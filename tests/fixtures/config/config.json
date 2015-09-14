@@ -1,0 +1,37 @@
+{
+  "app": {
+    "name": null,
+    "site": {
+      "code": null
+    },
+    "room": {
+      "code": null
+    },
+    "features": {
+      "touch": false
+    }
+  },
+  "api": {
+    "token": null,
+    "url": "http://a1-dv01-bng-02.cloudapp.net",
+    "headers": {
+      "x-api-version" : "2.1"
+    }
+  },
+  "ajax": {
+    "contentType": "application/json; charset=utf-8",
+    "dataType": "json",
+    "timeout": 10000,
+    "cache": true,
+    "async": true
+  },
+  "user": {
+    "id" : null,
+    "nickname": null,
+    "token": null,
+    "roles": []
+  },
+  "pollInterval": 25000,
+  "socketUrl": "",
+  "debug": false
+}

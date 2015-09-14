@@ -1,0 +1,20 @@
+{
+	"configDE": {
+		"app": {
+			"locale": "de-DE"
+		}
+	},
+	"configNA": {
+		"app": {
+
+		}
+	},
+	"lang": {
+		"en-GB": {
+			"translation": {
+				"helloWorld": "Hello World!",
+				"buyNTickets": "Buy %d tickets?"
+			}
+		}
+	}
+}

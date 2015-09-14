@@ -1,0 +1,71 @@
+{
+  "name": "orchestra",
+  "version": "0.0.0",
+  "authors": [
+    "Andrew Humphreys <ahumphreys87@googlemail.com>",
+    "Joe Fitter <hello@joefitter.com>",
+    "Jonathan Holmlund <jonoh89@gmail.com>"
+  ],
+  "contributors": [
+    "Viktor Movcan <viktor.movcan@bedegaming.com>",
+    "Luke Jackson <luke.jackson@bedegaming.com>",
+    "Connor Smallman <connor.smallman@bedegaming.com>"
+  ],
+  "repository": "https://github.com/BedeGaming/orchestra",
+  "engines": {
+    "node": ">= 0.8.x"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "backbone": "1.2.1",
+    "backbone.cocktail": "0.5.10",
+    "backbone.marionette": "^2.4.2",
+    "backbone.radio": "^1.0.0",
+    "backbone.stickit": "^0.8.0",
+    "hammerjs": "^2.0.4",
+    "i18next-client": "^1.7.4",
+    "jquery": "2.1.1",
+    "lodash": "^3.7.0",
+    "moment": "^2.8.3",
+    "handlebars": "~1.3.0",
+    "numeral": "^1.5.3"
+  },
+  "devDependencies": {
+    "babel": "^5.6.3",
+    "babelify": "^6.1.3",
+    "browserify": "^9.0.3",
+    "browserify-handlebars": "^0.2.0",
+    "expect.js": "0.3.1",
+    "gulp": "3.8.7",
+    "gulp-babel": "^5.1.0",
+    "gulp-istanbul": "^0.6.0",
+    "gulp-jscs": "^1.4.0",
+    "gulp-jshint": "1.8.4",
+    "gulp-mocha": "^2.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.6",
+    "isparta": "^3.0.3",
+    "connect": "2.4.3",
+    "jsdom": "2.0.0",
+    "localStorage": "^1.0.2",
+    "mocha-teamcity-reporter": "0.0.4",
+    "mockery": "^1.4.0",
+    "require-new": "^1.1.0",
+    "sinon": "^1.13.0",
+    "through2": "0.6.1",
+    "require-dir": "^0.3.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "browser": "src/index.js"
+}
