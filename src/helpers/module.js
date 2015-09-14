@@ -19,4 +19,4 @@ class ModuleHelpers {
   }
 }
 
-module.exports = new ModuleHelpers();
+export default new ModuleHelpers();
