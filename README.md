@@ -1,5 +1,11 @@
-<img src="orchestra-banner.png" width="100%" />
-
+<p align="center">
+  <img src="orchestra-banner.png" width="100%" />
+</p>
+<p align="center">
+  <a title='Build Status' href="https://travis-ci.org/BedeGaming/orchestra">
+    <img src='https://secure.travis-ci.org/BedeGaming/orchestra.svg?branch=master' />
+  </a>
+</p>
 All of the dependencies. None of the hassle. Just code.
 
 Using a known set of compatible dependency versions, Orchestra takes the pain away from setting up your Marionette applications. Just install and go!
