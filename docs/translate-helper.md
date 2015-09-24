@@ -9,7 +9,7 @@ var enGB = {
   'yes': 'Yes',
   'confirm' 'Please confirm'
 };
-var translateHelper = Orchestra.Translate;
+var translateHelper = Orchestra.Translator;
 
 translateHelper.addLocale('en-GB', enGB);
 
@@ -27,7 +27,7 @@ The default locale is `en-GB` in order to give your application a different loca
 ```js
 var Orchestra = require('orchestra');
 var globalChannel = Orchestra.Radio.channel('global');
-var translateHelper = Orchestra.Translate;
+var translateHelper = Orchestra.Translator;
 
 translateHelper.addLocale('en-GB', gbp);
 
@@ -46,7 +46,7 @@ console.log(translateHelper.translate('yes')); // outputs: Yes
 
 ```
 
-To use the Handlebars helper in your templates do the following: 
+To use the Handlebars helper in your templates do the following:
 
 ```html
 <p>{{translate 'confirm'}}</p> // outputs <p>Please confirm</p>
