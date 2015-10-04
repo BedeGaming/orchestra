@@ -108,6 +108,57 @@ var Orchestra = require('orchestra');
 var soundChannel = Orchestra.Radio.channel('sound');
 ```
 
+### Backbone.Routing
+[repo](https://github.com/thejameskyle/backbone-routing)
+
+_"Simple router and route classes for Backbone."_
+
+Backbone.Routing exposes 2 classes: `Router` and `Route`. These class are available via Orchestra using
+the following syntax:
+
+```
+var Orchestra = require('orchestra');
+
+var IndexRoute = Orchestra.Route.extend({
+  initialize(options) {
+    this.foo = options.foo;
+  },
+
+  fetch: function() {
+    // fetch model/collection
+  },
+
+  render: function() {
+    // render a view, called after `fetch`
+  },
+
+  destroy: function() {
+    // clean up view
+  }
+});
+
+var Router = Orchestra.Router.extend({
+  initialize: function(options) {
+    // do stuff on init
+    this.foo = options.foo;
+  },
+
+  onBeforeEnter: function() {
+    // do something before entering any of the routes, e.g. check authentication, highlight navbar
+  },
+
+  routes: {
+    '': 'index'
+  },
+
+  index: function() {
+    return new IndexRoute({
+      foo: this.foo
+    });
+  }
+});
+```
+
 ### Backbone.Cocktail
 [repo](https://github.com/onsi/cocktail)
 
