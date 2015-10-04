@@ -5,6 +5,7 @@ import _ from 'lodash';
 import Backbone from 'backbone';
 import Cocktail from 'backbone.cocktail';
 import Radio from 'backbone.radio';
+import Service from 'backbone.service';
 import Collection from './mvc/collection';
 import Currency from './helpers/currency';
 import LocalStorage from './helpers/localStorage';
@@ -34,6 +35,7 @@ _.extend(Orchestra, {
   _,
   $,
   Radio,
+  Service,
   Cocktail,
   Collection,
   Currency,

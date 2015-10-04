@@ -22,6 +22,7 @@
     "backbone.cocktail": "0.5.10",
     "backbone.marionette": "^2.4.2",
     "backbone.radio": "^1.0.0",
+    "backbone.service": "^0.5.0",
     "backbone.stickit": "^0.8.0",
     "hammerjs": "^2.0.4",
     "i18next-client": "^1.7.4",
