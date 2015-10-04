@@ -224,6 +224,42 @@ var Router = Orchestra.Router.extend({
 });
 ```
 
+### Backbone.Storage
+[repo](https://github.com/thejameskyle/backbone.storage)
+
+_"A simple storage class for Backbone Models and Collections."_
+
+Backbone Storage combines Backbone Models and Collections into a single, easy to use API. To access the Storage class in Orchestra, use the following API:
+
+```
+var Orchestra = require('orchestra');
+var Book = require('./model)';
+var Books = require('./collection');
+
+var BookStore = Orchestra.Storage.extend({
+  model: Book,
+  collection: Books
+});
+
+var bookStore = new BookStore();
+
+// get a single book
+bookStore.find(1).then(model => {
+  model.get('name'); // >> A Tale of Two Cities
+});
+
+// get all books
+bookStore.findAll().then(collection => {
+  collection.length; // >> 10
+});
+
+// save a book to the server
+var book = new Book({ name: 'Lolita' });
+bookStore.save(book).then(model => {
+  model.id; // >> 11
+});
+```
+
 ### Backbone.Cocktail
 [repo](https://github.com/onsi/cocktail)
 

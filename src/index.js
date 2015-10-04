@@ -7,6 +7,7 @@ import {Route, Router} from 'backbone-routing';
 import Cocktail from 'backbone.cocktail';
 import Radio from 'backbone.radio';
 import Service from 'backbone.service';
+import Storage from 'backbone.storage';
 import Collection from './mvc/collection';
 import Currency from './helpers/currency';
 import LocalStorage from './helpers/localStorage';
@@ -37,6 +38,7 @@ _.extend(Orchestra, {
   $,
   Radio,
   Service,
+  Storage,
   Cocktail,
   Route,
   Router,
