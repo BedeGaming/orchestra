@@ -3,6 +3,7 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import Backbone from 'backbone';
+import {Route, Router} from 'backbone-routing';
 import Cocktail from 'backbone.cocktail';
 import Radio from 'backbone.radio';
 import Collection from './mvc/collection';
@@ -35,6 +36,8 @@ _.extend(Orchestra, {
   $,
   Radio,
   Cocktail,
+  Route,
+  Router,
   Collection,
   Currency,
   LocalStorage,
