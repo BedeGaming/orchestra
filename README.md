@@ -5,6 +5,9 @@
   <a title='Build Status' href="https://travis-ci.org/BedeGaming/orchestra">
     <img src='https://secure.travis-ci.org/BedeGaming/orchestra.svg?branch=master' />
   </a>
+  <a href='https://coveralls.io/github/BedeGaming/orchestra?branch=coveralls'>
+    <img src='https://coveralls.io/repos/BedeGaming/orchestra/badge.svg?branch=coveralls&service=github' alt='Coverage Status' />
+  </a>
 </p>
 All of the dependencies. None of the hassle. Just code.
 
