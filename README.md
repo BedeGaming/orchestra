@@ -159,6 +159,71 @@ var Router = Orchestra.Router.extend({
 });
 ```
 
+### Backbone.Service
+[repo](https://github.com/thejameskyle/backbone.service)
+
+_"Simple service class for Backbone."_
+
+Backbone.Service extends Backbone.Radio's channel functionality by taking in a `requests` hash and returning a `Promise`
+from each one. The `start` and `stop` methods make Backbone.Service a great way to break up applications into modular components. To use `Service`s in Orchestra, follow this API:
+
+```
+var Orchestra = require('orchestra');
+
+var AuthService = Orchestra.Service.extend({
+  start: function() {
+    this.user = new User();
+    return this.user.fetch();
+  },
+
+  requests: {
+    isAuthenticated: 'isAuthenticated',
+    authenticate: 'authenticate'
+  },
+
+  isAuthenticated: function() {
+    return this.user.get('isAuthenticated');
+  },
+
+  authenticate: function() {
+    this.user.authenticate();
+  },
+
+  onError: function(err) {
+    console.log('Err!', err);
+  }
+});
+
+var authService = new AuthService();
+
+var Router = Orchestra.Router.extend({
+  onBeforeEnter: function() {
+    // check authentication
+    authService.request('isAuthenticated').then(isAuthenticated => {
+      if (!isAuthenticated) {
+        this.cancel();
+        history.navigate('login', { trigger: true });
+        return;
+      }
+    }).catch(err => {
+      if (!isAuthenticated) {
+        this.cancel();
+        history.navigate('login', { trigger: true });
+        return;
+      }
+    });
+  },
+
+  routes: {
+    '': 'index'
+  },
+
+  index: function() {
+    return new IndexRoute();
+  }
+});
+```
+
 ### Backbone.Cocktail
 [repo](https://github.com/onsi/cocktail)
 
