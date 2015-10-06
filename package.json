@@ -18,7 +18,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "backbone": "1.2.1",
+    "backbone": "1.2.3",
     "backbone-routing": "^0.2.0",
     "backbone.cocktail": "0.5.10",
     "backbone.marionette": "^2.4.2",
