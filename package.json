@@ -73,5 +73,6 @@
       "babelify"
     ]
   },
-  "browser": "src/index.js"
+  "browser": "src/index.js",
+  "jsnext:main": "src/index.js"
 }
