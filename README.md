@@ -277,6 +277,25 @@ var CollectionView =  Orchestra.CollectionView.extend({});
 Orchestra.mixin(CollectionView, MyMixins.SelectMixin, MyMixins.SomeOtherMixin);
 ```
 
+### Backbone.Syphon
+[repo](https://github.com/marionettejs/backbone.syphon)
+
+_"Backbone.Syphon aims to make it easy to serialize the fields of a Backbone.View into a simple JSON object that contains all of the values."_
+
+To easily serialize forms fields into a JSON representation with Orchestra, follow this API:
+
+```
+Orchestra.LayoutView.extend({
+  events: {
+    "submit form": "formSubmitted"
+  },
+  formSubmitted: function(e){
+    e.preventDefault();
+    var data = Backbone.Syphon.serialize(this);
+  },
+});
+```
+
 ### jQuery
 [repo](https://github.com/jquery/jquery) | [docs](http://api.jquery.com/)
 
