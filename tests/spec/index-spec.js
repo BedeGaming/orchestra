@@ -26,6 +26,10 @@ describe('Orchestra', function() {
     expect(Orchestra.Syphon).to.be.an('object');
   });
 
+  it('should expose the Backbone.Validation object', function() {
+    expect(Orchestra.Validation).to.be.an('object');
+  });
+
 	it('should expose the Backbone.Cocktail object', function() {
 		expect(Orchestra.Cocktail).to.be.an('object');
 	});
