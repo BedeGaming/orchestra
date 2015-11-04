@@ -20,6 +20,7 @@
   "dependencies": {
     "backbone": "1.2.3",
     "backbone-routing": "^0.2.0",
+    "backbone-validation": "^0.11.5",
     "backbone.cocktail": "0.5.10",
     "backbone.marionette": "^2.4.2",
     "backbone.radio": "^1.0.0",

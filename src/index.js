@@ -4,6 +4,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import Backbone from 'backbone';
 import {Route, Router} from 'backbone-routing';
+import Validation from 'backbone-validation';
 import Cocktail from 'backbone.cocktail';
 import Radio from 'backbone.radio';
 import Service from 'backbone.service';
@@ -41,6 +42,7 @@ _.extend(Orchestra, {
   Service,
   Storage,
   Syphon,
+  Validation,
   Cocktail,
   Route,
   Router,

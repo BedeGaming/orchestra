@@ -296,6 +296,45 @@ Orchestra.LayoutView.extend({
 });
 ```
 
+### Backbone.Validation
+[repo](https://github.com/thedersen/backbone.validation)
+
+_"A validation plugin for Backbone.js that validates both your model as well as form input."_
+
+To validate forms and inputs with Orchestra, follow this API:
+
+```
+// Define validation schema in model
+var User = Orchestra.Model.extend({
+  validation: {
+    email: {
+      required: true,
+      pattern: 'email',
+    },
+    age: {
+      range: [1, 80]
+    },
+  }
+});
+
+// Bind validation to view
+var View = Orchestra.LayoutView.extend({
+  initialize: function(){
+    this.model = new User();
+    Orchestra.Validation.bind(this);
+  },
+  events: {
+    "submit form": "formSubmitted"
+  },
+  formSubmitted: function(e){
+    this.model.preValidate({
+      email: 'example@dom.com',
+      age: 55,
+    });
+  },
+});
+```
+
 ### jQuery
 [repo](https://github.com/jquery/jquery) | [docs](http://api.jquery.com/)
 
