@@ -8,6 +8,9 @@
   <a href='https://coveralls.io/github/BedeGaming/orchestra?branch=coveralls'>
     <img src='https://coveralls.io/repos/BedeGaming/orchestra/badge.svg?branch=coveralls&service=github' alt='Coverage Status' />
   </a>
+  <a href='https://gitter.im/BedeGaming/orchestra?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge'>
+    <img src='https://badges.gitter.im/Join%20Chat.svg' alt='Gitter Chat' />
+  </a>
 </p>
 All of the dependencies. None of the hassle. Just code.
 
