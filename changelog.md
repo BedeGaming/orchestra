@@ -1,3 +1,9 @@
+### v1.2.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.1.0...v1.2.0)
+
+#### Features
+
+* Added Backbone.Syphon.
+
 ### v1.1.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.0.0...v1.1.0)
 
 #### Features
