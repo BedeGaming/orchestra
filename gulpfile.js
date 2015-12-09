@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var files = require('./build/config').files;
 var requireDir = require('require-dir');
 
-require('babel/register');
+require('babel-register');
 requireDir('./build/tasks');
 
 gulp.task('lint', ['jshint', 'jscs']);
