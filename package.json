@@ -1,7 +1,7 @@
 {
   "name": "orchestra",
   "description": "Simplify Backbone.Marionette applcations with an opinionated set of dependencies",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "authors": [
     "Andrew Humphreys <ahumphreys87@googlemail.com>",
     "Joe Fitter <hello@joefitter.com>",
