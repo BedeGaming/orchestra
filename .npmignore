@@ -3,4 +3,5 @@ node_modules/
 npm-debug.log
 coverage/
 bower.json
+.babelrc
 dist
