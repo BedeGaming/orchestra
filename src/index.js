@@ -21,7 +21,7 @@ import handlebarsHelpers from './helpers/handlebars';
 import 'backbone.marionette';
 import 'backbone.stickit';
 
-if (global === window) {
+// if (global === window) {
   var f = Backbone.Marionette.LayoutView.prototype.constructor;
 
   Backbone.Marionette.Region.prototype.getEl = function(el) {
@@ -31,31 +31,33 @@ if (global === window) {
     // console.log('THIS', this);
     // console.log(Backbone.Marionette._getValue(this.options.parentEl, this));
     return Backbone.$(el, Backbone.Marionette._getValue(this.options.parentEl, this));
-  },
+  };
 
-  Backbone.Marionette.LayoutView = Backbone.Marionette.LayoutView.extend({
-    render() {
-      if (this.onRender) {
-        this.onRender();
+  if (global === window) {
+    Backbone.Marionette.LayoutView = Backbone.Marionette.LayoutView.extend({
+      render() {
+        if (this.onRender) {
+          this.onRender();
+        }
+        return this;
+      },
+
+      _buildRegions: function(regions) {
+        var defaults = {
+          regionClass: this.getOption('regionClass'),
+          parentEl: _.partial(_.result, this, 'el')
+        };
+
+        return this.regionManager.addRegions(regions, defaults);
+      },
+
+      constructor(...args) {
+        this._ensureElement();
+        this.bindUIElements();
+        f.apply(this, args);
       }
-      return this;
-    },
-
-    _buildRegions: function(regions) {
-      var defaults = {
-        regionClass: this.getOption('regionClass'),
-        parentEl: _.partial(_.result, this, 'el')
-      };
-
-      return this.regionManager.addRegions(regions, defaults);
-    },
-
-    constructor(...args) {
-      this._ensureElement();
-      this.bindUIElements();
-      f.apply(this, args);
-    }
-  });
+    });
+  }
 
   // var regionEnsureElement = Backbone.Marionette.Region.prototype._ensureElement;
   // Backbone.Marionette.Region.prototype._ensureElement = function(...args) {
@@ -73,9 +75,10 @@ if (global === window) {
   var collectionViewConstructor = Backbone.Marionette.CollectionView.prototype.constructor;
   Backbone.Marionette.CollectionView = Backbone.Marionette.CollectionView.extend({
     buildChildView: function(child, ChildViewClass, childViewOptions) {
-
       var index = child.collection.indexOf(child);
-      var el = this.el.childNodes[index];
+
+      var el = this._isRendered ? undefined : this.el.childNodes[index];
+
       var options = _.extend({model: child, el: el}, childViewOptions);
       var childView = new ChildViewClass(options);
       Backbone.Marionette.MonitorDOMRefresh(childView);
@@ -95,7 +98,7 @@ if (global === window) {
     }
     _ensureElement.apply(this);
   }
-}
+// }
 
 handlebarsHelpers();
 

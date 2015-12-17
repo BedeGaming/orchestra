@@ -16,7 +16,7 @@
   "engines": {
     "node": ">= 0.8.x"
   },
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "dependencies": {
     "backbone": "1.2.3",
     "backbone-routing": "^0.2.0",
