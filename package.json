@@ -42,6 +42,7 @@
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
     "browserify-handlebars": "^0.2.0",
+    "browserify-swap": "^0.2.2",
     "connect": "2.4.3",
     "expect.js": "^0.3.1",
     "gulp": "^3.8.7",
@@ -69,12 +70,22 @@
   },
   "scripts": {
     "test": "NODE_ENV=build gulp test",
-    "coverage": "NODE_ENV=build gulp coveralls"
+    "coverage": "NODE_ENV=build gulp coveralls",
+    "build": "BROWSERIFYSWAP_ENV='all' gulp build"
   },
   "browserify": {
     "transform": [
-      "babelify"
+      "babelify",
+      "browserify-swap"
     ]
+  },
+  "browserify-swap": {
+    "@packages": [
+      "underscore"
+    ],
+    "all": {
+      "underscore.js$": "lodash"
+    }
   },
   "browser": "src/index.js"
 }
