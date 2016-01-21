@@ -1,3 +1,9 @@
+### v1.3.2 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.3.1...v1.3.2)
+
+#### Bugs
+
+* Stop including both underscore and lodash.
+
 ### v1.3.1 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.3.0...v1.3.1)
 
 #### Package Updates
