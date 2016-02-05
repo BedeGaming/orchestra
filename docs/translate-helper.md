@@ -6,8 +6,12 @@ Orchestra provides a helper for handling multi-lingual applications. You have th
 
 var Orchestra = require('orchestra');
 var enGB = {
-  'yes': 'Yes',
-  'confirm' 'Please confirm'
+  'en-GB': {
+    'translation': {
+      'yes': 'Yes',
+      'confirm': 'Please confirm'
+    }
+  }
 };
 var translateHelper = Orchestra.Translator;
 
