@@ -3,8 +3,9 @@
 //
 'use strict';
 
-import i18next from 'i18next-client';
+import i18next from 'i18next';
 import Radio from 'backbone.radio';
+import sprintf from 'i18next-sprintf-postprocessor';
 
 const resources = {};
 const channel = Radio.channel('global');
@@ -33,15 +34,17 @@ class TranslateHelpers {
     const locale = this.getLocale();
     let result = null;
 
-    i18next.init({
-      lng: locale,
-      resStore: resources[locale]
-    }, (err, translate) => {
-      result = translate(i18nKey, {
-        postProcess: 'sprintf',
-        sprintf: params
+    i18next
+      .use(sprintf)
+      .init({
+        lng: locale,
+        resources: resources[locale]
+      }, (err, translate) => {
+        result = translate(i18nKey, {
+          postProcess: 'sprintf',
+          sprintf: params
+        });
       });
-    });
 
     return result;
   }
