@@ -1,8 +1,15 @@
+### v1.3.3 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.3.2...v1.3.3)
+
+#### Package Updates
+
+* Update backbone.service.
+* Update i18next to 2.1.0 as 1.11.x had been deprecated.
+
 ### v1.3.2 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.3.1...v1.3.2)
 
 #### Bugs
 
-* Stop including both underscore and lodash.
+* Stop including both underscore and lodash, and only use lodash.
 
 ### v1.3.1 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.3.0...v1.3.1)
 
