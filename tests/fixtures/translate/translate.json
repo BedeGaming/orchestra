@@ -13,7 +13,9 @@
 		"en-GB": {
 			"translation": {
 				"helloWorld": "Hello World!",
-				"buyNTickets": "Buy %d tickets?"
+				"buyNTickets": "Buy %d tickets?",
+				"day": "day",
+				"day_plural": "days"
 			}
 		}
 	}

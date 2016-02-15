@@ -83,8 +83,16 @@ describe('Translate Helper', function() {
 			translateHelper.addLocale('en-GB', fixture.lang);
 		});
 
-		it('shoule translate il8Key correctly', function() {
+		it('should translate il8Key correctly', function() {
 			expect(translateHelper.translate('helloWorld')).to.eql('Hello World!');
+		});
+
+		it('should translate i18Key correctly with the count number supplied', function() {
+			expect(translateHelper.translate('day', {count: 2})).to.eql('days');
+		});
+
+		it('should translate i18Key correctly with the count number supplied', function() {
+			expect(translateHelper.translate('day', {count: 1})).to.eql('day');
 		});
 
 		it('should subsitute number into translated text', function() {

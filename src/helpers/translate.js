@@ -33,6 +33,10 @@ class TranslateHelpers {
   translate(i18nKey, params) {
     const locale = this.getLocale();
     let result = null;
+    const options = {
+      postProcess: 'sprintf',
+      sprintf: params
+    };
 
     i18next
       .use(sprintf)
@@ -40,10 +44,10 @@ class TranslateHelpers {
         lng: locale,
         resources: resources[locale]
       }, (err, translate) => {
-        result = translate(i18nKey, {
-          postProcess: 'sprintf',
-          sprintf: params
-        });
+        if (params && params.count) {
+          options.count = params.count;
+        }
+        result = translate(i18nKey, options);
       });
 
     return result;
