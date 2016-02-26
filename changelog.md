@@ -1,3 +1,13 @@
+### v1.4.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.3.4...v1.4.0)
+
+### New Features
+
+* Support Plurals in translate helper.
+
+#### Package Updates
+
+* Update backbone.storage.
+
 ### v1.3.4 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.3.3...v1.3.4)
 
 #### Package Updates
