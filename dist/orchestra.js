@@ -41149,15 +41149,19 @@ var TranslateHelpers = (function () {
     value: function translate(i18nKey, params) {
       var locale = this.getLocale();
       var result = null;
+      var options = {
+        postProcess: 'sprintf',
+        sprintf: params
+      };
 
       _i18next2.default.use(_i18nextSprintfPostprocessor2.default).init({
         lng: locale,
         resources: resources[locale]
       }, function (err, translate) {
-        result = translate(i18nKey, {
-          postProcess: 'sprintf',
-          sprintf: params
-        });
+        if (params && params.count) {
+          options.count = params.count;
+        }
+        result = translate(i18nKey, options);
       });
 
       return result;
