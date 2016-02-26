@@ -27,7 +27,7 @@
     "backbone.radio": "^1.0.0",
     "backbone.service": "^0.5.2",
     "backbone.stickit": "^0.9.0",
-    "backbone.storage": "^0.1.0",
+    "backbone.storage": "0.2.1",
     "backbone.syphon": "^0.6.3",
     "browserify-swap": "^0.2.2",
     "hammerjs": "^2.0.4",
