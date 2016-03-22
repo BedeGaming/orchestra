@@ -18,8 +18,12 @@ import TouchView from './mixins/touch.view';
 import Visibility from './helpers/visibility';
 import ModuleHelper from './helpers/module';
 import handlebarsHelpers from './helpers/handlebars';
-import 'backbone.marionette';
+import Marionette from 'backbone.marionette';
 import 'backbone.stickit';
+
+if (window.__agent) {
+  window.__agent.start(Backbone, Marionette);
+}
 
 handlebarsHelpers();
 
