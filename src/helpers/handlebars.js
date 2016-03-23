@@ -60,7 +60,16 @@ export default function(handlebars) {
 
   });
 
+  /*
+   * call with {{currency amount (decimals)}}
+   * amount accepts a number or function
+   * which returns a number.
+   */
   Handlebars.registerHelper('currency', (amount, decimals) => {
+    if (typeof amount === 'function') {
+      amount = amount();
+    }
+
     amount = parseFloat(amount);
 
     if (decimals) {
