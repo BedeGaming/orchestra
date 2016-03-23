@@ -1,3 +1,9 @@
+### v1.5.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.4.0...v1.5.0)
+
+### New Features
+
+* Added ability to use Marionette.Inspector in chrome devtools.
+
 ### v1.4.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.3.4...v1.4.0)
 
 ### New Features
