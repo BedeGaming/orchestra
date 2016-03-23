@@ -94,29 +94,30 @@ describe('handlebars Helpers', function() {
 
     beforeEach(function() {
       this.currency = handlebars.helpers.currency;
-    });
-
-    it('should return a Handlebars.SafeString', function() {
       globalChannel.reply('currencyLocale', function() {
         return 'en-GB';
       });
+    });
+
+    it('should return a Handlebars.SafeString', function() {
       var safeString = this.currency(10, 2);
       expect(safeString).to.be.a(handlebars.SafeString);
     });
 
     it('should return the currency in the correct format', function() {
-      globalChannel.reply('currencyLocale', function() {
-        return 'en-GB';
-      });
       expect(this.currency(1.2, 2).toString()).to.be('£1.20');
     });
 
     it('should return the currency in the correct format', function() {
-      globalChannel.reply('currencyLocale', function() {
-        return 'en-GB';
-      });
       expect(this.currency(1.2).toString()).to.be('£1');
     });
+
+    it('should accept a function as the first argument', function() {
+      var func = function() {
+        return 1.50;
+      };
+      expect(this.currency(func, 2).toString()).to.be('£1.50');
+    })
 
   });
 
