@@ -117,7 +117,7 @@ describe('handlebars Helpers', function() {
         return 1.50;
       };
       expect(this.currency(func, 2).toString()).to.be('£1.50');
-    })
+    });
 
   });
 
