@@ -1,3 +1,9 @@
+### v1.5.1 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.5.0...v1.5.1)
+
+#### Package Updates
+
+* Use v2.3.5 of i18next to solve regression in 2.4.0.
+
 ### v1.5.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.4.0...v1.5.0)
 
 ### New Features
