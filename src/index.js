@@ -59,7 +59,7 @@ _.extend(Orchestra, {
       this.instances[namespace] = new this.Application({
         namespace: namespace
       });
-      console.log(namespace, this.instances);
+
       this.listenTo(this.instances[namespace], 'destroy', () => {
         delete this.instances[namespace];
       });
