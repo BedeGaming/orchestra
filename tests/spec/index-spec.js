@@ -12,8 +12,8 @@ describe('Orchestra', function() {
 	});
 
 	it('should expose Marionette classes', function() {
-		expect(this.Orchestra.CompositeView).to.be.a('function');
-		expect(this.Orchestra.Module).to.be.a('function');
+		expect(this.Orchestra.View).to.be.a('function');
+		expect(this.Orchestra.CollectionView).to.be.a('function');
 	});
 
 	it('should expose the TouchView object', function() {
@@ -92,13 +92,13 @@ describe('Orchestra', function() {
 
 			it('should return new \'main\' orchestra instance', function() {
 				component = this.Orchestra.getInstance('main');
-				expect(component.namespace).to.eql('main');
+				expect(component.options.namespace).to.eql('main');
 			});
 
 			it('should store reference for instance in instances object', function() {
 				this.Orchestra.getInstance('main');
 				expect(this.Orchestra.instances.main).to.be.an('object');
-				expect(this.Orchestra.instances.main.namespace).to.eql('main');
+				expect(this.Orchestra.instances.main.options.namespace).to.eql('main');
 			});
 
 		});
@@ -113,17 +113,6 @@ describe('Orchestra', function() {
 		 		component.destroy();
 		 		expect(this.Orchestra.instances).to.eql({});
 		 	});
-		});
-	});
-
-	describe('Module.create()', function() {
-		before(function() {
-			this.instance = this.Orchestra.getInstance('main');
-		});
-
-		it('should add namespace to options of the module', function() {
-			this.Orchestra.Module.create(this.instance, 'custom.module', {});
-			expect(this.instance.custom.module.options.namespace).to.eql('custom.module');
 		});
 	});
 

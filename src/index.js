@@ -27,13 +27,6 @@ if (window.__agent) {
 
 handlebarsHelpers();
 
-var func = Backbone.Marionette.Module.create;
-
-Backbone.Marionette.Module.create = function(app, moduleNames, moduleDefinition) {
-  moduleDefinition.namespace = moduleNames;
-  func.apply(this, arguments);
-};
-
 // build orchestra framework
 const Orchestra = {};
 _.extend(Orchestra, Backbone);
@@ -66,6 +59,7 @@ _.extend(Orchestra, {
       this.instances[namespace] = new this.Application({
         namespace: namespace
       });
+      console.log(namespace, this.instances);
       this.listenTo(this.instances[namespace], 'destroy', () => {
         delete this.instances[namespace];
       });
