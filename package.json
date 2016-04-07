@@ -27,7 +27,7 @@
     "backbone.service": "git+ssh://git@github.com:ahumphreys87/backbone.service#radio-2",
     "backbone.stickit": "^0.9.0",
     "backbone.storage": "0.2.1",
-    "backbone.syphon": "^0.6.3",
+    "backbone.syphon": "git+ssh://git@github.com:ahumphreys87/backbone.syphon#peer-deps",
     "browserify-swap": "^0.2.2",
     "hammerjs": "^2.0.4",
     "handlebars": "~1.3.0",
