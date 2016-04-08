@@ -37,7 +37,8 @@
     "jquery": "2.1.1",
     "lodash": "^4.0.0",
     "moment": "^2.8.3",
-    "numeral": "^1.5.3"
+    "numeral": "^1.5.3",
+    "whatwg-fetch": "^0.11.0"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.1",
