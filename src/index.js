@@ -19,6 +19,9 @@ import Visibility from './helpers/visibility';
 import ModuleHelper from './helpers/module';
 import handlebarsHelpers from './helpers/handlebars';
 import Marionette from 'backbone.marionette';
+
+import './mvc/native';
+
 import 'backbone.stickit';
 
 if (window.__agent) {
