@@ -3,6 +3,9 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import Backbone from 'backbone';
+import fetch from 'backbone.fetch';
+Backbone.ajax = fetch;
+
 import {Route, Router} from 'backbone-routing';
 import Validation from 'backbone-validation';
 import Cocktail from 'backbone.cocktail';

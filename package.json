@@ -24,6 +24,7 @@
     "backbone-validation": "^0.11.5",
     "backbone.cocktail": "0.5.10",
     "backbone.marionette": "3.0.0-pre.5",
+    "backbone.fetch": "^0.2.4",
     "backbone.service": "git://github.com/ahumphreys87/backbone.service.git#radio-2",
     "backbone.stickit": "^0.9.0",
     "backbone.storage": "0.2.1",
