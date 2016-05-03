@@ -15,7 +15,8 @@
 				"helloWorld": "Hello World!",
 				"buyNTickets": "Buy %d tickets?",
 				"day": "day",
-				"day_plural": "days"
+				"day_plural": "days",
+				"error_message": "There was a problem: could not connect"
 			}
 		}
 	}

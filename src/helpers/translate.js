@@ -41,6 +41,8 @@ class TranslateHelpers {
     i18next
       .use(sprintf)
       .init({
+        nsSeparator: false,
+        keySeparator: false,
         lng: locale,
         resources: resources[locale]
       }, (err, translate) => {
