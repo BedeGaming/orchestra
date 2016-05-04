@@ -1,3 +1,9 @@
+### v2.0.0-pre.2 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0-pre.1...v2.0.0-pre.2)
+
+#### Fixes
+
+* Translation strings can now have colons present.
+
 ### v2.0.0-pre.1 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.5.1...v2.0.0-pre.1)
 
 #### Package Updates

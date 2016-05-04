@@ -6507,7 +6507,8 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
   } else if (typeof exports !== 'undefined') {
     var _ = require('underscore');
     var Backbone = require('backbone');
-    var $ = require('jquery');
+    var $;
+    try {$ = require('jquery')} catch(e){};
     module.exports = factory(_, Backbone, $);
   } else {
     factory(root._, root.Backbone, root.jQuery);
@@ -41386,6 +41387,8 @@ var TranslateHelpers = function () {
       };
 
       _i18next2.default.use(_i18nextSprintfPostprocessor2.default).init({
+        nsSeparator: false,
+        keySeparator: false,
         lng: locale,
         resources: resources[locale]
       }, function (err, translate) {
