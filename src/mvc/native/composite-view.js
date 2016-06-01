@@ -13,18 +13,26 @@ const NativeViewMixin = {
     return this;
   },
 
+  // Internal method. Append a view to the end of the $el.
+  // Overidden from CollectionView to ensure view is appended to
+  // childViewContainer
+  _insertAfter: function _insertAfter(childView) {
+    var $container = this.getChildViewContainer(this, childView);
+    $container.appendChild(childView.el);
+  },
+
   // Internal method to ensure an `$childViewContainer` exists, for the
   // `attachHtml` method to use.
   getChildViewContainer: function(containerView, childView) {
-    if (!!containerView.childViewContainer) {
-      return containerView.childViewContainer;
+    if (!!containerView.$childViewContainer) {
+      return containerView.$childViewContainer;
     }
 
     var container;
     var childViewContainer = getOption(containerView, 'childViewContainer');
     if (childViewContainer) {
 
-      var selector = _getValue(childViewContainer, containerView);
+      var selector = this.getValue(childViewContainer, containerView);
 
       if (selector.charAt(0) === '@' && containerView.ui) {
         container = containerView.ui[selector.substr(4)];
@@ -43,7 +51,7 @@ const NativeViewMixin = {
       container = containerView.el;
     }
 
-    containerView.childViewContainer = container;
+    containerView.$childViewContainer = container;
     return container;
   },
 }

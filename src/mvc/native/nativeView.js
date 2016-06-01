@@ -113,6 +113,7 @@ const NativeViewMixin = {
     } : listener;
 
     elementAddEventListener.call(this.el, eventName, handler, false);
+    console.log(this.el, selector, eventName);
     this._domEvents.push({eventName: eventName, handler: handler, listener: listener, selector: selector});
     return handler;
   },
