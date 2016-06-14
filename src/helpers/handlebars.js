@@ -60,6 +60,13 @@ export default function(handlebars) {
 
   });
 
+  Handlebars.registerHelper('plural', (...args) => {
+    const i18nKey = args.shift();
+    const count = args[0] || 0;
+
+    return new Handlebars.SafeString(translator.translate(i18nKey, {count: count}));
+  });
+
   Handlebars.registerHelper('currency', (amount, decimals) => {
     amount = parseFloat(amount);
 
