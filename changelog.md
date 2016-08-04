@@ -1,3 +1,10 @@
+### v2.0.0-pre.3 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0-pre.2...v2.0.0-pre.3)
+
+#### Package Updates
+
+* Update to Marionette 3.0 prerelease 5.
+
+
 ### v2.0.0-pre.2 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0-pre.1...v2.0.0-pre.2)
 
 #### Fixes
