@@ -29,10 +29,10 @@ const NativeViewMixin = {
     }
 
     var container;
-    var childViewContainer = getOption(containerView, 'childViewContainer');
+    var childViewContainer = containerView.childViewContainer;
     if (childViewContainer) {
 
-      var selector = this.getValue(childViewContainer, containerView);
+      var selector = _.result(containerView, 'childViewContainer');
 
       if (selector.charAt(0) === '@' && containerView.ui) {
         container = containerView.ui[selector.substr(4)];
