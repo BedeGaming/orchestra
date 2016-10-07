@@ -45,7 +45,7 @@ export default function(handlebars) {
    * full options here: https://github.com/alexei/sprintf.js
    */
   Handlebars.registerHelper('translate', (...args) => {
-    var i18nKey = args.shift();
+    const i18nKey = args.shift();
 
     // remove the options object
     args.pop();
@@ -57,7 +57,12 @@ export default function(handlebars) {
     });
 
     return new Handlebars.SafeString(translator.translate(i18nKey, args));
+  });
 
+  Handlebars.registerHelper('pluralize', (i18nKey, count) => {
+    const translated = translator.translate(i18nKey, {count: count});
+
+    return new Handlebars.SafeString(translated);
   });
 
   Handlebars.registerHelper('currency', (amount, decimals) => {
@@ -67,7 +72,7 @@ export default function(handlebars) {
       decimals = parseInt(decimals, 10);
     }
 
-    var str = currencyHelper.format(amount, decimals);
+    const str = currencyHelper.format(amount, decimals);
 
     return new Handlebars.SafeString(str);
   });

@@ -87,6 +87,18 @@ describe('Translate Helper', function() {
 			expect(translateHelper.translate('helloWorld')).to.eql('Hello World!');
 		});
 
+		it('should translate i18Key correctly with the count number supplied', function() {
+			expect(translateHelper.translate('day', {count: 2})).to.eql('days');
+		});
+
+		it('should translate i18Key correctly with the count number supplied', function() {
+			expect(translateHelper.translate('day', {count: 0})).to.eql('days');
+		});
+
+		it('should translate i18Key correctly with the count number supplied', function() {
+			expect(translateHelper.translate('day', {count: 1})).to.eql('day');
+		});
+
 		it('should translate i18key with value containing colons correctly', function() {
 			expect(translateHelper.translate('error_message')).to.eql('There was a problem: could not connect');
 		});

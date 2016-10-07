@@ -46,7 +46,7 @@ class TranslateHelpers {
         lng: locale,
         resources: resources[locale]
       }, (err, translate) => {
-        if (params && params.count) {
+        if (params && (params.count || params.count === 0)) {
           options.count = params.count;
         }
         result = translate(i18nKey, options);

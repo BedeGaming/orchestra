@@ -32,7 +32,9 @@ if (localeExists) {
     'en-GB': {
       translation: {
         stop: 'Stop',
-        start: 'Start'
+        start: 'Start',
+        'day': 'day',
+        'day_plural': 'days'
       }
     }
   };

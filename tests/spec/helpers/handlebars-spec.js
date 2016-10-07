@@ -90,31 +90,58 @@ describe('handlebars Helpers', function() {
 
   });
 
+  describe('pluralize', function() {
+
+    beforeEach(function() {
+      this.pluralize = handlebars.helpers.pluralize;
+    });
+
+    it('should return a Handlebars.SafeString', function() {
+      var safeString = this.pluralize('day', 2);
+      expect(safeString).to.be.a(handlebars.SafeString);
+    });
+
+    it('should return a plural form of the word (4)', function() {
+      expect(this.pluralize('day', 4).toString()).to.be('days');
+    });
+
+    it('should return a singular form of the word if no count is given (undefined)', function() {
+      expect(this.pluralize('day').toString()).to.be('day');
+    });
+
+    it('should return a singular form of the word (1)', function() {
+      expect(this.pluralize('day', 1).toString()).to.be('day');
+    });
+
+    it('should return a plural form of the word (3)', function() {
+      expect(this.pluralize('day', 2).toString()).to.be('days');
+    });
+
+    it('should return a plural form of the word (0)', function() {
+      expect(this.pluralize('day', 0).toString()).to.be('days');
+    });
+
+  });
+
   describe('currency', function() {
 
     beforeEach(function() {
       this.currency = handlebars.helpers.currency;
-    });
-
-    it('should return a Handlebars.SafeString', function() {
       globalChannel.reply('currencyLocale', function() {
         return 'en-GB';
       });
+    });
+
+    it('should return a Handlebars.SafeString', function() {
       var safeString = this.currency(10, 2);
       expect(safeString).to.be.a(handlebars.SafeString);
     });
 
     it('should return the currency in the correct format', function() {
-      globalChannel.reply('currencyLocale', function() {
-        return 'en-GB';
-      });
       expect(this.currency(1.2, 2).toString()).to.be('£1.20');
     });
 
     it('should return the currency in the correct format', function() {
-      globalChannel.reply('currencyLocale', function() {
-        return 'en-GB';
-      });
       expect(this.currency(1.2).toString()).to.be('£1');
     });
 
