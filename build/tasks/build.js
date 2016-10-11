@@ -21,8 +21,7 @@ var buildPath = 'dist/';
 
 function _generate(bundle){
   return bundle.generate({
-    format: 'umd',
-    moduleName: 'Orchestra = global[\'Orchestra\']',
+    format: 'cjs',
     sourceMap: true
   });
 }

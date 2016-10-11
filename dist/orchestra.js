@@ -1,8 +1,4 @@
-(function (global, factory) {
-   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-   typeof define === 'function' && define.amd ? define(factory) :
-   (global.Orchestra = global['Orchestra'] = factory());
-}(this, (function () { 'use strict';
+'use strict';
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -30664,8 +30660,6 @@ lodash.extend(Orchestra, {
   }
 });
 
-return Orchestra;
-
-})));
+module.exports = Orchestra;
 
 //# sourceMappingURL=orchestra.js.map
