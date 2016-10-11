@@ -20,7 +20,7 @@ module.exports = {
 
 		var props = _.extend(defaultProps, props);
 
-		return Orchestra.ItemView.extend(props);
+		return Orchestra.View.extend(props);
 	},
 
 	boot: function(view, mixViewProps) {

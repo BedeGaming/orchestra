@@ -1,3 +1,33 @@
+### v2.0.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.5.1...v2.0.0)
+
+#### Package Updates
+
+* Update to Marionette 3.0.
+* Update to lodash 4
+* Remove Radio in favour of using the instance that is bundled with Marionette 3.0.
+* Translation strings can now have colons present.
+
+### v2.0.0-pre.3 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0-pre.2...v2.0.0-pre.3)
+
+#### Package Updates
+
+* Update to Marionette 3.0 prerelease 5.
+
+
+### v2.0.0-pre.2 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0-pre.1...v2.0.0-pre.2)
+
+#### Fixes
+
+* Translation strings can now have colons present.
+
+### v2.0.0-pre.1 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.5.1...v2.0.0-pre.1)
+
+#### Package Updates
+
+* Update to Marionette 3.0 prerelease.
+* Update to lodash 4
+* Remove Radio in favour of using the instance that is bundled with Marionette 3.0.
+
 ### v1.5.1 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.5.0...v1.5.1)
 
 #### Package Updates
