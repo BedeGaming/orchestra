@@ -73,6 +73,17 @@ gulp.task('build-lib', function(){
   });
 });
 
+gulp.task('minify', function(){
+  return gulp.src('dist/orchestra.js')
+      .pipe(rename('orchestra.min.js'))
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(uglify({
+        preserveComments: 'license'
+      }))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest(buildPath));
+});
+
 gulp.task('build', function(done) {
-  runSequence('build-lib', done);
+  runSequence('build-lib', 'minify', done);
 });
