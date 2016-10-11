@@ -21,7 +21,7 @@ var buildPath = 'dist/';
 
 function _generate(bundle){
   return bundle.generate({
-    format: 'cjs',
+    format: 'es',
     sourceMap: true
   });
 }

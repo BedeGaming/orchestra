@@ -1,5 +1,3 @@
-'use strict';
-
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 function commonjsRequire () {
@@ -30660,6 +30658,6 @@ lodash.extend(Orchestra, {
   }
 });
 
-module.exports = Orchestra;
+export default Orchestra;
 
 //# sourceMappingURL=orchestra.js.map
