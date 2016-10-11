@@ -10,7 +10,7 @@ requireDir('./build/tasks');
 gulp.task('lint', ['jshint', 'jscs']);
 gulp.task('test', ['lint', 'mocha']);
 gulp.task('coverage', ['lint', 'istanbul']);
-gulp.task('build', ['test', 'browserify', 'browserify:min', 'babel']);
+// gulp.task('build', ['test', 'browserify', 'browserify:min', 'babel']);
 
 gulp.task('watch', function() {
   gulp.watch(files.javascript, ['lint', 'test']);

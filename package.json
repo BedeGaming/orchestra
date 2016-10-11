@@ -39,31 +39,41 @@
     "numeral": "^1.5.3"
   },
   "devDependencies": {
-    "babel-plugin-add-module-exports": "^0.1.1",
-    "babel-preset-es2015": "^6.3.13",
-    "babelify": "^7.2.0",
-    "browserify": "^12.0.1",
-    "browserify-handlebars": "^0.2.0",
+    "babel-core": "^6.17.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-es2015-rollup": "^1.2.0",
+    "babel-register": "^6.16.3",
     "connect": "2.4.3",
     "expect.js": "^0.3.1",
     "gulp": "^3.8.7",
-    "gulp-babel": "^6.1.1",
     "gulp-coveralls": "^0.1.4",
+    "gulp-file": "^0.3.0",
+    "gulp-filter": "^4.0.0",
     "gulp-istanbul": "^0.10.3",
     "gulp-jscs": "^3.0.2",
     "gulp-jshint": "^2.0.0",
     "gulp-mocha": "^2.0.0",
+    "gulp-plumber": "^1.1.0",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.6",
-    "jshint": "^2.8.0",
     "isparta": "^4.0.0",
     "jsdom": "^7.2.0",
+    "jshint": "^2.8.0",
     "localStorage": "^1.0.2",
     "mockery": "^1.4.0",
     "require-dir": "^0.3.0",
     "require-new": "^1.1.0",
+    "rollup": "^0.36.3",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^5.0.4",
+    "rollup-plugin-json": "^2.0.2",
+    "rollup-plugin-multi-entry": "^2.0.1",
+    "rollup-plugin-node-globals": "^1.0.9",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "run-sequence": "^1.2.2",
     "sinon": "^1.17.2",
     "through2": "^2.0.0",
     "vinyl-buffer": "^1.0.0",
@@ -73,20 +83,5 @@
     "test": "NODE_ENV=build gulp test",
     "coverage": "NODE_ENV=build gulp coveralls",
     "build": "BROWSERIFYSWAP_ENV='all' gulp build"
-  },
-  "browserify": {
-    "transform": [
-      "babelify",
-      "browserify-swap"
-    ]
-  },
-  "browserify-swap": {
-    "@packages": [
-      "underscore"
-    ],
-    "all": {
-      "underscore.js$": "lodash"
-    }
-  },
-  "browser": "src/index.js"
+  }
 }

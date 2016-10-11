@@ -50,7 +50,7 @@ mockery.enable({
 mockery.registerMock('signalr', {});
 mockery.registerMock('modernizr', {});
 
-var Orchestra = require('../../../src/index');
+var Orchestra = require('../../../src/index').default;
 global.Orchestra = Orchestra;
 global._ = Orchestra._;
 global.$ = Orchestra.$;

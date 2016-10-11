@@ -1,54 +1,78 @@
-var gulp = require("gulp");
-var babel = require("gulp-babel");
-var browserify = require('browserify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
+var gulp = require('gulp');
+var file = require('gulp-file');
+var filter = require('gulp-filter');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
-var babelify = require('babelify');
-var gutil = require('gulp-util');
-var files = require('../config').files;
+var plumber = require('gulp-plumber');
+var runSequence = require('run-sequence');
+var rollup = require('rollup').rollup;
+var babel = require('rollup-plugin-babel');
+var json = require('rollup-plugin-json');
+var resolve = require('rollup-plugin-node-resolve');
+var commonjs = require('rollup-plugin-commonjs');
+var preset = require('babel-preset-es2015-rollup');
 
 var pkg = require('../../package');
 
-gulp.task("babel", function () {
-  return gulp.src(files.javascript)
-    .pipe(sourcemaps.init())
-    .pipe(babel())
-    .pipe(sourcemaps.write("."))
-    .pipe(gulp.dest("lib"));
+var srcPath = 'src/';
+var buildPath = 'dist/';
+
+function _generate(bundle){
+  return bundle.generate({
+    format: 'umd',
+    moduleName: 'Orchestra = global[\'Orchestra\']',
+    sourceMap: true
+  });
+}
+
+function bundle(opts) {
+  return rollup({
+    entry: srcPath + 'index.js',
+    plugins: [
+      json(),
+      resolve({
+        jsnext: true,
+        main: true,
+        browser: true,
+      }),
+      commonjs({
+        namedExports: {
+          'backbone-routing': [ 'Route', 'Router' ]
+        }
+      }),
+      babel({
+        sourceMaps: true,
+        presets: [ preset ],
+        babelrc: false
+      })
+    ]
+  }).then(bundle => {
+    return _generate(bundle);
+  }).then(gen => {
+    gen.code += '\n//# sourceMappingURL=' + gen.map.toUrl();
+    return gen;
+  });
+}
+
+gulp.task('build-lib', function(){
+  return bundle().then(gen => {
+    return file('orchestra.js', gen.code, {src: true})
+      .pipe(plumber())
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest(buildPath))
+      .pipe(filter(['*', '!**/*.js.map']))
+      .pipe(rename('orchestra.min.js'))
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(uglify({
+        preserveComments: 'license'
+      }))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest(buildPath));
+  });
 });
 
-gulp.task('browserify', function () {
-  // set up the browserify instance on a task basis
-  var b = browserify(['./src/index.js'], {
-    standalone: 'orchestra'
-  });
-
-  return b.transform(babelify)
-    .bundle()
-    .on('error', gutil.log)
-    .pipe(source('orchestra.js'))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./dist/'));
-});
-
-gulp.task('browserify:min', function () {
-  // set up the browserify instance on a task basis
-  var b = browserify(['./src/index.js'], {
-    standalone: 'orchestra'
-  });
-
-  return b.transform(babelify)
-    .bundle()
-    .on('error', gutil.log)
-    .pipe(source('orchestra.min.js'))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(uglify())
-    .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./dist/'));
+gulp.task('build', function(done) {
+  runSequence('build-lib', done);
 });
