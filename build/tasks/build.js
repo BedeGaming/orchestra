@@ -11,6 +11,7 @@ var babel = require('rollup-plugin-babel');
 var json = require('rollup-plugin-json');
 var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
+var alias = require('rollup-plugin-alias');
 var preset = require('babel-preset-es2015-rollup');
 
 var pkg = require('../../package');
@@ -40,6 +41,9 @@ function bundle(opts) {
         namedExports: {
           'backbone-routing': [ 'Route', 'Router' ]
         }
+      }),
+      alias({
+        underscore: 'lodash'
       }),
       babel({
         sourceMaps: true,
@@ -77,9 +81,7 @@ gulp.task('minify', function(){
   return gulp.src('dist/orchestra.js')
       .pipe(rename('orchestra.min.js'))
       .pipe(sourcemaps.init({loadMaps: true}))
-      .pipe(uglify({
-        preserveComments: 'license'
-      }))
+      .pipe(uglify())
       .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest(buildPath));
 });
