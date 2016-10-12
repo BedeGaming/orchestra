@@ -16,10 +16,6 @@ describe('Orchestra', function() {
 		expect(this.Orchestra.CollectionView).to.be.a('function');
 	});
 
-	it('should expose the TouchView object', function() {
-		expect(this.Orchestra.TouchView).to.be.an('object');
-	});
-
 	it('should expose the Backbone.Radio object', function() {
 		expect(this.Orchestra.Radio).to.be.an('object');
 	});

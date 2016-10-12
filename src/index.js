@@ -14,7 +14,6 @@ import Collection from './mvc/collection';
 import Currency from './helpers/currency';
 import LocalStorage from './helpers/localStorage';
 import Translator from './helpers/translate';
-import TouchView from './mixins/touch.view';
 import Visibility from './helpers/visibility';
 import ModuleHelper from './helpers/module';
 import handlebarsHelpers from './helpers/handlebars';
@@ -49,7 +48,6 @@ _.extend(Orchestra, {
   Translator,
   Visibility,
   ModuleHelper,
-  TouchView,
 
   instances: {},
 
