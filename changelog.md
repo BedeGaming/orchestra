@@ -1,3 +1,14 @@
+### v3.0.0-pre.1 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0...v3.0.0-pre.1)
+
+#### Package Updates
+
+* Update to Handlebars 4.
+
+#### Breaking change
+
+* Remove hammerjs
+* Remove touch view mixin.
+
 ### v2.0.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.5.1...v2.0.0)
 
 #### Package Updates
