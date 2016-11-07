@@ -6,16 +6,12 @@
 'use strict';
 
 import HB from 'handlebars/runtime';
-import {Translator} from './translate';
-import {Currency} from './currency';
+import { Translator } from './translate';
+import { Currency } from './currency';
 
 export default function(handlebars) {
 
   let Handlebars = HB.default;
-
-  // if (global.handlebars) {
-  //   Handlebars = global.handlebars;
-  // }
 
   if (handlebars) {
     Handlebars = handlebars;
