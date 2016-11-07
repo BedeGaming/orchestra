@@ -5,7 +5,7 @@
 
 require('../../app/support/setup');
 var helperLocation = '../../../src/helpers/translate';
-var translateHelper = require(helperLocation);
+var translateHelper = require(helperLocation).Translator;
 var fixture = require('../../fixtures/translate/translate.json');
 
 describe('Translate Helper', function() {

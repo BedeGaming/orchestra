@@ -15,7 +15,7 @@ module.exports = function classify(target) {
   );
 };
 
-},{"backbone-metal":2,"underscore":57}],2:[function(require,module,exports){
+},{"backbone-metal":2,"underscore":94}],2:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('backbone'), require('underscore')) : typeof define === 'function' && define.amd ? define(['backbone', 'underscore'], factory) : global.Metal = factory(global.Backbone, global._);
 })(this, function (Backbone, _) {
@@ -521,7 +521,7 @@ module.exports = function classify(target) {
   return backbone_metal;
 });
 
-},{"backbone":15,"underscore":57}],3:[function(require,module,exports){
+},{"backbone":13,"underscore":94}],3:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('underscore'), require('backbone')) :
   typeof define === 'function' && define.amd ? define(['underscore', 'backbone'], factory) :
@@ -1012,7 +1012,7 @@ module.exports = function classify(target) {
 
 }));
 
-},{"backbone":15,"underscore":57}],4:[function(require,module,exports){
+},{"backbone":13,"underscore":94}],4:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('backbone'), require('backbone-metal')) : typeof define === 'function' && define.amd ? define(['backbone', 'backbone-metal'], factory) : global.Backbone.Routing = factory(global.Backbone, global.Metal);
 })(this, function (Backbone, Metal) {
@@ -1261,7 +1261,7 @@ module.exports = function classify(target) {
   return backbone_routing;
 });
 
-},{"backbone":15,"backbone-metal":3}],5:[function(require,module,exports){
+},{"backbone":13,"backbone-metal":3}],5:[function(require,module,exports){
 // Backbone.Validation v0.11.5
 //
 // Copyright (c) 2011-2015 Thomas Pedersen
@@ -1980,113 +1980,7 @@ module.exports = function classify(target) {
   }(_));
   return Backbone.Validation;
 }));
-},{"backbone":15,"underscore":57}],6:[function(require,module,exports){
-//     (c) 2012 Onsi Fakhouri
-//     Cocktail.js may be freely distributed under the MIT license.
-//     http://github.com/onsi/cocktail
-(function(factory) {
-    if (typeof require === 'function' && typeof module !== 'undefined' && module.exports) {
-        module.exports = factory(require('underscore'));
-    } else if (typeof define === 'function') {
-        define(['underscore'], factory);
-    } else {
-        this.Cocktail = factory(_);
-    }
-}(function (_) {
-
-    var Cocktail = {};
-
-    Cocktail.mixins = {};
-
-    Cocktail.mixin = function mixin(klass) {
-        var mixins = _.chain(arguments).toArray().rest().flatten().value();
-        // Allows mixing into the constructor's prototype or the dynamic instance
-        var obj = klass.prototype || klass;
-
-        var collisions = {};
-
-        _.each(mixins, function(mixin) {
-            if (_.isString(mixin)) {
-                mixin = Cocktail.mixins[mixin];
-            }
-            _.each(mixin, function(value, key) {
-                if (_.isFunction(value)) {
-                    // If the mixer already has that exact function reference
-                    // Note: this would occur on an accidental mixin of the same base
-                    if (obj[key] === value) return;
-
-                    if (obj[key]) {
-                        // Avoid accessing built-in properties like constructor (#39)
-                        collisions[key] = collisions.hasOwnProperty(key) ? collisions[key] : [obj[key]];
-                        collisions[key].push(value);
-                    }
-                    obj[key] = value;
-                } else if (_.isArray(value)) {
-                    obj[key] = _.union(value, obj[key] || []);
-                } else if (_.isObject(value)) {
-                    obj[key] = _.extend({}, value, obj[key] || {});
-                } else if (!(key in obj)) {
-                    obj[key] = value;
-                }
-            });
-        });
-
-        _.each(collisions, function(propertyValues, propertyName) {
-            obj[propertyName] = function() {
-                var that = this,
-                    args = arguments,
-                    returnValue;
-
-                _.each(propertyValues, function(value) {
-                    var returnedValue = _.isFunction(value) ? value.apply(that, args) : value;
-                    returnValue = (typeof returnedValue === 'undefined' ? returnValue : returnedValue);
-                });
-
-                return returnValue;
-            };
-        });
-
-        return klass;
-    };
-
-    var originalExtend;
-
-    Cocktail.patch = function patch(Backbone) {
-        originalExtend = Backbone.Model.extend;
-
-        var extend = function(protoProps, classProps) {
-            var klass = originalExtend.call(this, protoProps, classProps);
-
-            var mixins = klass.prototype.mixins;
-            if (mixins && klass.prototype.hasOwnProperty('mixins')) {
-                Cocktail.mixin(klass, mixins);
-            }
-
-            return klass;
-        };
-
-        _.each([Backbone.Model, Backbone.Collection, Backbone.Router, Backbone.View], function(klass) {
-            klass.mixin = function mixin() {
-                Cocktail.mixin(this, _.toArray(arguments));
-            };
-
-            klass.extend = extend;
-        });
-    };
-
-    Cocktail.unpatch = function unpatch(Backbone) {
-        _.each([Backbone.Model, Backbone.Collection, Backbone.Router, Backbone.View], function(klass) {
-            klass.mixin = undefined;
-            klass.extend = originalExtend;
-        });
-    };
-
-    return Cocktail;
-}));
-
-},{"underscore":7}],7:[function(require,module,exports){
-module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_modules/lodash/lodash.js');
-},{"/Users/andrewhumphreys/Documents/work/orchestra/node_modules/lodash/lodash.js":54}],8:[function(require,module,exports){
+},{"backbone":13,"underscore":94}],6:[function(require,module,exports){
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
 // v3.0.0
@@ -5328,7 +5222,7 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
 
 
 
-},{"backbone":15,"backbone.radio":9,"underscore":57}],9:[function(require,module,exports){
+},{"backbone":13,"backbone.radio":7,"underscore":94}],7:[function(require,module,exports){
 // Backbone.Radio v2.0.0
 
 (function (global, factory) {
@@ -5679,7 +5573,7 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
 
 }));
 
-},{"backbone":15,"underscore":57}],10:[function(require,module,exports){
+},{"backbone":13,"underscore":94}],8:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('backbone.radio'), require('underscore'), require('backbone-metal-classify'), require('es6-promise')) : typeof define === 'function' && define.amd ? define(['backbone.radio', 'underscore', 'backbone-metal-classify', 'es6-promise'], factory) : global.Backbone.Service = factory(global.Radio, global._, global.classify, global.PromisePolyfill);
 })(this, function (Radio, _, classify, PromisePolyfill) {
@@ -5748,7 +5642,7 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
   return backbone_service;
 });
 
-},{"backbone-metal-classify":1,"backbone.radio":11,"es6-promise":16,"underscore":57}],11:[function(require,module,exports){
+},{"backbone-metal-classify":1,"backbone.radio":9,"es6-promise":14,"underscore":94}],9:[function(require,module,exports){
 // Backbone.Radio v2.0.0-pre.1
 
 (function (global, factory) {
@@ -6099,7 +5993,7 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
 
 }));
 
-},{"backbone":15,"underscore":57}],12:[function(require,module,exports){
+},{"backbone":13,"underscore":94}],10:[function(require,module,exports){
 // Backbone.Stickit v0.9.2, MIT Licensed
 // Copyright (c) 2012-2015 The New York Times, CMS Group, Matthew DeLambo <delambo@gmail.com>
 
@@ -6793,7 +6687,7 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
 
 }));
 
-},{"backbone":15,"underscore":57}],13:[function(require,module,exports){
+},{"backbone":13,"underscore":94}],11:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory(require("backbone"), require("backbone-metal")) : typeof define === "function" && define.amd ? define(["backbone", "backbone-metal"], factory) : global.Backbone.Storage = factory(global.Backbone, global.Metal);
 })(this, function (Backbone, Metal) {
@@ -6942,7 +6836,7 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
   return backbone_storage;
 });
 
-},{"backbone":15,"backbone-metal":3}],14:[function(require,module,exports){
+},{"backbone":13,"backbone-metal":3}],12:[function(require,module,exports){
 // Backbone.Syphon, v0.6.3
 // ----------------------------------
 //
@@ -7444,7 +7338,7 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
   return Backbone.Syphon;
 }));
 
-},{"backbone":15,"jquery":53,"underscore":57}],15:[function(require,module,exports){
+},{"backbone":13,"jquery":51,"underscore":94}],13:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.3.3
 
@@ -9368,7 +9262,7 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":53,"underscore":57}],16:[function(require,module,exports){
+},{"jquery":51,"underscore":94}],14:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -10344,7 +10238,7 @@ module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_m
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":56}],17:[function(require,module,exports){
+},{"_process":93}],15:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10412,7 +10306,7 @@ exports['default'] = inst;
 module.exports = exports['default'];
 
 
-},{"./handlebars/base":18,"./handlebars/exception":21,"./handlebars/no-conflict":31,"./handlebars/runtime":32,"./handlebars/safe-string":33,"./handlebars/utils":34}],18:[function(require,module,exports){
+},{"./handlebars/base":16,"./handlebars/exception":19,"./handlebars/no-conflict":29,"./handlebars/runtime":30,"./handlebars/safe-string":31,"./handlebars/utils":32}],16:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10518,7 +10412,7 @@ exports.createFrame = _utils.createFrame;
 exports.logger = _logger2['default'];
 
 
-},{"./decorators":19,"./exception":21,"./helpers":22,"./logger":30,"./utils":34}],19:[function(require,module,exports){
+},{"./decorators":17,"./exception":19,"./helpers":20,"./logger":28,"./utils":32}],17:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10536,7 +10430,7 @@ function registerDefaultDecorators(instance) {
 }
 
 
-},{"./decorators/inline":20}],20:[function(require,module,exports){
+},{"./decorators/inline":18}],18:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10567,7 +10461,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":34}],21:[function(require,module,exports){
+},{"../utils":32}],19:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10609,7 +10503,7 @@ exports['default'] = Exception;
 module.exports = exports['default'];
 
 
-},{}],22:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10657,7 +10551,7 @@ function registerDefaultHelpers(instance) {
 }
 
 
-},{"./helpers/block-helper-missing":23,"./helpers/each":24,"./helpers/helper-missing":25,"./helpers/if":26,"./helpers/log":27,"./helpers/lookup":28,"./helpers/with":29}],23:[function(require,module,exports){
+},{"./helpers/block-helper-missing":21,"./helpers/each":22,"./helpers/helper-missing":23,"./helpers/if":24,"./helpers/log":25,"./helpers/lookup":26,"./helpers/with":27}],21:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10698,7 +10592,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":34}],24:[function(require,module,exports){
+},{"../utils":32}],22:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10794,7 +10688,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":21,"../utils":34}],25:[function(require,module,exports){
+},{"../exception":19,"../utils":32}],23:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10821,7 +10715,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../exception":21}],26:[function(require,module,exports){
+},{"../exception":19}],24:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10852,7 +10746,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":34}],27:[function(require,module,exports){
+},{"../utils":32}],25:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10880,7 +10774,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],28:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10894,7 +10788,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{}],29:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10929,7 +10823,7 @@ exports['default'] = function (instance) {
 module.exports = exports['default'];
 
 
-},{"../utils":34}],30:[function(require,module,exports){
+},{"../utils":32}],28:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10978,7 +10872,7 @@ exports['default'] = logger;
 module.exports = exports['default'];
 
 
-},{"./utils":34}],31:[function(require,module,exports){
+},{"./utils":32}],29:[function(require,module,exports){
 (function (global){
 /* global window */
 'use strict';
@@ -11002,7 +10896,7 @@ module.exports = exports['default'];
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],32:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11296,7 +11190,7 @@ function executeDecorators(fn, prog, container, depths, data, blockParams) {
 }
 
 
-},{"./base":18,"./exception":21,"./utils":34}],33:[function(require,module,exports){
+},{"./base":16,"./exception":19,"./utils":32}],31:[function(require,module,exports){
 // Build out our basic SafeString type
 'use strict';
 
@@ -11313,7 +11207,7 @@ exports['default'] = SafeString;
 module.exports = exports['default'];
 
 
-},{}],34:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11439,16 +11333,16 @@ function appendContextPath(contextPath, id) {
 }
 
 
-},{}],35:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime')['default'];
 
-},{"./dist/cjs/handlebars.runtime":17}],36:[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":15}],34:[function(require,module,exports){
 (function (global){
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var t;t="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,t.i18nextSprintfPostProcessor=e()}}(function(){var e;return function t(e,n,r){function o(s,a){if(!n[s]){if(!e[s]){var f="function"==typeof require&&require;if(!a&&f)return f(s,!0);if(i)return i(s,!0);var l=new Error("Cannot find module '"+s+"'");throw l.code="MODULE_NOT_FOUND",l}var p=n[s]={exports:{}};e[s][0].call(p.exports,function(t){var n=e[s][1][t];return o(n?n:t)},p,p.exports,t,e,n,r)}return n[s].exports}for(var i="function"==typeof require&&require,s=0;s<r.length;s++)o(r[s]);return o}({1:[function(t,n,r){!function(t){function n(){var e=arguments[0],t=n.cache;return t[e]&&t.hasOwnProperty(e)||(t[e]=n.parse(e)),n.format.call(null,t[e],arguments)}function o(e){return Object.prototype.toString.call(e).slice(8,-1).toLowerCase()}function i(e,t){return Array(t+1).join(e)}var s={not_string:/[^s]/,number:/[diefg]/,json:/[j]/,not_json:/[^j]/,text:/^[^\x25]+/,modulo:/^\x25{2}/,placeholder:/^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijosuxX])/,key:/^([a-z_][a-z_\d]*)/i,key_access:/^\.([a-z_][a-z_\d]*)/i,index_access:/^\[(\d+)\]/,sign:/^[\+\-]/};n.format=function(e,t){var r,a,f,l,p,u,c,d=1,g=e.length,h="",y=[],x=!0,b="";for(a=0;g>a;a++)if(h=o(e[a]),"string"===h)y[y.length]=e[a];else if("array"===h){if(l=e[a],l[2])for(r=t[d],f=0;f<l[2].length;f++){if(!r.hasOwnProperty(l[2][f]))throw new Error(n("[sprintf] property '%s' does not exist",l[2][f]));r=r[l[2][f]]}else r=l[1]?t[l[1]]:t[d++];if("function"==o(r)&&(r=r()),s.not_string.test(l[8])&&s.not_json.test(l[8])&&"number"!=o(r)&&isNaN(r))throw new TypeError(n("[sprintf] expecting number but found %s",o(r)));switch(s.number.test(l[8])&&(x=r>=0),l[8]){case"b":r=r.toString(2);break;case"c":r=String.fromCharCode(r);break;case"d":case"i":r=parseInt(r,10);break;case"j":r=JSON.stringify(r,null,l[6]?parseInt(l[6]):0);break;case"e":r=l[7]?r.toExponential(l[7]):r.toExponential();break;case"f":r=l[7]?parseFloat(r).toFixed(l[7]):parseFloat(r);break;case"g":r=l[7]?parseFloat(r).toPrecision(l[7]):parseFloat(r);break;case"o":r=r.toString(8);break;case"s":r=(r=String(r))&&l[7]?r.substring(0,l[7]):r;break;case"u":r>>>=0;break;case"x":r=r.toString(16);break;case"X":r=r.toString(16).toUpperCase()}s.json.test(l[8])?y[y.length]=r:(!s.number.test(l[8])||x&&!l[3]?b="":(b=x?"+":"-",r=r.toString().replace(s.sign,"")),u=l[4]?"0"===l[4]?"0":l[4].charAt(1):" ",c=l[6]-(b+r).length,p=l[6]&&c>0?i(u,c):"",y[y.length]=l[5]?b+r+p:"0"===u?b+p+r:p+b+r)}return y.join("")},n.cache={},n.parse=function(e){for(var t=e,n=[],r=[],o=0;t;){if(null!==(n=s.text.exec(t)))r[r.length]=n[0];else if(null!==(n=s.modulo.exec(t)))r[r.length]="%";else{if(null===(n=s.placeholder.exec(t)))throw new SyntaxError("[sprintf] unexpected placeholder");if(n[2]){o|=1;var i=[],a=n[2],f=[];if(null===(f=s.key.exec(a)))throw new SyntaxError("[sprintf] failed to parse named argument key");for(i[i.length]=f[1];""!==(a=a.substring(f[0].length));)if(null!==(f=s.key_access.exec(a)))i[i.length]=f[1];else{if(null===(f=s.index_access.exec(a)))throw new SyntaxError("[sprintf] failed to parse named argument key");i[i.length]=f[1]}n[2]=i}else o|=2;if(3===o)throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported");r[r.length]=n}t=t.substring(n[0].length)}return r};var a=function(e,t,r){return r=(t||[]).slice(0),r.splice(0,0,e),n.apply(null,r)};"undefined"!=typeof r?(r.sprintf=n,r.vsprintf=a):(t.sprintf=n,t.vsprintf=a,"function"==typeof e&&e.amd&&e(function(){return{sprintf:n,vsprintf:a}}))}("undefined"==typeof window?this:window)},{}],2:[function(e,t,n){"use strict";Object.defineProperty(n,"__esModule",{value:!0});var r=e("sprintf-js");n["default"]={name:"sprintf",type:"postProcessor",process:function(e,t,n){return n.sprintf?"[object Array]"===Object.prototype.toString.apply(n.sprintf)?(0,r.vsprintf)(e,n.sprintf):"object"==typeof n.sprintf?(0,r.sprintf)(e,n.sprintf):e:e},overloadTranslationOptionHandler:function(e){for(var t=[],n=1;n<e.length;n++)t.push(e[n]);return{postProcess:"sprintf",sprintf:t}}},t.exports=n["default"]},{"sprintf-js":1}]},{},[2])(2)});
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],37:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11712,7 +11606,7 @@ var Connector = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = Connector;
-},{"./EventEmitter":39,"./logger":49,"./utils":51}],38:[function(require,module,exports){
+},{"./EventEmitter":37,"./logger":47,"./utils":49}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11801,7 +11695,7 @@ var Connector = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = Connector;
-},{"./EventEmitter":39,"./logger":49,"./utils":51}],39:[function(require,module,exports){
+},{"./EventEmitter":37,"./logger":47,"./utils":49}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11869,7 +11763,7 @@ var EventEmitter = function () {
 }();
 
 exports.default = EventEmitter;
-},{}],40:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12015,7 +11909,7 @@ var Interpolator = function () {
 }();
 
 exports.default = Interpolator;
-},{"./logger":49,"./utils":51}],41:[function(require,module,exports){
+},{"./logger":47,"./utils":49}],39:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12105,7 +11999,7 @@ var LanguageUtil = function () {
 ;
 
 exports.default = LanguageUtil;
-},{"./logger":49}],42:[function(require,module,exports){
+},{"./logger":47}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12270,7 +12164,7 @@ var PluralResolver = function () {
 ;
 
 exports.default = PluralResolver;
-},{"./logger":49}],43:[function(require,module,exports){
+},{"./logger":47}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12428,7 +12322,7 @@ var ResourceStore = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = ResourceStore;
-},{"./EventEmitter":39,"./utils":51}],44:[function(require,module,exports){
+},{"./EventEmitter":37,"./utils":49}],42:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12737,7 +12631,7 @@ var Translator = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = Translator;
-},{"./EventEmitter":39,"./compatibility/v1":45,"./logger":49,"./postProcessor":50,"./utils":51}],45:[function(require,module,exports){
+},{"./EventEmitter":37,"./compatibility/v1":43,"./logger":47,"./postProcessor":48,"./utils":49}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12892,7 +12786,7 @@ function appendBackwardsAPI(i18n) {
     });
   };
 }
-},{"../logger":49}],46:[function(require,module,exports){
+},{"../logger":47}],44:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12963,7 +12857,7 @@ function transformOptions(options) {
 
   return options;
 }
-},{}],47:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13342,7 +13236,7 @@ var I18n = function (_EventEmitter) {
 }(_EventEmitter3.default);
 
 exports.default = new I18n();
-},{"./BackendConnector":37,"./CacheConnector":38,"./EventEmitter":39,"./Interpolator":40,"./LanguageUtils":41,"./PluralResolver":42,"./ResourceStore":43,"./Translator":44,"./compatibility/v1":45,"./defaults":46,"./logger":49,"./postProcessor":50}],48:[function(require,module,exports){
+},{"./BackendConnector":35,"./CacheConnector":36,"./EventEmitter":37,"./Interpolator":38,"./LanguageUtils":39,"./PluralResolver":40,"./ResourceStore":41,"./Translator":42,"./compatibility/v1":43,"./defaults":44,"./logger":47,"./postProcessor":48}],46:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13356,7 +13250,7 @@ var _i18next2 = _interopRequireDefault(_i18next);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _i18next2.default;
-},{"./i18next":47}],49:[function(require,module,exports){
+},{"./i18next":45}],47:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13449,7 +13343,7 @@ var Logger = function () {
 ;
 
 exports.default = new Logger();
-},{}],50:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13472,7 +13366,7 @@ exports.default = {
     return value;
   }
 };
-},{}],51:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13590,10 +13484,10 @@ function escape(data) {
     return data;
   }
 }
-},{}],52:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 module.exports = require('./dist/commonjs/index.js').default;
 
-},{"./dist/commonjs/index.js":48}],53:[function(require,module,exports){
+},{"./dist/commonjs/index.js":46}],51:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.1
  * http://jquery.com/
@@ -22785,7 +22679,7 @@ return jQuery;
 
 }));
 
-},{}],54:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -39771,40 +39665,2158 @@ return jQuery;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],53:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Czech
+ * locale: Czech Republic
+ * author : Anatoli Papirovski : https://github.com/apapirovski
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'cs-CZ',
+        cultureCode: 'cs-CZ',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'tis.',
+            million: 'mil.',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'Kč',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],54:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Danish
+ * locale: Denmark
+ * author : Michael Storgaard : https://github.com/mstorgaard
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'da-DK',
+        cultureCode: 'da-DK',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mio',
+            billion: 'mia',
+            trillion: 'b'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'kr',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
 },{}],55:[function(require,module,exports){
 /*!
- * numeral.js
- * version : 1.5.3
- * author : Adam Draper
+ * numbro.js language configuration
+ * language : German
+ * locale: Switzerland
+ * author : Michael Piefel : https://github.com/piefel (based on work from Marco Krage : https://github.com/sinky)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'de-CH',
+        cultureCode: 'de-CH',
+        delimiters: {
+            thousands: '\'',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'CHF',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],56:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : German
+ * locale: Germany
+ * author : Marco Krage : https://github.com/sinky
+ *
+ * Generally useful in Germany, Austria, Luxembourg, Belgium
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'de-DE',
+        cultureCode: 'de-DE',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix',
+            spaceSeparated: true
+        },
+        defaults: {
+            currencyFormat: ',4'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],57:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : English
+ * locale: Australia
+ * author : Benedikt Huss : https://github.com/ben305
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'en-AU',
+        cultureCode: 'en-AU',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (~~ (number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+        },
+        currency: {
+            symbol: '$',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: '$ ,0.00',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: '$ ,0'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],58:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : English
+ * locale: United Kingdom of Great Britain and Northern Ireland
+ * author : Dan Ristic : https://github.com/dristic
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'en-GB',
+        cultureCode: 'en-GB',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (~~ (number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+        },
+        currency: {
+            symbol: '£',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: '$ ,0.00',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: '$ ,0'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],59:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : English
+ * locale: New Zealand
+ * author : Benedikt Huss : https://github.com/ben305
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'en-NZ',
+        cultureCode: 'en-NZ',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (~~ (number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+        },
+        currency: {
+            symbol: '$',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: '$ ,0.00',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: '$ ,0'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],60:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : English
+ * locale: South Africa
+ * author : Stewart Scott https://github.com/stewart42
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'en-ZA',
+        cultureCode: 'en-ZA',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (~~ (number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+        },
+        currency: {
+            symbol: 'R',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: '$ ,0.00',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: '$ ,0'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],61:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Spanish
+ * locale: Argentina
+ * author : Hernan Garcia : https://github.com/hgarcia
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'es-AR',
+        cultureCode: 'es-AR',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (b === 1 || b === 3) ? 'er' :
+                (b === 2) ? 'do' :
+                (b === 7 || b === 0) ? 'mo' :
+        (b === 8) ? 'vo' :
+        (b === 9) ? 'no' : 'to';
+        },
+        currency: {
+            symbol: '$',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],62:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Spanish
+ * locale: Spain
+ * author : Hernan Garcia : https://github.com/hgarcia
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'es-ES',
+        cultureCode: 'es-ES',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (b === 1 || b === 3) ? 'er' :
+                (b === 2) ? 'do' :
+                    (b === 7 || b === 0) ? 'mo' :
+                        (b === 8) ? 'vo' :
+                            (b === 9) ? 'no' : 'to';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],63:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Estonian
+ * locale: Estonia
+ * author : Illimar Tambek : https://github.com/ragulka
+ *
+ * Note: in Estonian, abbreviations are always separated
+ * from numbers with a space
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'et-EE',
+        cultureCode: 'et-EE',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: ' tuh',
+            million: ' mln',
+            billion: ' mld',
+            trillion: ' trl'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],64:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Farsi
+ * locale: Iran
+ * author : neo13 : https://github.com/neo13
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'fa-IR',
+        cultureCode: 'fa-IR',
+        delimiters: {
+            thousands: '،',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'هزار',
+            million: 'میلیون',
+            billion: 'میلیارد',
+            trillion: 'تریلیون'
+        },
+        ordinal: function () {
+            return 'ام';
+        },
+        currency: {
+            symbol: '﷼'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],65:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Finnish
+ * locale: Finland
+ * author : Sami Saada : https://github.com/samitheberber
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'fi-FI',
+        cultureCode: 'fi-FI',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'M',
+            billion: 'G',
+            trillion: 'T'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],66:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Filipino (Pilipino)
+ * locale: Philippines
+ * author : Michael Abadilla : https://github.com/mjmaix
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'fil-PH',
+        cultureCode: 'fil-PH',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (~~ (number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+        },
+        currency: {
+            symbol: '₱'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],67:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : French
+ * locale: Canada
+ * author : Léo Renaud-Allaire : https://github.com/renaudleo
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'fr-CA',
+        cultureCode: 'fr-CA',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'M',
+            billion: 'G',
+            trillion: 'T'
+        },
+        ordinal : function (number) {
+            return number === 1 ? 'er' : 'ème';
+        },
+        currency: {
+            symbol: '$',
+            position: 'postfix',
+            spaceSeparated : true
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: '$ ,0.00',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: '$ ,0'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],68:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : French
+ * locale: Switzerland
+ * author : Adam Draper : https://github.com/adamwdraper
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'fr-CH',
+        cultureCode: 'fr-CH',
+        delimiters: {
+            thousands: '\'',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal : function (number) {
+            return number === 1 ? 'er' : 'ème';
+        },
+        currency: {
+            symbol: 'CHF',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],69:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : French
+ * locale: France
+ * author : Adam Draper : https://github.com/adamwdraper
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'fr-FR',
+        cultureCode: 'fr-FR',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal : function (number) {
+            return number === 1 ? 'er' : 'ème';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],70:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Hebrew
+ * locale : IL
+ * author : Eli Zehavi : https://github.com/eli-zehavi
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'he-IL',
+        cultureCode: 'he-IL',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'אלף',
+            million: 'מליון',
+            billion: 'בליון',
+            trillion: 'טריליון'
+        },
+        currency: {
+            symbol: '₪',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: '₪ ,0.00',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: '₪ ,0'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+
+},{}],71:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Hungarian
+ * locale: Hungary
+ * author : Peter Bakondy : https://github.com/pbakondy
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'hu-HU',
+        cultureCode: 'hu-HU',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'E',  // ezer
+            million: 'M',   // millió
+            billion: 'Mrd', // milliárd
+            trillion: 'T'   // trillió
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: ' Ft',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],72:[function(require,module,exports){
+exports['cs-CZ'] = require('./cs-CZ.js');
+exports['da-DK'] = require('./da-DK.js');
+exports['de-CH'] = require('./de-CH.js');
+exports['de-DE'] = require('./de-DE.js');
+exports['en-AU'] = require('./en-AU.js');
+exports['en-GB'] = require('./en-GB.js');
+exports['en-NZ'] = require('./en-NZ.js');
+exports['en-ZA'] = require('./en-ZA.js');
+exports['es-AR'] = require('./es-AR.js');
+exports['es-ES'] = require('./es-ES.js');
+exports['et-EE'] = require('./et-EE.js');
+exports['fa-IR'] = require('./fa-IR.js');
+exports['fi-FI'] = require('./fi-FI.js');
+exports['fil-PH'] = require('./fil-PH.js');
+exports['fr-CA'] = require('./fr-CA.js');
+exports['fr-CH'] = require('./fr-CH.js');
+exports['fr-FR'] = require('./fr-FR.js');
+exports['he-IL'] = require('./he-IL.js');
+exports['hu-HU'] = require('./hu-HU.js');
+exports['it-IT'] = require('./it-IT.js');
+exports['ja-JP'] = require('./ja-JP.js');
+exports['ko-KR'] = require('./ko-KR.js');
+exports['lv-LV'] = require('./lv-LV.js');
+exports['nb-NO'] = require('./nb-NO.js');
+exports['nl-BE'] = require('./nl-BE.js');
+exports['nl-NL'] = require('./nl-NL.js');
+exports['pl-PL'] = require('./pl-PL.js');
+exports['pt-BR'] = require('./pt-BR.js');
+exports['pt-PT'] = require('./pt-PT.js');
+exports['ru-RU'] = require('./ru-RU.js');
+exports['ru-UA'] = require('./ru-UA.js');
+exports['sk-SK'] = require('./sk-SK.js');
+exports['sv-SE'] = require('./sv-SE.js');
+exports['th-TH'] = require('./th-TH.js');
+exports['tr-TR'] = require('./tr-TR.js');
+exports['uk-UA'] = require('./uk-UA.js');
+exports['zh-CN'] = require('./zh-CN.js');
+exports['zh-TW'] = require('./zh-TW.js');
+},{"./cs-CZ.js":53,"./da-DK.js":54,"./de-CH.js":55,"./de-DE.js":56,"./en-AU.js":57,"./en-GB.js":58,"./en-NZ.js":59,"./en-ZA.js":60,"./es-AR.js":61,"./es-ES.js":62,"./et-EE.js":63,"./fa-IR.js":64,"./fi-FI.js":65,"./fil-PH.js":66,"./fr-CA.js":67,"./fr-CH.js":68,"./fr-FR.js":69,"./he-IL.js":70,"./hu-HU.js":71,"./it-IT.js":73,"./ja-JP.js":74,"./ko-KR.js":75,"./lv-LV.js":76,"./nb-NO.js":77,"./nl-BE.js":78,"./nl-NL.js":79,"./pl-PL.js":80,"./pt-BR.js":81,"./pt-PT.js":82,"./ru-RU.js":83,"./ru-UA.js":84,"./sk-SK.js":85,"./sv-SE.js":86,"./th-TH.js":87,"./tr-TR.js":88,"./uk-UA.js":89,"./zh-CN.js":90,"./zh-TW.js":91}],73:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Italian
+ * locale: Italy
+ * author : Giacomo Trombi : http://cinquepunti.it
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'it-IT',
+        cultureCode: 'it-IT',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'mila',
+            million: 'mil',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return 'º';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],74:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Japanese
+ * locale: Japan
+ * author : teppeis : https://github.com/teppeis
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'ja-JP',
+        cultureCode: 'ja-JP',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: '千',
+            million: '百万',
+            billion: '十億',
+            trillion: '兆'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '¥',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: '$ ,0.00',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: '$ ,0'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],75:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Korean
+ * author (numbro.js Version): Randy Wilander : https://github.com/rocketedaway
+ * author (numeral.js Version) : Rich Daley : https://github.com/pedantic-git
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'ko-KR',
+        cultureCode: 'ko-KR',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: '천',
+            million: '백만',
+            billion: '십억',
+            trillion: '일조'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '₩'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],76:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Latvian
+ * locale: Latvia
+ * author : Lauris Bukšis-Haberkorns : https://github.com/Lafriks
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'lv-LV',
+        cultureCode: 'lv-LV',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: ' tūkst.',
+            million: ' milj.',
+            billion: ' mljrd.',
+            trillion: ' trilj.'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],77:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language: Norwegian Bokmål
+ * locale: Norway
+ * author : Benjamin Van Ryseghem
+ */
+(function() {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'nb-NO',
+        cultureCode: 'nb-NO',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 't',
+            million: 'M',
+            billion: 'md',
+            trillion: 't'
+        },
+        currency: {
+            symbol: 'kr',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],78:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Dutch
+ * locale: Belgium
+ * author : Dieter Luypaert : https://github.com/moeriki
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'nl-BE',
+        cultureCode: 'nl-BE',
+        delimiters: {
+            thousands: ' ',
+            decimal  : ','
+        },
+        abbreviations: {
+            thousand : 'k',
+            million  : 'mln',
+            billion  : 'mld',
+            trillion : 'bln'
+        },
+        ordinal : function (number) {
+            var remainder = number % 100;
+            return (number !== 0 && remainder <= 1 || remainder === 8 || remainder >= 20) ? 'ste' : 'de';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],79:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Dutch
+ * locale: Netherlands
+ * author : Dave Clayton : https://github.com/davedx
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'nl-NL',
+        cultureCode: 'nl-NL',
+        delimiters: {
+            thousands: '.',
+            decimal  : ','
+        },
+        abbreviations: {
+            thousand : 'k',
+            million  : 'mln',
+            billion  : 'mrd',
+            trillion : 'bln'
+        },
+        ordinal : function (number) {
+            var remainder = number % 100;
+            return (number !== 0 && remainder <= 1 || remainder === 8 || remainder >= 20) ? 'ste' : 'de';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],80:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Polish
+ * locale : Poland
+ * author : Dominik Bulaj : https://github.com/dominikbulaj
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'pl-PL',
+        cultureCode: 'pl-PL',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'tys.',
+            million: 'mln',
+            billion: 'mld',
+            trillion: 'bln'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: ' zł',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],81:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Portuguese
+ * locale : Brazil
+ * author : Ramiro Varandas Jr : https://github.com/ramirovjr
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'pt-BR',
+        cultureCode: 'pt-BR',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'mil',
+            million: 'milhões',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return 'º';
+        },
+        currency: {
+            symbol: 'R$',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],82:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Portuguese
+ * locale : Portugal
+ * author : Diogo Resende : https://github.com/dresende
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'pt-PT',
+        cultureCode: 'pt-PT',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal : function () {
+            return 'º';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],83:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Russian
+ * locale : Russsia
+ * author : Anatoli Papirovski : https://github.com/apapirovski
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'ru-RU',
+        cultureCode: 'ru-RU',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'тыс.',
+            million: 'млн',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            // not ideal, but since in Russian it can taken on
+            // different forms (masculine, feminine, neuter)
+            // this is all we can do
+            return '.';
+        },
+        currency: {
+            symbol: 'руб.',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],84:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Russian
+ * locale : Ukraine
+ * author : Anatoli Papirovski : https://github.com/apapirovski
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'ru-UA',
+        cultureCode: 'ru-UA',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'тыс.',
+            million: 'млн',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            // not ideal, but since in Russian it can taken on
+            // different forms (masculine, feminine, neuter)
+            // this is all we can do
+            return '.';
+        },
+        currency: {
+            symbol: '\u20B4',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],85:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Slovak
+ * locale : Slovakia
+ * author : Ahmed Al Hafoudh : http://www.freevision.sk
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'sk-SK',
+        cultureCode: 'sk-SK',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'tis.',
+            million: 'mil.',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],86:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Swedish
+ * locale : Sweden
+ * author : Benjamin Van Ryseghem (benjamin.vanryseghem.com)
+ */
+(function() {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'sv-SE',
+        cultureCode: 'sv-SE',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 't',
+            million: 'M',
+            billion: 'md',
+            trillion: 'tmd'
+        },
+        currency: {
+            symbol: 'kr',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],87:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Thai
+ * locale : Thailand
+ * author : Sathit Jittanupat : https://github.com/jojosati
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'th-TH',
+        cultureCode: 'th-TH',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'พัน',
+            million: 'ล้าน',
+            billion: 'พันล้าน',
+            trillion: 'ล้านล้าน'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '฿',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],88:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Turkish
+ * locale : Turkey
+ * author : Ecmel Ercan : https://github.com/ecmel,
+ *          Erhan Gundogan : https://github.com/erhangundogan,
+ *          Burak Yiğit Kaya: https://github.com/BYK
+ */
+(function() {
+    'use strict';
+
+    var suffixes = {
+            1: '\'inci',
+            5: '\'inci',
+            8: '\'inci',
+            70: '\'inci',
+            80: '\'inci',
+
+            2: '\'nci',
+            7: '\'nci',
+            20: '\'nci',
+            50: '\'nci',
+
+            3: '\'üncü',
+            4: '\'üncü',
+            100: '\'üncü',
+
+            6: '\'ncı',
+
+            9: '\'uncu',
+            10: '\'uncu',
+            30: '\'uncu',
+
+            60: '\'ıncı',
+            90: '\'ıncı'
+        },
+        language = {
+            langLocaleCode: 'tr-TR',
+            cultureCode: 'tr-TR',
+            delimiters: {
+                thousands: '.',
+                decimal: ','
+            },
+            abbreviations: {
+                thousand: 'bin',
+                million: 'milyon',
+                billion: 'milyar',
+                trillion: 'trilyon'
+            },
+            ordinal: function(number) {
+                if (number === 0) {  // special case for zero
+                    return '\'ıncı';
+                }
+
+                var a = number % 10,
+                    b = number % 100 - a,
+                    c = number >= 100 ? 100 : null;
+
+                return suffixes[a] || suffixes[b] || suffixes[c];
+            },
+            currency: {
+                symbol: '\u20BA',
+                position: 'postfix'
+            },
+            defaults: {
+                currencyFormat: ',4 a'
+            },
+            formats: {
+                fourDigits: '4 a',
+                fullWithTwoDecimals: ',0.00 $',
+                fullWithTwoDecimalsNoCurrency: ',0.00',
+                fullWithNoDecimals: ',0 $'
+            }
+        };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],89:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Ukrainian
+ * locale : Ukraine
+ * author : Michael Piefel : https://github.com/piefel (with help from Tetyana Kuzmenko)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'uk-UA',
+        cultureCode: 'uk-UA',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'тис.',
+            million: 'млн',
+            billion: 'млрд',
+            trillion: 'блн'
+        },
+        ordinal: function () {
+            // not ideal, but since in Ukrainian it can taken on
+            // different forms (masculine, feminine, neuter)
+            // this is all we can do
+            return '';
+        },
+        currency: {
+            symbol: '\u20B4',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],90:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : simplified chinese
+ * locale : China
+ * author : badplum : https://github.com/badplum
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'zh-CN',
+        cultureCode: 'zh-CN',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: '千',
+            million: '百万',
+            billion: '十亿',
+            trillion: '兆'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '¥',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: '$ ,0.00',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: '$ ,0'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],91:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Chinese (Taiwan)
+ * author (numbro.js Version): Randy Wilander : https://github.com/rocketedaway
+ * author (numeral.js Version) : Rich Daley : https://github.com/pedantic-git
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'zh-TW',
+        cultureCode: 'zh-TW',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: '千',
+            million: '百萬',
+            billion: '十億',
+            trillion: '兆'
+        },
+        ordinal: function () {
+            return '第';
+        },
+        currency: {
+            symbol: 'NT$'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],92:[function(require,module,exports){
+(function (process){
+/*!
+ * numbro.js
+ * version : 1.9.3
+ * author : Företagsplatsen AB
  * license : MIT
- * http://adamwdraper.github.com/Numeral-js/
+ * http://www.foretagsplatsen.se
  */
 
 (function () {
+    'use strict';
 
     /************************************
         Constants
     ************************************/
 
-    var numeral,
-        VERSION = '1.5.3',
-        // internal storage for language config files
-        languages = {},
-        currentLanguage = 'en',
+    var numbro,
+        VERSION = '1.9.3',
+        binarySuffixes = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
+        decimalSuffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+        bytes = {
+            general: { scale: 1024, suffixes: decimalSuffixes, marker: 'bd' },
+            binary:  { scale: 1024, suffixes: binarySuffixes, marker: 'b' },
+            decimal: { scale: 1000, suffixes: decimalSuffixes, marker: 'd' }
+        },
+        // general must be before the others because it reuses their characters!
+        byteFormatOrder = [ bytes.general, bytes.binary, bytes.decimal ],
+    // internal storage for culture config files
+        cultures = {},
+    // Todo: Remove in 2.0.0
+        languages = cultures,
+        currentCulture = 'en-US',
         zeroFormat = null,
         defaultFormat = '0,0',
+        defaultCurrencyFormat = '0$',
         // check for nodeJS
-        hasModule = (typeof module !== 'undefined' && module.exports);
-
+        hasModule = (typeof module !== 'undefined' && module.exports),
+    // default culture
+        enUS = {
+            delimiters: {
+                thousands: ',',
+                decimal: '.'
+            },
+            abbreviations: {
+                thousand: 'k',
+                million: 'm',
+                billion: 'b',
+                trillion: 't'
+            },
+            ordinal: function(number) {
+                var b = number % 10;
+                return (~~(number % 100 / 10) === 1) ? 'th' :
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
+            },
+            currency: {
+                symbol: '$',
+                position: 'prefix'
+            },
+            defaults: {
+                currencyFormat: ',0000 a'
+            },
+            formats: {
+                fourDigits: '0000 a',
+                fullWithTwoDecimals: '$ ,0.00',
+                fullWithTwoDecimalsNoCurrency: ',0.00'
+            }
+        };
 
     /************************************
         Constructors
     ************************************/
 
 
-    // Numeral prototype object
-    function Numeral (number) {
+    // Numbro prototype object
+    function Numbro(number) {
         this._value = number;
+    }
+
+    function zeroes(count) {
+        var i, ret = '';
+
+        for (i = 0; i < count; i++) {
+            ret += '0';
+        }
+
+        return ret;
+    }
+    /**
+     * Implementation of toFixed() for numbers with exponents
+     * This function may return negative representations for zero values e.g. "-0.0"
+     */
+    function toFixedLargeSmall(value, precision) {
+        var mantissa,
+            beforeDec,
+            afterDec,
+            exponent,
+            prefix,
+            endStr,
+            zerosStr,
+            str;
+
+        str = value.toString();
+
+        mantissa = str.split('e')[0];
+        exponent = str.split('e')[1];
+
+        beforeDec = mantissa.split('.')[0];
+        afterDec = mantissa.split('.')[1] || '';
+
+        if (+exponent > 0) {
+            // exponent is positive - add zeros after the numbers
+            str = beforeDec + afterDec + zeroes(exponent - afterDec.length);
+        } else {
+            // exponent is negative
+
+            if (+beforeDec < 0) {
+                prefix = '-0';
+            } else {
+                prefix = '0';
+            }
+
+            // tack on the decimal point if needed
+            if (precision > 0) {
+                prefix += '.';
+            }
+
+            zerosStr = zeroes((-1 * exponent) - 1);
+            // substring off the end to satisfy the precision
+            endStr = (zerosStr + Math.abs(beforeDec) + afterDec).substr(0, precision);
+            str = prefix + endStr;
+        }
+
+        // only add percision 0's if the exponent is positive
+        if (+exponent > 0 && precision > 0) {
+            str += '.' + zeroes(precision);
+        }
+
+        return str;
     }
 
     /**
@@ -39812,15 +41824,26 @@ return jQuery;
      *
      * Fixes binary rounding issues (eg. (0.615).toFixed(2) === '0.61') that present
      * problems for accounting- and finance-related software.
+     *
+     * Also removes negative signs for zero-formatted numbers. e.g. -0.01 w/ precision 1 -> 0.0
      */
-    function toFixed (value, precision, roundingFunction, optionals) {
+    function toFixed(value, precision, roundingFunction, optionals) {
         var power = Math.pow(10, precision),
             optionalsRegExp,
             output;
-            
-        //roundingFunction = (roundingFunction !== undefined ? roundingFunction : Math.round);
-        // Multiply up by precision, round accurately, then divide and use native toFixed():
-        output = (roundingFunction(value * power) / power).toFixed(precision);
+
+        if (value.toString().indexOf('e') > -1) {
+            // toFixed returns scientific notation for numbers above 1e21 and below 1e-7
+            output = toFixedLargeSmall(value, precision);
+            // remove the leading negative sign if it exists and should not be present (e.g. -0.00)
+            if (output.charAt(0) === '-' && +output >= 0) {
+                output = output.substr(1); // chop off the '-'
+            }
+        }
+        else {
+            // Multiply up by precision, round accurately, then divide and use native toFixed():
+            output = (roundingFunction(value + 'e+' + precision) / power).toFixed(precision);
+        }
 
         if (optionals) {
             optionalsRegExp = new RegExp('0{1,' + optionals + '}$');
@@ -39835,15 +41858,16 @@ return jQuery;
     ************************************/
 
     // determine what type of formatting we need to do
-    function formatNumeral (n, format, roundingFunction) {
-        var output;
+    function formatNumbro(n, format, roundingFunction) {
+        var output,
+            escapedFormat = format.replace(/\{[^\{\}]*\}/g, '');
 
         // figure out what kind of format we are dealing with
-        if (format.indexOf('$') > -1) { // currency!!!!!
-            output = formatCurrency(n, format, roundingFunction);
-        } else if (format.indexOf('%') > -1) { // percentage
+        if (escapedFormat.indexOf('$') > -1) { // currency!!!!!
+            output = formatCurrency(n, cultures[currentCulture].currency.symbol, format, roundingFunction);
+        } else if (escapedFormat.indexOf('%') > -1) { // percentage
             output = formatPercentage(n, format, roundingFunction);
-        } else if (format.indexOf(':') > -1) { // time
+        } else if (escapedFormat.indexOf(':') > -1) { // time
             output = formatTime(n, format);
         } else { // plain ol' numbers or bytes
             output = formatNumber(n._value, format, roundingFunction);
@@ -39854,13 +41878,12 @@ return jQuery;
     }
 
     // revert to number
-    function unformatNumeral (n, string) {
+    function unformatNumbro(n, string) {
         var stringOriginal = string,
             thousandRegExp,
             millionRegExp,
             billionRegExp,
             trillionRegExp,
-            suffixes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
             bytesMultiplier = false,
             power;
 
@@ -39870,85 +41893,153 @@ return jQuery;
             if (string === zeroFormat) {
                 n._value = 0;
             } else {
-                if (languages[currentLanguage].delimiters.decimal !== '.') {
-                    string = string.replace(/\./g,'').replace(languages[currentLanguage].delimiters.decimal, '.');
+                if (cultures[currentCulture].delimiters.decimal !== '.') {
+                    string = string.replace(/\./g, '').replace(cultures[currentCulture].delimiters.decimal, '.');
                 }
 
                 // see if abbreviations are there so that we can multiply to the correct number
-                thousandRegExp = new RegExp('[^a-zA-Z]' + languages[currentLanguage].abbreviations.thousand + '(?:\\)|(\\' + languages[currentLanguage].currency.symbol + ')?(?:\\))?)?$');
-                millionRegExp = new RegExp('[^a-zA-Z]' + languages[currentLanguage].abbreviations.million + '(?:\\)|(\\' + languages[currentLanguage].currency.symbol + ')?(?:\\))?)?$');
-                billionRegExp = new RegExp('[^a-zA-Z]' + languages[currentLanguage].abbreviations.billion + '(?:\\)|(\\' + languages[currentLanguage].currency.symbol + ')?(?:\\))?)?$');
-                trillionRegExp = new RegExp('[^a-zA-Z]' + languages[currentLanguage].abbreviations.trillion + '(?:\\)|(\\' + languages[currentLanguage].currency.symbol + ')?(?:\\))?)?$');
+                thousandRegExp = new RegExp('[^a-zA-Z]' + cultures[currentCulture].abbreviations.thousand +
+                    '(?:\\)|(\\' + cultures[currentCulture].currency.symbol + ')?(?:\\))?)?$');
+                millionRegExp = new RegExp('[^a-zA-Z]' + cultures[currentCulture].abbreviations.million +
+                    '(?:\\)|(\\' + cultures[currentCulture].currency.symbol + ')?(?:\\))?)?$');
+                billionRegExp = new RegExp('[^a-zA-Z]' + cultures[currentCulture].abbreviations.billion +
+                    '(?:\\)|(\\' + cultures[currentCulture].currency.symbol + ')?(?:\\))?)?$');
+                trillionRegExp = new RegExp('[^a-zA-Z]' + cultures[currentCulture].abbreviations.trillion +
+                    '(?:\\)|(\\' + cultures[currentCulture].currency.symbol + ')?(?:\\))?)?$');
 
                 // see if bytes are there so that we can multiply to the correct number
-                for (power = 0; power <= suffixes.length; power++) {
-                    bytesMultiplier = (string.indexOf(suffixes[power]) > -1) ? Math.pow(1024, power + 1) : false;
-
-                    if (bytesMultiplier) {
-                        break;
+                for (power = 1; power < binarySuffixes.length && !bytesMultiplier; ++power) {
+                    if (string.indexOf(binarySuffixes[power]) > -1) {
+                        bytesMultiplier = Math.pow(1024, power);
+                    } else if (string.indexOf(decimalSuffixes[power]) > -1) {
+                        bytesMultiplier = Math.pow(1000, power);
                     }
                 }
 
-                // do some math to create our number
-                n._value = ((bytesMultiplier) ? bytesMultiplier : 1) * ((stringOriginal.match(thousandRegExp)) ? Math.pow(10, 3) : 1) * ((stringOriginal.match(millionRegExp)) ? Math.pow(10, 6) : 1) * ((stringOriginal.match(billionRegExp)) ? Math.pow(10, 9) : 1) * ((stringOriginal.match(trillionRegExp)) ? Math.pow(10, 12) : 1) * ((string.indexOf('%') > -1) ? 0.01 : 1) * (((string.split('-').length + Math.min(string.split('(').length-1, string.split(')').length-1)) % 2)? 1: -1) * Number(string.replace(/[^0-9\.]+/g, ''));
+                var str = string.replace(/[^0-9\.]+/g, '');
+                if (str === '') {
+                    // An empty string is not a number.
+                    n._value = NaN;
 
-                // round if we are talking about bytes
-                n._value = (bytesMultiplier) ? Math.ceil(n._value) : n._value;
+                } else {
+                    // do some math to create our number
+                    n._value = ((bytesMultiplier) ? bytesMultiplier : 1) *
+                        ((stringOriginal.match(thousandRegExp)) ? Math.pow(10, 3) : 1) *
+                        ((stringOriginal.match(millionRegExp)) ? Math.pow(10, 6) : 1) *
+                        ((stringOriginal.match(billionRegExp)) ? Math.pow(10, 9) : 1) *
+                        ((stringOriginal.match(trillionRegExp)) ? Math.pow(10, 12) : 1) *
+                        ((string.indexOf('%') > -1) ? 0.01 : 1) *
+                        (((string.split('-').length +
+                            Math.min(string.split('(').length - 1, string.split(')').length - 1)) % 2) ? 1 : -1) *
+                        Number(str);
+
+                    // round if we are talking about bytes
+                    n._value = (bytesMultiplier) ? Math.ceil(n._value) : n._value;
+                }
             }
         }
         return n._value;
     }
 
-    function formatCurrency (n, format, roundingFunction) {
-        var symbolIndex = format.indexOf('$'),
+    function formatCurrency(n, currencySymbol, originalFormat, roundingFunction) {
+        var format = originalFormat,
+            symbolIndex = format.indexOf('$'),
             openParenIndex = format.indexOf('('),
+            plusSignIndex = format.indexOf('+'),
             minusSignIndex = format.indexOf('-'),
             space = '',
+            decimalSeparator = '',
             spliceIndex,
             output;
 
-        // check for space before or after currency
-        if (format.indexOf(' $') > -1) {
-            space = ' ';
-            format = format.replace(' $', '');
-        } else if (format.indexOf('$ ') > -1) {
-            space = ' ';
-            format = format.replace('$ ', '');
-        } else {
-            format = format.replace('$', '');
-        }
-
-        // format the number
-        output = formatNumber(n._value, format, roundingFunction);
-
-        // position the symbol
-        if (symbolIndex <= 1) {
-            if (output.indexOf('(') > -1 || output.indexOf('-') > -1) {
-                output = output.split('');
-                spliceIndex = 1;
-                if (symbolIndex < openParenIndex || symbolIndex < minusSignIndex){
-                    // the symbol appears before the "(" or "-"
-                    spliceIndex = 0;
+        if(format.indexOf('$') === -1){
+            // Use defaults instead of the format provided
+            if (cultures[currentCulture].currency.position === 'infix') {
+                decimalSeparator = currencySymbol;
+                if (cultures[currentCulture].currency.spaceSeparated) {
+                    decimalSeparator = ' ' + decimalSeparator + ' ';
                 }
-                output.splice(spliceIndex, 0, languages[currentLanguage].currency.symbol + space);
-                output = output.join('');
-            } else {
-                output = languages[currentLanguage].currency.symbol + space + output;
+            } else if (cultures[currentCulture].currency.spaceSeparated) {
+                space = ' ';
             }
         } else {
-            if (output.indexOf(')') > -1) {
-                output = output.split('');
-                output.splice(-1, 0, space + languages[currentLanguage].currency.symbol);
-                output = output.join('');
+            // check for space before or after currency
+            if (format.indexOf(' $') > -1) {
+                space = ' ';
+                format = format.replace(' $', '');
+            } else if (format.indexOf('$ ') > -1) {
+                space = ' ';
+                format = format.replace('$ ', '');
             } else {
-                output = output + space + languages[currentLanguage].currency.symbol;
+                format = format.replace('$', '');
+            }
+        }
+
+        // Format The Number
+        output = formatNumber(n._value, format, roundingFunction, decimalSeparator);
+
+        if (originalFormat.indexOf('$') === -1) {
+            // Use defaults instead of the format provided
+            switch (cultures[currentCulture].currency.position) {
+                case 'postfix':
+                    if (output.indexOf(')') > -1) {
+                        output = output.split('');
+                        output.splice(-1, 0, space + currencySymbol);
+                        output = output.join('');
+                    } else {
+                        output = output + space + currencySymbol;
+                    }
+                    break;
+                case 'infix':
+                    break;
+                case 'prefix':
+                    if (output.indexOf('(') > -1 || output.indexOf('-') > -1) {
+                        output = output.split('');
+                        spliceIndex = Math.max(openParenIndex, minusSignIndex) + 1;
+
+                        output.splice(spliceIndex, 0, currencySymbol + space);
+                        output = output.join('');
+                    } else {
+                        output = currencySymbol + space + output;
+                    }
+                    break;
+                default:
+                    throw Error('Currency position should be among ["prefix", "infix", "postfix"]');
+            }
+        } else {
+            // position the symbol
+            if (symbolIndex <= 1) {
+                if (output.indexOf('(') > -1 || output.indexOf('+') > -1 || output.indexOf('-') > -1) {
+                    output = output.split('');
+                    spliceIndex = 1;
+                    if (symbolIndex < openParenIndex || symbolIndex < plusSignIndex || symbolIndex < minusSignIndex) {
+                        // the symbol appears before the "(", "+" or "-"
+                        spliceIndex = 0;
+                    }
+                    output.splice(spliceIndex, 0, currencySymbol + space);
+                    output = output.join('');
+                } else {
+                    output = currencySymbol + space + output;
+                }
+            } else {
+                if (output.indexOf(')') > -1) {
+                    output = output.split('');
+                    output.splice(-1, 0, space + currencySymbol);
+                    output = output.join('');
+                } else {
+                    output = output + space + currencySymbol;
+                }
             }
         }
 
         return output;
     }
 
-    function formatPercentage (n, format, roundingFunction) {
+    function formatForeignCurrency(n, foreignCurrencySymbol, originalFormat, roundingFunction) {
+        return formatCurrency(n, foreignCurrencySymbol, originalFormat, roundingFunction);
+    }
+
+    function formatPercentage(n, format, roundingFunction) {
         var space = '',
             output,
             value = n._value * 100;
@@ -39962,8 +42053,8 @@ return jQuery;
         }
 
         output = formatNumber(value, format, roundingFunction);
-        
-        if (output.indexOf(')') > -1 ) {
+
+        if (output.indexOf(')') > -1) {
             output = output.split('');
             output.splice(-1, 0, space + '%');
             output = output.join('');
@@ -39974,14 +42065,16 @@ return jQuery;
         return output;
     }
 
-    function formatTime (n) {
-        var hours = Math.floor(n._value/60/60),
-            minutes = Math.floor((n._value - (hours * 60 * 60))/60),
+    function formatTime(n) {
+        var hours = Math.floor(n._value / 60 / 60),
+            minutes = Math.floor((n._value - (hours * 60 * 60)) / 60),
             seconds = Math.round(n._value - (hours * 60 * 60) - (minutes * 60));
-        return hours + ':' + ((minutes < 10) ? '0' + minutes : minutes) + ':' + ((seconds < 10) ? '0' + seconds : seconds);
+        return hours + ':' +
+            ((minutes < 10) ? '0' + minutes : minutes) + ':' +
+            ((seconds < 10) ? '0' + seconds : seconds);
     }
 
-    function unformatTime (string) {
+    function unformatTime(string) {
         var timeArray = string.split(':'),
             seconds = 0;
         // turn hours and minutes into seconds and add them all up
@@ -40001,7 +42094,36 @@ return jQuery;
         return Number(seconds);
     }
 
-    function formatNumber (value, format, roundingFunction) {
+    function formatByteUnits (value, suffixes, scale) {
+        var suffix = suffixes[0],
+            power,
+            min,
+            max,
+            abs = Math.abs(value);
+
+        if (abs >= scale) {
+            for (power = 1; power < suffixes.length; ++power) {
+                min = Math.pow(scale, power);
+                max = Math.pow(scale, power + 1);
+
+                if (abs >= min && abs < max) {
+                    suffix = suffixes[power];
+                    value = value / min;
+                    break;
+                }
+            }
+
+            // values greater than or equal to [scale] YB never set the suffix
+            if (suffix === suffixes[0]) {
+                value = value / Math.pow(scale, suffixes.length - 1);
+                suffix = suffixes[suffixes.length - 1];
+            }
+        }
+
+        return { value: value, suffix: suffix };
+    }
+
+    function formatNumber (value, format, roundingFunction, sep) {
         var negP = false,
             signed = false,
             optDec = false,
@@ -40012,254 +42134,607 @@ return jQuery;
             abbrT = false, // force abbreviation to trillions
             abbrForce = false, // force abbreviation
             bytes = '',
+            byteFormat,
+            units,
             ord = '',
             abs = Math.abs(value),
-            suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-            min,
-            max,
-            power,
+            totalLength,
+            length,
+            minimumPrecision,
+            pow,
             w,
+            intPrecision,
             precision,
+            prefix,
+            postfix,
             thousands,
             d = '',
-            neg = false;
+            forcedNeg = false,
+            neg = false,
+            indexOpenP,
+            size,
+            indexMinus,
+            paren = '',
+            minlen,
+            i;
 
         // check if number is zero and a custom zero format has been set
         if (value === 0 && zeroFormat !== null) {
             return zeroFormat;
+        }
+
+        if (!isFinite(value)) {
+            return '' + value;
+        }
+
+        if (format.indexOf('{') === 0) {
+            var end = format.indexOf('}');
+            if (end === -1) {
+                throw Error('Format should also contain a "}"');
+            }
+            prefix = format.slice(1, end);
+            format = format.slice(end + 1);
         } else {
-            // see if we should use parentheses for negative number or if we should prefix with a sign
-            // if both are present we default to parentheses
-            if (format.indexOf('(') > -1) {
-                negP = true;
-                format = format.slice(1, -1);
-            } else if (format.indexOf('+') > -1) {
-                signed = true;
-                format = format.replace(/\+/g, '');
+            prefix = '';
+        }
+
+        if (format.indexOf('}') === format.length - 1) {
+            var start = format.indexOf('{');
+            if (start === -1) {
+                throw Error('Format should also contain a "{"');
+            }
+            postfix = format.slice(start + 1, -1);
+            format = format.slice(0, start + 1);
+        } else {
+            postfix = '';
+        }
+
+        // check for min length
+        var info;
+        if (format.indexOf('.') === -1) {
+            info = format.match(/([0-9]+).*/);
+        } else {
+            info = format.match(/([0-9]+)\..*/);
+        }
+        minlen = info === null ? -1 : info[1].length;
+
+        // see if we should use parentheses for negative number or if we should prefix with a sign
+        // if both are present we default to parentheses
+        if (format.indexOf('-') !== -1) {
+            forcedNeg = true;
+        }
+        if (format.indexOf('(') > -1) {
+            negP = true;
+            format = format.slice(1, -1);
+        } else if (format.indexOf('+') > -1) {
+            signed = true;
+            format = format.replace(/\+/g, '');
+        }
+
+        // see if abbreviation is wanted
+        if (format.indexOf('a') > -1) {
+            intPrecision = format.split('.')[0].match(/[0-9]+/g) || ['0'];
+            intPrecision = parseInt(intPrecision[0], 10);
+
+            // check if abbreviation is specified
+            abbrK = format.indexOf('aK') >= 0;
+            abbrM = format.indexOf('aM') >= 0;
+            abbrB = format.indexOf('aB') >= 0;
+            abbrT = format.indexOf('aT') >= 0;
+            abbrForce = abbrK || abbrM || abbrB || abbrT;
+
+            // check for space before abbreviation
+            if (format.indexOf(' a') > -1) {
+                abbr = ' ';
+                format = format.replace(' a', '');
+            } else {
+                format = format.replace('a', '');
             }
 
-            // see if abbreviation is wanted
-            if (format.indexOf('a') > -1) {
-                // check if abbreviation is specified
-                abbrK = format.indexOf('aK') >= 0;
-                abbrM = format.indexOf('aM') >= 0;
-                abbrB = format.indexOf('aB') >= 0;
-                abbrT = format.indexOf('aT') >= 0;
-                abbrForce = abbrK || abbrM || abbrB || abbrT;
+            totalLength = Math.floor(Math.log(abs) / Math.LN10) + 1;
 
-                // check for space before abbreviation
-                if (format.indexOf(' a') > -1) {
-                    abbr = ' ';
-                    format = format.replace(' a', '');
-                } else {
-                    format = format.replace('a', '');
+            minimumPrecision = totalLength % 3;
+            minimumPrecision = minimumPrecision === 0 ? 3 : minimumPrecision;
+
+            if (intPrecision && abs !== 0) {
+
+                length = Math.floor(Math.log(abs) / Math.LN10) + 1 - intPrecision;
+
+                pow = 3 * ~~((Math.min(intPrecision, totalLength) - minimumPrecision) / 3);
+
+                abs = abs / Math.pow(10, pow);
+
+                if (format.indexOf('.') === -1 && intPrecision > 3) {
+                    format += '[.]';
+
+                    size = length === 0 ? 0 : 3 * ~~(length / 3) - length;
+                    size = size < 0 ? size + 3 : size;
+
+                    format += zeroes(size);
                 }
+            }
 
+            if (Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1 !== intPrecision) {
                 if (abs >= Math.pow(10, 12) && !abbrForce || abbrT) {
                     // trillion
-                    abbr = abbr + languages[currentLanguage].abbreviations.trillion;
+                    abbr = abbr + cultures[currentCulture].abbreviations.trillion;
                     value = value / Math.pow(10, 12);
                 } else if (abs < Math.pow(10, 12) && abs >= Math.pow(10, 9) && !abbrForce || abbrB) {
                     // billion
-                    abbr = abbr + languages[currentLanguage].abbreviations.billion;
+                    abbr = abbr + cultures[currentCulture].abbreviations.billion;
                     value = value / Math.pow(10, 9);
                 } else if (abs < Math.pow(10, 9) && abs >= Math.pow(10, 6) && !abbrForce || abbrM) {
                     // million
-                    abbr = abbr + languages[currentLanguage].abbreviations.million;
+                    abbr = abbr + cultures[currentCulture].abbreviations.million;
                     value = value / Math.pow(10, 6);
                 } else if (abs < Math.pow(10, 6) && abs >= Math.pow(10, 3) && !abbrForce || abbrK) {
                     // thousand
-                    abbr = abbr + languages[currentLanguage].abbreviations.thousand;
+                    abbr = abbr + cultures[currentCulture].abbreviations.thousand;
                     value = value / Math.pow(10, 3);
                 }
             }
+        }
 
-            // see if we are formatting bytes
-            if (format.indexOf('b') > -1) {
+        // see if we are formatting
+        //   binary-decimal bytes (1024 MB), binary bytes (1024 MiB), or decimal bytes (1000 MB)
+        for (i = 0; i < byteFormatOrder.length; ++i) {
+            byteFormat = byteFormatOrder[i];
+
+            if (format.indexOf(byteFormat.marker) > -1) {
                 // check for space before
-                if (format.indexOf(' b') > -1) {
+                if (format.indexOf(' ' + byteFormat.marker) >-1) {
                     bytes = ' ';
-                    format = format.replace(' b', '');
-                } else {
-                    format = format.replace('b', '');
                 }
 
-                for (power = 0; power <= suffixes.length; power++) {
-                    min = Math.pow(1024, power);
-                    max = Math.pow(1024, power+1);
+                // remove the marker (with the space if it had one)
+                format = format.replace(bytes + byteFormat.marker, '');
 
-                    if (value >= min && value < max) {
-                        bytes = bytes + suffixes[power];
-                        if (min > 0) {
-                            value = value / min;
-                        }
-                        break;
-                    }
-                }
+                units = formatByteUnits(value, byteFormat.suffixes, byteFormat.scale);
+
+                value = units.value;
+                bytes = bytes + units.suffix;
+
+                break;
+            }
+        }
+
+        // see if ordinal is wanted
+        if (format.indexOf('o') > -1) {
+            // check for space before
+            if (format.indexOf(' o') > -1) {
+                ord = ' ';
+                format = format.replace(' o', '');
+            } else {
+                format = format.replace('o', '');
             }
 
-            // see if ordinal is wanted
-            if (format.indexOf('o') > -1) {
-                // check for space before
-                if (format.indexOf(' o') > -1) {
-                    ord = ' ';
-                    format = format.replace(' o', '');
-                } else {
-                    format = format.replace('o', '');
-                }
-
-                ord = ord + languages[currentLanguage].ordinal(value);
+            if (cultures[currentCulture].ordinal) {
+                ord = ord + cultures[currentCulture].ordinal(value);
             }
+        }
 
-            if (format.indexOf('[.]') > -1) {
-                optDec = true;
-                format = format.replace('[.]', '.');
-            }
+        if (format.indexOf('[.]') > -1) {
+            optDec = true;
+            format = format.replace('[.]', '.');
+        }
 
-            w = value.toString().split('.')[0];
-            precision = format.split('.')[1];
-            thousands = format.indexOf(',');
+        w = value.toString().split('.')[0];
+        precision = format.split('.')[1];
+        thousands = format.indexOf(',');
 
-            if (precision) {
+        if (precision) {
+            if (precision.indexOf('*') !== -1) {
+                d = toFixed(value, value.toString().split('.')[1].length, roundingFunction);
+            } else {
                 if (precision.indexOf('[') > -1) {
                     precision = precision.replace(']', '');
                     precision = precision.split('[');
-                    d = toFixed(value, (precision[0].length + precision[1].length), roundingFunction, precision[1].length);
+                    d = toFixed(value, (precision[0].length + precision[1].length), roundingFunction,
+                        precision[1].length);
                 } else {
                     d = toFixed(value, precision.length, roundingFunction);
                 }
+            }
 
-                w = d.split('.')[0];
+            w = d.split('.')[0];
 
-                if (d.split('.')[1].length) {
-                    d = languages[currentLanguage].delimiters.decimal + d.split('.')[1];
-                } else {
-                    d = '';
-                }
-
-                if (optDec && Number(d.slice(1)) === 0) {
-                    d = '';
-                }
+            if (d.split('.')[1].length) {
+                var p = sep ? abbr + sep : cultures[currentCulture].delimiters.decimal;
+                d = p + d.split('.')[1];
             } else {
-                w = toFixed(value, null, roundingFunction);
+                d = '';
             }
 
-            // format number
-            if (w.indexOf('-') > -1) {
-                w = w.slice(1);
-                neg = true;
+            if (optDec && Number(d.slice(1)) === 0) {
+                d = '';
             }
-
-            if (thousands > -1) {
-                w = w.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + languages[currentLanguage].delimiters.thousands);
-            }
-
-            if (format.indexOf('.') === 0) {
-                w = '';
-            }
-
-            return ((negP && neg) ? '(' : '') + ((!negP && neg) ? '-' : '') + ((!neg && signed) ? '+' : '') + w + d + ((ord) ? ord : '') + ((abbr) ? abbr : '') + ((bytes) ? bytes : '') + ((negP && neg) ? ')' : '');
+        } else {
+            w = toFixed(value, 0, roundingFunction);
         }
+
+        // format number
+        if (w.indexOf('-') > -1) {
+            w = w.slice(1);
+            neg = true;
+        }
+
+        if (w.length < minlen) {
+            w = zeroes(minlen - w.length) + w;
+        }
+
+        if (thousands > -1) {
+            w = w.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' +
+                cultures[currentCulture].delimiters.thousands);
+        }
+
+        if (format.indexOf('.') === 0) {
+            w = '';
+        }
+
+        indexOpenP = format.indexOf('(');
+        indexMinus = format.indexOf('-');
+
+        if (indexOpenP < indexMinus) {
+            paren = ((negP && neg) ? '(' : '') + (((forcedNeg && neg) || (!negP && neg)) ? '-' : '');
+        } else {
+            paren = (((forcedNeg && neg) || (!negP && neg)) ? '-' : '') + ((negP && neg) ? '(' : '');
+        }
+
+        return prefix +
+            paren + ((!neg && signed && value !== 0) ? '+' : '') +
+            w + d +
+            ((ord) ? ord : '') +
+            ((abbr && !sep) ? abbr : '') +
+            ((bytes) ? bytes : '') +
+            ((negP && neg) ? ')' : '') +
+            postfix;
     }
 
     /************************************
         Top Level Functions
     ************************************/
 
-    numeral = function (input) {
-        if (numeral.isNumeral(input)) {
+    numbro = function(input) {
+        if (numbro.isNumbro(input)) {
             input = input.value();
         } else if (input === 0 || typeof input === 'undefined') {
             input = 0;
         } else if (!Number(input)) {
-            input = numeral.fn.unformat(input);
+            input = numbro.fn.unformat(input);
         }
 
-        return new Numeral(Number(input));
+        return new Numbro(Number(input));
     };
 
     // version number
-    numeral.version = VERSION;
+    numbro.version = VERSION;
 
-    // compare numeral object
-    numeral.isNumeral = function (obj) {
-        return obj instanceof Numeral;
+    // compare numbro object
+    numbro.isNumbro = function(obj) {
+        return obj instanceof Numbro;
     };
 
-    // This function will load languages and then set the global language.  If
-    // no arguments are passed in, it will simply return the current global
-    // language key.
-    numeral.language = function (key, values) {
+    /**
+     * This function allow the user to set a new language with a fallback if
+     * the language does not exist. If no fallback language is provided,
+     * it fallbacks to english.
+     *
+     * @deprecated Since in version 1.6.0. It will be deleted in version 2.0
+     * `setCulture` should be used instead.
+     */
+    numbro.setLanguage = function(newLanguage, fallbackLanguage) {
+        console.warn('`setLanguage` is deprecated since version 1.6.0. Use `setCulture` instead');
+        var key = newLanguage,
+            prefix = newLanguage.split('-')[0],
+            matchingLanguage = null;
+        if (!languages[key]) {
+            Object.keys(languages).forEach(function(language) {
+                if (!matchingLanguage && language.split('-')[0] === prefix) {
+                    matchingLanguage = language;
+                }
+            });
+            key = matchingLanguage || fallbackLanguage || 'en-US';
+        }
+        chooseCulture(key);
+    };
+
+    /**
+     * This function allow the user to set a new culture with a fallback if
+     * the culture does not exist. If no fallback culture is provided,
+     * it falls back to "en-US".
+     */
+    numbro.setCulture = function(newCulture, fallbackCulture) {
+        var key = newCulture,
+            suffix = newCulture.split('-')[1],
+            matchingCulture = null;
+        if (!cultures[key]) {
+            if (suffix) {
+                Object.keys(cultures).forEach(function(language) {
+                    if (!matchingCulture && language.split('-')[1] === suffix) {
+                        matchingCulture = language;
+                    }
+                });
+            }
+
+            key = matchingCulture || fallbackCulture || 'en-US';
+        }
+        chooseCulture(key);
+    };
+
+    /**
+     * This function will load languages and then set the global language.  If
+     * no arguments are passed in, it will simply return the current global
+     * language key.
+     *
+     * @deprecated Since in version 1.6.0. It will be deleted in version 2.0
+     * `culture` should be used instead.
+     */
+    numbro.language = function(key, values) {
+        console.warn('`language` is deprecated since version 1.6.0. Use `culture` instead');
+
         if (!key) {
-            return currentLanguage;
+            return currentCulture;
         }
 
         if (key && !values) {
-            if(!languages[key]) {
+            if (!languages[key]) {
                 throw new Error('Unknown language : ' + key);
             }
-            currentLanguage = key;
+            chooseCulture(key);
         }
 
         if (values || !languages[key]) {
-            loadLanguage(key, values);
+            setCulture(key, values);
         }
 
-        return numeral;
+        return numbro;
     };
-    
-    // This function provides access to the loaded language data.  If
-    // no arguments are passed in, it will simply return the current
-    // global language object.
-    numeral.languageData = function (key) {
-        if (!key) {
-            return languages[currentLanguage];
+
+    /**
+     * This function will load cultures and then set the global culture.  If
+     * no arguments are passed in, it will simply return the current global
+     * culture code.
+     */
+    numbro.culture = function(code, values) {
+        if (!code) {
+            return currentCulture;
         }
-        
+
+        if (code && !values) {
+            if (!cultures[code]) {
+                throw new Error('Unknown culture : ' + code);
+            }
+            chooseCulture(code);
+        }
+
+        if (values || !cultures[code]) {
+            setCulture(code, values);
+        }
+
+        return numbro;
+    };
+
+    /**
+     * This function provides access to the loaded language data.  If
+     * no arguments are passed in, it will simply return the current
+     * global language object.
+     *
+     * @deprecated Since in version 1.6.0. It will be deleted in version 2.0
+     * `culture` should be used instead.
+     */
+    numbro.languageData = function(key) {
+        console.warn('`languageData` is deprecated since version 1.6.0. Use `cultureData` instead');
+
+        if (!key) {
+            return languages[currentCulture];
+        }
+
         if (!languages[key]) {
             throw new Error('Unknown language : ' + key);
         }
-        
+
         return languages[key];
     };
 
-    numeral.language('en', {
-        delimiters: {
-            thousands: ',',
-            decimal: '.'
-        },
-        abbreviations: {
-            thousand: 'k',
-            million: 'm',
-            billion: 'b',
-            trillion: 't'
-        },
-        ordinal: function (number) {
-            var b = number % 10;
-            return (~~ (number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
-        },
-        currency: {
-            symbol: '$'
+    /**
+     * This function provides access to the loaded culture data.  If
+     * no arguments are passed in, it will simply return the current
+     * global culture object.
+     */
+    numbro.cultureData = function(code) {
+        if (!code) {
+            return cultures[currentCulture];
         }
-    });
 
-    numeral.zeroFormat = function (format) {
+        if (!cultures[code]) {
+            throw new Error('Unknown culture : ' + code);
+        }
+
+        return cultures[code];
+    };
+
+    numbro.culture('en-US', enUS);
+
+    /**
+     * @deprecated Since in version 1.6.0. It will be deleted in version 2.0
+     * `cultures` should be used instead.
+     */
+    numbro.languages = function() {
+        console.warn('`languages` is deprecated since version 1.6.0. Use `cultures` instead');
+
+        return languages;
+    };
+
+    numbro.cultures = function() {
+        return cultures;
+    };
+
+    numbro.zeroFormat = function(format) {
         zeroFormat = typeof(format) === 'string' ? format : null;
     };
 
-    numeral.defaultFormat = function (format) {
+    numbro.defaultFormat = function(format) {
         defaultFormat = typeof(format) === 'string' ? format : '0.0';
+    };
+
+    numbro.defaultCurrencyFormat = function (format) {
+        defaultCurrencyFormat = typeof(format) === 'string' ? format : '0$';
+    };
+
+    numbro.validate = function(val, culture) {
+
+        var _decimalSep,
+            _thousandSep,
+            _currSymbol,
+            _valArray,
+            _abbrObj,
+            _thousandRegEx,
+            cultureData,
+            temp;
+
+        //coerce val to string
+        if (typeof val !== 'string') {
+            val += '';
+            if (console.warn) {
+                console.warn('Numbro.js: Value is not string. It has been co-erced to: ', val);
+            }
+        }
+
+        //trim whitespaces from either sides
+        val = val.trim();
+
+        //replace the initial '+' or '-' sign if present
+        val = val.replace(/^[+-]?/, '');
+
+        //if val is just digits return true
+        if ( !! val.match(/^\d+$/)) {
+            return true;
+        }
+
+        //if val is empty return false
+        if (val === '') {
+            return false;
+        }
+
+        //get the decimal and thousands separator from numbro.cultureData
+        try {
+            //check if the culture is understood by numbro. if not, default it to current culture
+            cultureData = numbro.cultureData(culture);
+        } catch (e) {
+            cultureData = numbro.cultureData(numbro.culture());
+        }
+
+        //setup the delimiters and currency symbol based on culture
+        _currSymbol = cultureData.currency.symbol;
+        _abbrObj = cultureData.abbreviations;
+        _decimalSep = cultureData.delimiters.decimal;
+        if (cultureData.delimiters.thousands === '.') {
+            _thousandSep = '\\.';
+        } else {
+            _thousandSep = cultureData.delimiters.thousands;
+        }
+
+        // validating currency symbol
+        temp = val.match(/^[^\d\.\,]+/);
+        if (temp !== null) {
+            val = val.substr(1);
+            if (temp[0] !== _currSymbol) {
+                return false;
+            }
+        }
+
+        //validating abbreviation symbol
+        temp = val.match(/[^\d]+$/);
+        if (temp !== null) {
+            val = val.slice(0, -1);
+            if (temp[0] !== _abbrObj.thousand && temp[0] !== _abbrObj.million &&
+                    temp[0] !== _abbrObj.billion && temp[0] !== _abbrObj.trillion) {
+                return false;
+            }
+        }
+
+        _thousandRegEx = new RegExp(_thousandSep + '{2}');
+
+        if (!val.match(/[^\d.,]/g)) {
+            _valArray = val.split(_decimalSep);
+            if (_valArray.length > 2) {
+                return false;
+            } else {
+                if (_valArray.length < 2) {
+                    return ( !! _valArray[0].match(/^\d+.*\d$/) && !_valArray[0].match(_thousandRegEx));
+                } else {
+                    if (_valArray[0] === '') {
+                        // for values without leading zero eg. .984
+                        return (!_valArray[0].match(_thousandRegEx) &&
+                            !!_valArray[1].match(/^\d+$/));
+
+                    } else if (_valArray[0].length === 1) {
+                        return ( !! _valArray[0].match(/^\d+$/) &&
+                            !_valArray[0].match(_thousandRegEx) &&
+                            !! _valArray[1].match(/^\d+$/));
+                    } else {
+                        return ( !! _valArray[0].match(/^\d+.*\d$/) &&
+                            !_valArray[0].match(_thousandRegEx) &&
+                            !! _valArray[1].match(/^\d+$/));
+                    }
+                }
+            }
+        }
+
+        return false;
+    };
+
+    /**
+     * * @deprecated Since in version 1.6.0. It will be deleted in version 2.0
+     * `loadCulturesInNode` should be used instead.
+     */
+    numbro.loadLanguagesInNode = function() {
+        console.warn('`loadLanguagesInNode` is deprecated since version 1.6.0. Use `loadCulturesInNode` instead');
+
+        numbro.loadCulturesInNode();
+    };
+
+    numbro.loadCulturesInNode = function() {
+        // TODO: Rename the folder in 2.0.0
+        var cultures = require('./languages');
+
+        for(var langLocaleCode in cultures) {
+            if(langLocaleCode) {
+                numbro.culture(langLocaleCode, cultures[langLocaleCode]);
+            }
+        }
     };
 
     /************************************
         Helpers
     ************************************/
 
-    function loadLanguage(key, values) {
-        languages[key] = values;
+    function setCulture(code, values) {
+        cultures[code] = values;
+    }
+
+    function chooseCulture(code) {
+        currentCulture = code;
+        var defaults = cultures[code].defaults;
+        if (defaults && defaults.format) {
+            numbro.defaultFormat(defaults.format);
+        }
+        if (defaults && defaults.currencyFormat) {
+            numbro.defaultCurrencyFormat(defaults.currencyFormat);
+        }
+    }
+
+    function inNodejsRuntime() {
+        return (typeof process !== 'undefined') &&
+            (process.browser === undefined) &&
+            process.title &&
+            (
+                process.title.indexOf('node') === 0 ||
+                process.title.indexOf('meteor-tool') > 0 ||
+                process.title === 'grunt' ||
+                process.title === 'gulp'
+            ) &&
+            (typeof require !== 'undefined');
     }
 
     /************************************
@@ -40274,16 +42749,15 @@ return jQuery;
      * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Compatibility
      */
     if ('function' !== typeof Array.prototype.reduce) {
-        Array.prototype.reduce = function (callback, opt_initialValue) {
-            'use strict';
-            
+        Array.prototype.reduce = function(callback, optInitialValue) {
+
             if (null === this || 'undefined' === typeof this) {
                 // At the moment all modern browsers, that support strict mode, have
                 // native implementation of Array.prototype.reduce. For instance, IE8
                 // does not support strict mode, so this check is actually useless.
                 throw new TypeError('Array.prototype.reduce called on null or undefined');
             }
-            
+
             if ('function' !== typeof callback) {
                 throw new TypeError(callback + ' is not a function');
             }
@@ -40294,7 +42768,7 @@ return jQuery;
                 isValueSet = false;
 
             if (1 < arguments.length) {
-                value = opt_initialValue;
+                value = optInitialValue;
                 isValueSet = true;
             }
 
@@ -40317,7 +42791,7 @@ return jQuery;
         };
     }
 
-    
+
     /**
      * Computes the multiplier necessary to make x >= 1,
      * effectively eliminating miscalculations caused by
@@ -40338,121 +42812,166 @@ return jQuery;
      */
     function correctionFactor() {
         var args = Array.prototype.slice.call(arguments);
-        return args.reduce(function (prev, next) {
+        return args.reduce(function(prev, next) {
             var mp = multiplier(prev),
                 mn = multiplier(next);
-        return mp > mn ? mp : mn;
+            return mp > mn ? mp : mn;
         }, -Infinity);
-    }        
-
+    }
 
     /************************************
-        Numeral Prototype
+        Numbro Prototype
     ************************************/
 
 
-    numeral.fn = Numeral.prototype = {
+    numbro.fn = Numbro.prototype = {
 
-        clone : function () {
-            return numeral(this);
+        clone: function() {
+            return numbro(this);
         },
 
-        format : function (inputString, roundingFunction) {
-            return formatNumeral(this, 
-                  inputString ? inputString : defaultFormat, 
-                  (roundingFunction !== undefined) ? roundingFunction : Math.round
-              );
+        format: function(inputString, roundingFunction) {
+            return formatNumbro(this,
+                inputString ? inputString : defaultFormat,
+                (roundingFunction !== undefined) ? roundingFunction : Math.round
+            );
         },
 
-        unformat : function (inputString) {
-            if (Object.prototype.toString.call(inputString) === '[object Number]') { 
-                return inputString; 
+        formatCurrency: function(inputString, roundingFunction) {
+            return formatCurrency(this,
+                cultures[currentCulture].currency.symbol,
+                inputString ? inputString : defaultCurrencyFormat,
+                (roundingFunction !== undefined) ? roundingFunction : Math.round
+            );
+        },
+
+        formatForeignCurrency: function(currencySymbol, inputString, roundingFunction) {
+            return formatForeignCurrency(this,
+                currencySymbol,
+                inputString ? inputString : defaultCurrencyFormat,
+                (roundingFunction !== undefined) ? roundingFunction : Math.round
+            );
+        },
+
+        unformat: function(inputString) {
+            if (typeof inputString === 'number') {
+                return inputString;
+            } else if (typeof inputString === 'string') {
+                var result = unformatNumbro(this, inputString);
+
+                // Any unparseable string (represented as NaN in the result) is
+                // converted into undefined.
+                return isNaN(result) ? undefined : result;
+            } else {
+                return undefined;
             }
-            return unformatNumeral(this, inputString ? inputString : defaultFormat);
         },
 
-        value : function () {
+        binaryByteUnits: function() {
+            return formatByteUnits(this._value, bytes.binary.suffixes, bytes.binary.scale).suffix;
+        },
+
+        byteUnits: function() {
+            return formatByteUnits(this._value, bytes.general.suffixes, bytes.general.scale).suffix;
+        },
+
+        decimalByteUnits: function() {
+            return formatByteUnits(this._value, bytes.decimal.suffixes, bytes.decimal.scale).suffix;
+        },
+
+        value: function() {
             return this._value;
         },
 
-        valueOf : function () {
+        valueOf: function() {
             return this._value;
         },
 
-        set : function (value) {
+        set: function(value) {
             this._value = Number(value);
             return this;
         },
 
-        add : function (value) {
+        add: function(value) {
             var corrFactor = correctionFactor.call(null, this._value, value);
-            function cback(accum, curr, currI, O) {
+
+            function cback(accum, curr) {
                 return accum + corrFactor * curr;
             }
             this._value = [this._value, value].reduce(cback, 0) / corrFactor;
             return this;
         },
 
-        subtract : function (value) {
+        subtract: function(value) {
             var corrFactor = correctionFactor.call(null, this._value, value);
-            function cback(accum, curr, currI, O) {
+
+            function cback(accum, curr) {
                 return accum - corrFactor * curr;
             }
-            this._value = [value].reduce(cback, this._value * corrFactor) / corrFactor;            
+            this._value = [value].reduce(cback, this._value * corrFactor) / corrFactor;
             return this;
         },
 
-        multiply : function (value) {
-            function cback(accum, curr, currI, O) {
-                var corrFactor = correctionFactor(accum, curr);
-                return (accum * corrFactor) * (curr * corrFactor) /
-                    (corrFactor * corrFactor);
+        multiply: function(value) {
+            function cback(accum, curr) {
+                var corrFactor = correctionFactor(accum, curr),
+                    result = accum * corrFactor;
+                result *= curr * corrFactor;
+                result /= corrFactor * corrFactor;
+                return result;
             }
             this._value = [this._value, value].reduce(cback, 1);
             return this;
         },
 
-        divide : function (value) {
-            function cback(accum, curr, currI, O) {
+        divide: function(value) {
+            function cback(accum, curr) {
                 var corrFactor = correctionFactor(accum, curr);
                 return (accum * corrFactor) / (curr * corrFactor);
             }
-            this._value = [this._value, value].reduce(cback);            
+            this._value = [this._value, value].reduce(cback);
             return this;
         },
 
-        difference : function (value) {
-            return Math.abs(numeral(this._value).subtract(value).value());
+        difference: function(value) {
+            return Math.abs(numbro(this._value).subtract(value).value());
         }
 
     };
 
     /************************************
-        Exposing Numeral
+        Exposing Numbro
     ************************************/
+
+    if (inNodejsRuntime()) {
+        //Todo: Rename the folder in 2.0.0
+        numbro.loadCulturesInNode();
+    }
 
     // CommonJS module is defined
     if (hasModule) {
-        module.exports = numeral;
+        module.exports = numbro;
+    } else {
+        /*global ender:false */
+        if (typeof ender === 'undefined') {
+            // here, `this` means `window` in the browser, or `global` on the server
+            // add `numbro` as a global object via a string identifier,
+            // for Closure Compiler 'advanced' mode
+            this.numbro = numbro;
+        }
+
+        /*global define:false */
+        if (typeof define === 'function' && define.amd) {
+            define([], function() {
+                return numbro;
+            });
+        }
     }
 
-    /*global ender:false */
-    if (typeof ender === 'undefined') {
-        // here, `this` means `window` in the browser, or `global` on the server
-        // add `numeral` as a global object via a string identifier,
-        // for Closure Compiler 'advanced' mode
-        this['numeral'] = numeral;
-    }
+}.call(typeof window === 'undefined' ? this : window));
 
-    /*global define:false */
-    if (typeof define === 'function' && define.amd) {
-        define([], function () {
-            return numeral;
-        });
-    }
-}).call(this);
-
-},{}],56:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./languages":72,"_process":93}],93:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -40634,14 +43153,15 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],57:[function(require,module,exports){
-arguments[4][7][0].apply(exports,arguments)
-},{"/Users/andrewhumphreys/Documents/work/orchestra/node_modules/lodash/lodash.js":54,"dup":7}],58:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
+module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_modules/lodash/lodash.js');
+},{"/Users/andrewhumphreys/Documents/work/orchestra/node_modules/lodash/lodash.js":52}],95:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Currency = undefined;
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -40657,9 +43177,9 @@ var _backbone = require('backbone.radio');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
-var _numeral = require('numeral');
+var _numbro = require('numbro');
 
-var _numeral2 = _interopRequireDefault(_numeral);
+var _numbro2 = _interopRequireDefault(_numbro);
 
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : { default: obj };
@@ -40681,7 +43201,7 @@ var CurrencyHelper = function () {
   _createClass(CurrencyHelper, [{
     key: 'addLocale',
     value: function addLocale(code, language) {
-      _numeral2.default.language(code, language);
+      _numbro2.default.culture(code, language);
     }
   }, {
     key: 'format',
@@ -40694,8 +43214,8 @@ var CurrencyHelper = function () {
       var formatStr = '$0,0';
 
       if (lang) {
-        _numeral2.default.language(lang);
-        var language = _numeral2.default.languageData();
+        _numbro2.default.culture(lang);
+        var language = _numbro2.default.cultureData();
         if (language.format) {
           formatStr = language.format;
         }
@@ -40709,18 +43229,16 @@ var CurrencyHelper = function () {
         formatStr += '0';
       }
 
-      return (0, _numeral2.default)(amount).format(formatStr);
+      return (0, _numbro2.default)(amount).format(formatStr);
     }
   }]);
 
   return CurrencyHelper;
 }();
 
-exports.default = new CurrencyHelper();
-module.exports = exports['default'];
+var Currency = exports.Currency = new CurrencyHelper();
 
-},{"backbone.radio":9,"numeral":55}],59:[function(require,module,exports){
-(function (global){
+},{"backbone.radio":7,"numbro":92}],96:[function(require,module,exports){
 //
 // ## helpers/handlebars
 //
@@ -40736,10 +43254,6 @@ exports.default = function (handlebars) {
   var _this = this;
 
   var Handlebars = _runtime2.default.default;
-
-  if (global.handlebars) {
-    Handlebars = global.handlebars;
-  }
 
   if (handlebars) {
     Handlebars = handlebars;
@@ -40784,7 +43298,7 @@ exports.default = function (handlebars) {
       }
     });
 
-    return new Handlebars.SafeString(_translate2.default.translate(i18nKey, args));
+    return new Handlebars.SafeString(_translate.Translator.translate(i18nKey, args));
   });
 
   Handlebars.registerHelper('currency', function (amount, decimals) {
@@ -40794,7 +43308,7 @@ exports.default = function (handlebars) {
       decimals = parseInt(decimals, 10);
     }
 
-    var str = _currency2.default.format(amount, decimals);
+    var str = _currency.Currency.format(amount, decimals);
 
     return new Handlebars.SafeString(str);
   });
@@ -40808,11 +43322,7 @@ var _runtime2 = _interopRequireDefault(_runtime);
 
 var _translate = require('./translate');
 
-var _translate2 = _interopRequireDefault(_translate);
-
 var _currency = require('./currency');
-
-var _currency2 = _interopRequireDefault(_currency);
 
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : { default: obj };
@@ -40820,8 +43330,7 @@ function _interopRequireDefault(obj) {
 
 module.exports = exports['default'];
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./currency":58,"./translate":62,"handlebars/runtime":35}],60:[function(require,module,exports){
+},{"./currency":95,"./translate":98,"handlebars/runtime":33}],97:[function(require,module,exports){
 //
 // #orchestra/storage/local.js
 //
@@ -40866,12 +43375,12 @@ function _classCallCheck(instance, Constructor) {
   }
 }
 
-var LocalStorage = function () {
-  function LocalStorage() {
-    _classCallCheck(this, LocalStorage);
+var LocalStorageHelper = function () {
+  function LocalStorageHelper() {
+    _classCallCheck(this, LocalStorageHelper);
   }
 
-  _createClass(LocalStorage, [{
+  _createClass(LocalStorageHelper, [{
     key: 'setItem',
     value: function setItem(name, item) {
       if ((typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object') {
@@ -40905,72 +43414,12 @@ var LocalStorage = function () {
     }
   }]);
 
-  return LocalStorage;
+  return LocalStorageHelper;
 }();
 
-exports.default = new LocalStorage();
-module.exports = exports['default'];
+var LocalStorage = exports.LocalStorage = new LocalStorageHelper();
 
-},{}],61:[function(require,module,exports){
-//
-// helpers.modules
-//
-
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-}();
-
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-var ModuleHelpers = function () {
-  function ModuleHelpers() {
-    _classCallCheck(this, ModuleHelpers);
-  }
-
-  _createClass(ModuleHelpers, [{
-    key: 'checkRequiredParams',
-    value: function checkRequiredParams(object, params, moduleName) {
-      _lodash2.default.each(params, function (name) {
-        if (!object[name]) {
-          throw new Error('orchestra:' + moduleName + ' required param ' + name + ' is undefined or null');
-        }
-
-        return true;
-      });
-    }
-  }]);
-
-  return ModuleHelpers;
-}();
-
-exports.default = new ModuleHelpers();
-module.exports = exports['default'];
-
-},{"lodash":54}],62:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 //
 // helpers.translate
 //
@@ -40979,6 +43428,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Translator = undefined;
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -41069,10 +43519,9 @@ var TranslateHelpers = function () {
   return TranslateHelpers;
 }();
 
-exports.default = new TranslateHelpers();
-module.exports = exports['default'];
+var Translator = exports.Translator = new TranslateHelpers();
 
-},{"backbone.radio":9,"i18next":52,"i18next-sprintf-postprocessor":36}],63:[function(require,module,exports){
+},{"backbone.radio":7,"i18next":50,"i18next-sprintf-postprocessor":34}],99:[function(require,module,exports){
 //
 // expose device capibilities to app object.
 //
@@ -41081,6 +43530,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Visibility = undefined;
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -41112,11 +43562,11 @@ function _classCallCheck(instance, Constructor) {
 
 var channel = _backbone2.default.channel('main');
 
-var Visibility = function () {
-  function Visibility() {
+var VisibilityHelper = function () {
+  function VisibilityHelper() {
     var _this = this;
 
-    _classCallCheck(this, Visibility);
+    _classCallCheck(this, VisibilityHelper);
 
     var visProp = this.getHiddenProp();
 
@@ -41132,7 +43582,7 @@ var Visibility = function () {
     }
   }
 
-  _createClass(Visibility, [{
+  _createClass(VisibilityHelper, [{
     key: 'getHiddenProp',
     value: function getHiddenProp() {
       var prefixes = ['webkit', 'moz', 'ms', 'o'];
@@ -41164,17 +43614,92 @@ var Visibility = function () {
     }
   }]);
 
-  return Visibility;
+  return VisibilityHelper;
 }();
 
-exports.default = new Visibility();
-module.exports = exports['default'];
+var Visibility = exports.Visibility = new VisibilityHelper();
 
-},{"backbone.radio":9,"jquery":53}],64:[function(require,module,exports){
+},{"backbone.radio":7,"jquery":51}],100:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
+});
+exports.Behavior = exports.Region = exports.CompositeView = exports.CollectionView = exports.View = exports.Application = exports.History = exports.history = exports.Sync = exports.Model = exports.Validation = exports.Syphon = exports.Radio = exports.Storage = exports.Service = exports._ = exports.$ = exports.Router = exports.Route = undefined;
+
+var _backboneRouting = require('backbone-routing');
+
+Object.defineProperty(exports, 'Route', {
+  enumerable: true,
+  get: function get() {
+    return _backboneRouting.Route;
+  }
+});
+Object.defineProperty(exports, 'Router', {
+  enumerable: true,
+  get: function get() {
+    return _backboneRouting.Router;
+  }
+});
+
+var _collection = require('./mvc/collection');
+
+Object.keys(_collection).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _collection[key];
+    }
+  });
+});
+
+var _currency = require('./helpers/currency');
+
+Object.keys(_currency).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _currency[key];
+    }
+  });
+});
+
+var _localStorage = require('./helpers/localStorage');
+
+Object.keys(_localStorage).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _localStorage[key];
+    }
+  });
+});
+
+var _translate = require('./helpers/translate');
+
+Object.keys(_translate).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _translate[key];
+    }
+  });
+});
+
+var _visibility = require('./helpers/visibility');
+
+Object.keys(_visibility).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _visibility[key];
+    }
+  });
 });
 
 var _jquery = require('jquery');
@@ -41189,63 +43714,33 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
-var _backboneRouting = require('backbone-routing');
-
 var _backboneValidation = require('backbone-validation');
 
 var _backboneValidation2 = _interopRequireDefault(_backboneValidation);
 
-var _backbone3 = require('backbone.cocktail');
+var _backbone3 = require('backbone.radio');
 
 var _backbone4 = _interopRequireDefault(_backbone3);
 
-var _backbone5 = require('backbone.radio');
+var _backbone5 = require('backbone.service');
 
 var _backbone6 = _interopRequireDefault(_backbone5);
 
-var _backbone7 = require('backbone.service');
+var _backbone7 = require('backbone.storage');
 
 var _backbone8 = _interopRequireDefault(_backbone7);
 
-var _backbone9 = require('backbone.storage');
+var _backbone9 = require('backbone.syphon');
 
 var _backbone10 = _interopRequireDefault(_backbone9);
-
-var _backbone11 = require('backbone.syphon');
-
-var _backbone12 = _interopRequireDefault(_backbone11);
-
-var _collection = require('./mvc/collection');
-
-var _collection2 = _interopRequireDefault(_collection);
-
-var _currency = require('./helpers/currency');
-
-var _currency2 = _interopRequireDefault(_currency);
-
-var _localStorage = require('./helpers/localStorage');
-
-var _localStorage2 = _interopRequireDefault(_localStorage);
-
-var _translate = require('./helpers/translate');
-
-var _translate2 = _interopRequireDefault(_translate);
-
-var _visibility = require('./helpers/visibility');
-
-var _visibility2 = _interopRequireDefault(_visibility);
-
-var _module = require('./helpers/module');
-
-var _module2 = _interopRequireDefault(_module);
 
 var _handlebars = require('./helpers/handlebars');
 
 var _handlebars2 = _interopRequireDefault(_handlebars);
 
-var _backbone13 = require('backbone.marionette');
+var _backbone11 = require('backbone.marionette');
 
-var _backbone14 = _interopRequireDefault(_backbone13);
+var _backbone12 = _interopRequireDefault(_backbone11);
 
 require('backbone.stickit');
 
@@ -41254,58 +43749,30 @@ function _interopRequireDefault(obj) {
 }
 
 if (window.__agent) {
-  window.__agent.start(_backbone2.default, _backbone14.default);
+  window.__agent.start(_backbone2.default, _backbone12.default);
 }
 
 (0, _handlebars2.default)();
 
-// build orchestra framework
-var Orchestra = {};
-_lodash2.default.extend(Orchestra, _backbone2.default);
-_lodash2.default.extend(Orchestra, _backbone2.default.Marionette.extend());
+var $ = exports.$ = _jquery2.default;
+var _ = exports._ = _lodash2.default;
+var Service = exports.Service = _backbone6.default;
+var Storage = exports.Storage = _backbone8.default;
+var Radio = exports.Radio = _backbone4.default;
+var Syphon = exports.Syphon = _backbone10.default;
+var Validation = exports.Validation = _backboneValidation2.default;
+var Model = exports.Model = _backbone2.default.Model;
+var Sync = exports.Sync = _backbone2.default.Sync;
+var history = exports.history = _backbone2.default.history;
+var History = exports.History = _backbone2.default.History;
+var Application = exports.Application = _backbone12.default.Application;
+var View = exports.View = _backbone12.default.View;
+var CollectionView = exports.CollectionView = _backbone12.default.CollectionView;
+var CompositeView = exports.CompositeView = _backbone12.default.CompositeView;
+var Region = exports.Region = _backbone12.default.Region;
+var Behavior = exports.Behavior = _backbone12.default.Behavior;
 
-_lodash2.default.extend(Orchestra, {
-  _: _lodash2.default,
-  $: _jquery2.default,
-  Radio: _backbone6.default,
-  Service: _backbone8.default,
-  Storage: _backbone10.default,
-  Syphon: _backbone12.default,
-  Validation: _backboneValidation2.default,
-  Cocktail: _backbone4.default,
-  Route: _backboneRouting.Route,
-  Router: _backboneRouting.Router,
-  Collection: _collection2.default,
-  Currency: _currency2.default,
-  LocalStorage: _localStorage2.default,
-  Translator: _translate2.default,
-  Visibility: _visibility2.default,
-  ModuleHelper: _module2.default,
-
-  instances: {},
-
-  getInstance: function getInstance(namespace) {
-    var _this = this;
-
-    namespace = namespace || 'main';
-    if (!this.instances[namespace]) {
-      this.instances[namespace] = new this.Application({
-        namespace: namespace
-      });
-
-      this.listenTo(this.instances[namespace], 'destroy', function () {
-        delete _this.instances[namespace];
-      });
-    }
-
-    return this.instances[namespace];
-  }
-});
-
-exports.default = Orchestra;
-module.exports = exports['default'];
-
-},{"./helpers/currency":58,"./helpers/handlebars":59,"./helpers/localStorage":60,"./helpers/module":61,"./helpers/translate":62,"./helpers/visibility":63,"./mvc/collection":65,"backbone":15,"backbone-routing":4,"backbone-validation":5,"backbone.cocktail":6,"backbone.marionette":8,"backbone.radio":9,"backbone.service":10,"backbone.stickit":12,"backbone.storage":13,"backbone.syphon":14,"jquery":53,"lodash":54}],65:[function(require,module,exports){
+},{"./helpers/currency":95,"./helpers/handlebars":96,"./helpers/localStorage":97,"./helpers/translate":98,"./helpers/visibility":99,"./mvc/collection":101,"backbone":13,"backbone-routing":4,"backbone-validation":5,"backbone.marionette":6,"backbone.radio":7,"backbone.service":8,"backbone.stickit":10,"backbone.storage":11,"backbone.syphon":12,"jquery":51,"lodash":52}],101:[function(require,module,exports){
 //
 // #orchestra/mvc/collection.js
 //
@@ -41323,6 +43790,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Collection = undefined;
 
 var _backbone = require('backbone');
 
@@ -41330,23 +43798,20 @@ var _backbone2 = _interopRequireDefault(_backbone);
 
 var _lodash = require('lodash');
 
-var _lodash2 = _interopRequireDefault(_lodash);
-
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : { default: obj };
 }
 
-exports.default = _backbone2.default.Collection.extend({
+var Collection = exports.Collection = _backbone2.default.Collection.extend({
   next: function next(model) {
-    return this.at((this.indexOf(model) + 1) % _lodash2.default.size(this));
+    return this.at((this.indexOf(model) + 1) % (0, _lodash.size)(this));
   },
   prev: function prev(model) {
     var index = this.indexOf(model) - 1;
-    return this.at(index > -1 ? index : _lodash2.default.size(this) - 1);
+    return this.at(index > -1 ? index : (0, _lodash.size)(this) - 1);
   }
 });
-module.exports = exports['default'];
 
-},{"backbone":15,"lodash":54}]},{},[64])(64)
+},{"backbone":13,"lodash":52}]},{},[100])(100)
 });
 //# sourceMappingURL=orchestra.js.map

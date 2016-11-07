@@ -1,9 +1,8 @@
 'use strict';
 
 require('../../app/support/setup');
-var currencyHelper = require('../../../src/helpers/currency');
-var enGB = require('numeral/languages/en-gb');
-var usd = require('numeral/languages/en-gb');
+var currencyHelper = require('../../../src/helpers/currency').Currency;
+var enGB = require('numbro/languages/en-GB');
 var currency = require('../../fixtures/currency/currency');
 
 describe('Currency Helper', function() {
@@ -17,23 +16,11 @@ describe('Currency Helper', function() {
   });
 
   describe('GBP', function() {
-
     it('should return the expected string', function() {
       this.sandbox.stub(globalChannel, 'request').returns('en-GB');
       var currencyString = currencyHelper.format(10, 2);
       expect(currencyString).to.be('£10.00');
     });
-
-  });
-
-  describe('Default', function() {
-
-    it('should return the expected string', function() {
-      this.sandbox.stub(globalChannel, 'request').returns('en');
-      var currencyString = currencyHelper.format(20, 2);
-      expect(currencyString).to.be('$20.00');
-    });
-
   });
 
   describe('Custom Format', function () {

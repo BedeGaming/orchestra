@@ -7,7 +7,7 @@ import $ from 'jquery';
 import Radio from 'backbone.radio';
 const channel = Radio.channel('main');
 
-class Visibility {
+class VisibilityHelper {
   constructor() {
     const visProp = this.getHiddenProp();
 
@@ -52,4 +52,4 @@ class Visibility {
   }
 }
 
-export default new Visibility();
+export const Visibility = new VisibilityHelper();

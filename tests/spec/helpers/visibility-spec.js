@@ -21,7 +21,7 @@ describe('Visibility Helper', function() {
   describe('Methods', function() {
 
     beforeEach(function() {
-      this.visibilityHelper = requireNew(helperLocation);
+      this.visibilityHelper = requireNew(helperLocation).Visibility;
     });
 
     it('should expose a getHiddenProp function', function() {
@@ -38,7 +38,7 @@ describe('Visibility Helper', function() {
 
     beforeEach(function() {
       document.hidden = true; // force bind visibility event listener
-      this.visibilityHelper = requireNew(helperLocation);
+      this.visibilityHelper = requireNew(helperLocation).Visibility;
       delete document.hidden;
       this.event = document.createEvent("HTMLEvents");
       this.event.initEvent("visibilitychange", true, true);
@@ -62,7 +62,7 @@ describe('Visibility Helper', function() {
   describe('document.hidden exists', function () {
     beforeEach(function() {
       document.hidden = true;
-      this.visibilityHelper = requireNew(helperLocation);
+      this.visibilityHelper = requireNew(helperLocation).Visibility;
       this.event = document.createEvent("HTMLEvents");
       this.event.initEvent("visibilitychange", true, true);
 
@@ -94,7 +94,7 @@ describe('Visibility Helper', function() {
     beforeEach(function() {
       this.vendorPrefix = 'webkit';
       document.webkitHidden = true;
-      this.visibilityHelper = requireNew(helperLocation);
+      this.visibilityHelper = requireNew(helperLocation).Visibility;
       this.event = document.createEvent("HTMLEvents");
       this.event.initEvent(
         this.vendorPrefix + "visibilitychange", true, true

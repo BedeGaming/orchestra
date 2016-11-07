@@ -14,7 +14,7 @@
 // ```
 'use strict';
 
-class LocalStorage {
+class LocalStorageHelper {
 
   setItem(name, item) {
     if (typeof item === 'object') {
@@ -46,4 +46,4 @@ class LocalStorage {
 
 }
 
-export default new LocalStorage();
+export const LocalStorage = new LocalStorageHelper();
