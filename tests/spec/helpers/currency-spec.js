@@ -2,8 +2,7 @@
 
 require('../../app/support/setup');
 var currencyHelper = require('../../../src/helpers/currency').Currency;
-var enGB = require('numbro/languages/en-gb');
-var usd = require('numbro/languages/en-gb');
+var enGB = require('numbro/languages/en-GB');
 var currency = require('../../fixtures/currency/currency');
 
 describe('Currency Helper', function() {
