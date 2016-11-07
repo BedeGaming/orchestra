@@ -6,16 +6,16 @@
 'use strict';
 
 import HB from 'handlebars/runtime';
-import translator from './translate';
-import currencyHelper from './currency';
+import {Translator} from './translate';
+import {Currency} from './currency';
 
 export default function(handlebars) {
 
   let Handlebars = HB.default;
 
-  if (global.handlebars) {
-    Handlebars = global.handlebars;
-  }
+  // if (global.handlebars) {
+  //   Handlebars = global.handlebars;
+  // }
 
   if (handlebars) {
     Handlebars = handlebars;
@@ -56,7 +56,7 @@ export default function(handlebars) {
       }
     });
 
-    return new Handlebars.SafeString(translator.translate(i18nKey, args));
+    return new Handlebars.SafeString(Translator.translate(i18nKey, args));
 
   });
 
@@ -67,7 +67,7 @@ export default function(handlebars) {
       decimals = parseInt(decimals, 10);
     }
 
-    var str = currencyHelper.format(amount, decimals);
+    var str = Currency.format(amount, decimals);
 
     return new Handlebars.SafeString(str);
   });

@@ -15,7 +15,7 @@
 import Backbone from 'backbone';
 import _ from 'lodash';
 
-export default Backbone.Collection.extend({
+export var Collection = Backbone.Collection.extend({
 
   next(model) {
     return this.at((this.indexOf(model) + 1) % _.size(this));

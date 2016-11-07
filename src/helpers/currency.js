@@ -1,13 +1,13 @@
 'use strict';
 
 import Radio from 'backbone.radio';
-import numeral from 'numeral';
+import numbro from 'numbro';
 
 const channel = Radio.channel('global');
 
 class CurrencyHelper {
   addLocale(code, language) {
-    numeral.language(code, language);
+    numbro.culture(code, language);
   }
 
   format(amount, decimals = 0, currencyLocale = null) {
@@ -16,8 +16,8 @@ class CurrencyHelper {
     let formatStr = '$0,0';
 
     if (lang) {
-      numeral.language(lang);
-      let language = numeral.languageData();
+      numbro.culture(lang);
+      let language = numbro.cultureData();
       if (language.format) {
         formatStr = language.format;
       }
@@ -31,8 +31,8 @@ class CurrencyHelper {
       formatStr += '0';
     }
 
-    return numeral(amount).format(formatStr);
+    return numbro(amount).format(formatStr);
   }
 }
 
-export default new CurrencyHelper();
+export var Currency = new CurrencyHelper();
