@@ -13,17 +13,17 @@
 'use strict';
 
 import Backbone from 'backbone';
-import { size } from 'lodash';
+import _ from 'lodash';
 
 export const Collection = Backbone.Collection.extend({
 
   next(model) {
-    return this.at((this.indexOf(model) + 1) % size(this));
+    return this.at((this.indexOf(model) + 1) % _.size(this));
   },
 
   prev(model) {
     const index = this.indexOf(model) - 1;
-    return this.at(index > -1 ? index : size(this) - 1);
+    return this.at(index > -1 ? index : _.size(this) - 1);
   }
 
 });
