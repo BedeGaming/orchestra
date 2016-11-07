@@ -1,3 +1,16 @@
+### v3.0.0-pre.2 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.1...v3.0.0-pre.2)
+
+#### Package Updates
+
+* Replaced numeral with numbro.
+* Replaced Backbone.Validation with a version compatible with lodash4.
+
+#### Breaking change
+
+* Named export rewrite, users using babel exports default plugin will no longer need this.
+* Removed module helper.
+* Removed `getInstance`.
+
 ### v3.0.0-pre.1 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0...v3.0.0-pre.1)
 
 #### Package Updates
