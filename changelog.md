@@ -1,3 +1,9 @@
+### v3.0.0-pre.3 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.2...v3.0.0-pre.3)
+
+#### Misc
+
+* import full lodash in `Collection`.
+
 ### v3.0.0-pre.2 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.1...v3.0.0-pre.2)
 
 #### Package Updates
