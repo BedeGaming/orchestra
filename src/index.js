@@ -1,3 +1,4 @@
+/* jshint -W079 */
 'use strict';
 
 import jQuery from 'jquery';
