@@ -15,7 +15,7 @@
 import Backbone from 'backbone';
 import { size } from 'lodash';
 
-export var Collection = Backbone.Collection.extend({
+export const Collection = Backbone.Collection.extend({
 
   next(model) {
     return this.at((this.indexOf(model) + 1) % size(this));

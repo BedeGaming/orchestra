@@ -46,4 +46,4 @@ class LocalStorageHelper {
 
 }
 
-export var LocalStorage = new LocalStorageHelper();
+export const LocalStorage = new LocalStorageHelper();

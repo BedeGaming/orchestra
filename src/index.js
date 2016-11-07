@@ -25,20 +25,20 @@ if (window.__agent) {
 
 handlebarsHelpers();
 
-export var $ = jQuery;
-export var _ = lodash;
-export var Service = BackboneService;
-export var Storage = BackboneStorage;
-export var Radio = BackboneRadio;
-export var Syphon = BackboneSyphon;
-export var Validation = BackboneValidation;
-export var Model = Backbone.Model;
-export var Sync = Backbone.Sync;
-export var history = Backbone.history;
-export var History = Backbone.History;
-export var Application = Marionette.Application;
-export var View = Marionette.View;
-export var CollectionView = Marionette.CollectionView;
-export var CompositeView = Marionette.CompositeView;
-export var Region = Marionette.Region;
-export var Behavior = Marionette.Behavior;
+export const $ = jQuery;
+export const _ = lodash;
+export const Service = BackboneService;
+export const Storage = BackboneStorage;
+export const Radio = BackboneRadio;
+export const Syphon = BackboneSyphon;
+export const Validation = BackboneValidation;
+export const Model = Backbone.Model;
+export const Sync = Backbone.Sync;
+export const history = Backbone.history;
+export const History = Backbone.History;
+export const Application = Marionette.Application;
+export const View = Marionette.View;
+export const CollectionView = Marionette.CollectionView;
+export const CompositeView = Marionette.CompositeView;
+export const Region = Marionette.Region;
+export const Behavior = Marionette.Behavior;

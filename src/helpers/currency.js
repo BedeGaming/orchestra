@@ -35,4 +35,4 @@ class CurrencyHelper {
   }
 }
 
-export var Currency = new CurrencyHelper();
+export const Currency = new CurrencyHelper();

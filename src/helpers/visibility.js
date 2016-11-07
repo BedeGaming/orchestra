@@ -52,4 +52,4 @@ class VisibilityHelper {
   }
 }
 
-export var Visibility = new VisibilityHelper();
+export const Visibility = new VisibilityHelper();
