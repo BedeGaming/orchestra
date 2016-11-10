@@ -1,3 +1,9 @@
+### v3.0.0-pre.4 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.3...v3.0.0-pre.4)
+
+#### Misc
+
+* export attachHelpers to allow attaching handlebars helpers to a different instance of handlebars.
+
 ### v3.0.0-pre.3 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.2...v3.0.0-pre.3)
 
 #### Misc

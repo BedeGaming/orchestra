@@ -43752,7 +43752,7 @@ var Visibility = exports.Visibility = new VisibilityHelper();
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Behavior = exports.Region = exports.CompositeView = exports.CollectionView = exports.View = exports.Application = exports.History = exports.history = exports.Sync = exports.Model = exports.Validation = exports.Syphon = exports.Radio = exports.Storage = exports.Service = exports._ = exports.$ = exports.Router = exports.Route = undefined;
+exports.Behavior = exports.Region = exports.CompositeView = exports.CollectionView = exports.View = exports.Application = exports.History = exports.history = exports.Sync = exports.Model = exports.Validation = exports.Syphon = exports.Radio = exports.Storage = exports.Service = exports._ = exports.$ = exports.attachHelpers = exports.Router = exports.Route = undefined;
 
 var _backboneRouting = require('backbone-routing');
 
@@ -43881,6 +43881,7 @@ if (window.__agent) {
 
 (0, _handlebars2.default)();
 
+var attachHelpers = exports.attachHelpers = _handlebars2.default;
 var $ = exports.$ = _jquery2.default;
 var _ = exports._ = _lodash2.default;
 var Service = exports.Service = _backbone6.default;

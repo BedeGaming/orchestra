@@ -26,6 +26,7 @@ if (window.__agent) {
 
 handlebarsHelpers();
 
+export const attachHelpers = handlebarsHelpers;
 export const $ = jQuery;
 export const _ = lodash;
 export const Service = BackboneService;
