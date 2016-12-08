@@ -32,6 +32,10 @@ describe('Orchestra', function() {
     expect(this.Orchestra.Validation).to.be.an('object');
   });
 
+  it('should expose the Backbone.Validation object', function() {
+    expect(Orchestra.Validation).to.be.an('object');
+  });
+
 	it('should expose the Backbone.Cocktail object', function() {
 		expect(this.Orchestra.Cocktail).to.be.an('object');
 	});
