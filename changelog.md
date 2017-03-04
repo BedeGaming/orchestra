@@ -1,3 +1,13 @@
+### v3.0.0-pre.5 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.4...v3.0.0-pre.5)
+
+#### Breaking Changes
+
+* Remove Backbone.Stickit.
+
+#### Misc
+
+* export `sync` and `Backbone.Collection`.
+
 ### v3.0.0-pre.4 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.3...v3.0.0-pre.4)
 
 #### Misc
