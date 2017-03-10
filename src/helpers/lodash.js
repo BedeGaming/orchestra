@@ -1,7 +1,7 @@
 /**
  * @license
  * Lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash include="each,isFunction,isObject,isString,matches,keys,uniqueId,bind,once,extend,result,defaults,clone,escape,iteratee,isEqual,isEmpty,has,defer,isArray,some,pick,isRegExp,map,create,values,invert,omit,chain,forEach,reduce,reduceRight,find,reject,every,includes,invoke,max,min,toArray,size,first,head,take,initial,rest,tail,drop,last,without,difference,indexOf,shuffle,lastIndexOf,sample,partition,groupBy,countBy,sortBy,findIndex,findLastIndex,isUndefined,noop,memoize,template,invokeMap,partial,filter,toPairs,isNumber,isFinite,isNull,shuffle,uniqBy,intersection,assign,range,capitalize,debounce,kebabCase,compact,value,slice,merge"`
+ * Build: `lodash include="each,isFunction,isObject,isString,matches,keys,uniqueId,bind,once,extend,result,defaults,clone,escape,iteratee,isEqual,isEmpty,has,defer,isArray,some,pick,isRegExp,map,create,values,invert,omit,chain,forEach,reduce,reduceRight,find,reject,every,includes,invoke,max,min,toArray,size,first,head,take,initial,rest,tail,drop,last,without,difference,indexOf,shuffle,lastIndexOf,sample,partition,groupBy,countBy,sortBy,findIndex,findLastIndex,isUndefined,noop,memoize,template,invokeMap,partial,filter,toPairs,isNumber,isFinite,isNull,shuffle,uniqBy,intersection,assign,range,capitalize,debounce,kebabCase,compact,value,slice,merge,endsWith"`
  * Copyright JS Foundation and other contributors <https://js.foundation/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -2356,6 +2356,27 @@
       result[index] = skip ? undefined : get(object, paths[index]);
     }
     return result;
+  }
+
+  /**
+   * The base implementation of `_.clamp` which doesn't coerce arguments.
+   *
+   * @private
+   * @param {number} number The number to clamp.
+   * @param {number} [lower] The lower bound.
+   * @param {number} upper The upper bound.
+   * @returns {number} Returns the clamped number.
+   */
+  function baseClamp(number, lower, upper) {
+    if (number === number) {
+      if (upper !== undefined) {
+        number = number <= upper ? number : upper;
+      }
+      if (lower !== undefined) {
+        number = number >= lower ? number : lower;
+      }
+    }
+    return number;
   }
 
   /**
@@ -9352,6 +9373,43 @@
   }
 
   /**
+   * Checks if `string` ends with the given target string.
+   *
+   * @static
+   * @memberOf _
+   * @since 3.0.0
+   * @category String
+   * @param {string} [string=''] The string to inspect.
+   * @param {string} [target] The string to search for.
+   * @param {number} [position=string.length] The position to search up to.
+   * @returns {boolean} Returns `true` if `string` ends with `target`,
+   *  else `false`.
+   * @example
+   *
+   * _.endsWith('abc', 'c');
+   * // => true
+   *
+   * _.endsWith('abc', 'b');
+   * // => false
+   *
+   * _.endsWith('abc', 'b', 2);
+   * // => true
+   */
+  function endsWith(string, target, position) {
+    string = toString(string);
+    target = baseToString(target);
+
+    var length = string.length;
+    position = position === undefined
+      ? length
+      : baseClamp(toInteger(position), 0, length);
+
+    var end = position;
+    position -= target.length;
+    return position >= 0 && string.slice(position, end) == target;
+  }
+
+  /**
    * Converts the characters "&", "<", ">", '"', and "'" in `string` to their
    * corresponding HTML entities.
    *
@@ -10168,6 +10226,7 @@
   lodash.capitalize = capitalize;
   lodash.clone = clone;
   lodash.deburr = deburr;
+  lodash.endsWith = endsWith;
   lodash.eq = eq;
   lodash.escape = escape;
   lodash.every = every;
