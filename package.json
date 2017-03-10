@@ -21,7 +21,7 @@
   "dependencies": {
     "backbone": "^1.3.3",
     "backbone-routing": "^0.2.0",
-    "backbone-validation": "git://github.com/ahumphreys87/backbone.validation.git#master",
+    "backbone-validation": "git://github.com/ahumphreys87/backbone.validation.git#custom-lodash",
     "backbone.cocktail": "0.5.10",
     "backbone.marionette": "^3.0.0",
     "backbone.service": "git://github.com/ahumphreys87/backbone.service.git#radio-2",

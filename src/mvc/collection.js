@@ -13,7 +13,7 @@
 'use strict';
 
 import Backbone from 'backbone';
-import _ from 'lodash';
+import _ from '../helpers/lodash';
 
 export const Collection = Backbone.Collection.extend({
 

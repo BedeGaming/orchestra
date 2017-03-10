@@ -2,7 +2,7 @@
 'use strict';
 
 import jQuery from 'jquery';
-import lodash from 'lodash';
+import lodash from './helpers/lodash';
 import Backbone from 'backbone';
 import BackboneValidation from 'backbone-validation';
 import BackboneRadio from 'backbone.radio';
