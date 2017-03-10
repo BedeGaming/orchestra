@@ -1,7 +1,7 @@
 /**
  * @license
  * Lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash include="each,isFunction,isObject,isString,matches,keys,uniqueId,bind,once,extend,result,defaults,clone,escape,iteratee,isEqual,isEmpty,has,defer,isArray,some,pick,isRegExp,map,create,values,invert,omit,chain,forEach,reduce,reduceRight,find,reject,every,includes,invoke,max,min,toArray,size,first,head,take,initial,rest,tail,drop,last,without,difference,indexOf,shuffle,lastIndexOf,sample,partition,groupBy,countBy,sortBy,findIndex,findLastIndex,isUndefined,noop,memoize,template,invokeMap,partial,filter,toPairs,isNumber,isFinite,isNull,shuffle,uniqBy,intersection,assign,range,capitalize,debounce,kebabCase,compact,value,slice,merge,endsWith,isNaN"`
+ * Build: `lodash include="each,isFunction,isObject,isString,matches,keys,uniqueId,bind,once,extend,result,defaults,clone,escape,iteratee,isEqual,isEmpty,has,defer,isArray,some,pick,isRegExp,map,create,values,invert,omit,chain,forEach,reduce,reduceRight,find,reject,every,includes,invoke,max,min,toArray,size,first,head,take,initial,rest,tail,drop,last,without,difference,indexOf,shuffle,lastIndexOf,sample,partition,groupBy,countBy,sortBy,findIndex,findLastIndex,isUndefined,noop,memoize,template,invokeMap,partial,filter,toPairs,isNumber,isFinite,isNull,shuffle,uniqBy,intersection,assign,range,capitalize,debounce,kebabCase,compact,value,slice,merge,endsWith,isNaN,isBoolean"`
  * Copyright JS Foundation and other contributors <https://js.foundation/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -8072,6 +8072,28 @@
   }
 
   /**
+   * Checks if `value` is classified as a boolean primitive or object.
+   *
+   * @static
+   * @memberOf _
+   * @since 0.1.0
+   * @category Lang
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is a boolean, else `false`.
+   * @example
+   *
+   * _.isBoolean(false);
+   * // => true
+   *
+   * _.isBoolean(null);
+   * // => false
+   */
+  function isBoolean(value) {
+    return value === true || value === false ||
+      (isObjectLike(value) && baseGetTag(value) == boolTag);
+  }
+
+  /**
    * Checks if `value` is a buffer.
    *
    * @static
@@ -10281,6 +10303,7 @@
   lodash.isArray = isArray;
   lodash.isArrayLike = isArrayLike;
   lodash.isArrayLikeObject = isArrayLikeObject;
+  lodash.isBoolean = isBoolean;
   lodash.isBuffer = isBuffer;
   lodash.isEmpty = isEmpty;
   lodash.isEqual = isEqual;
