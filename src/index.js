@@ -3,7 +3,7 @@
 
 import jQuery from 'jquery';
 import lodash from './helpers/lodash';
-import Backbone from 'backbone';
+import CoreBackbone from 'backbone';
 import BackboneValidation from 'backbone-validation';
 import BackboneRadio from 'backbone.radio';
 import BackboneService from 'backbone.service';
@@ -20,7 +20,7 @@ export * from './helpers/translate';
 export * from './helpers/visibility';
 
 if (window.__agent) {
-  window.__agent.start(Backbone, Marionette);
+  window.__agent.start(CoreBackbone, Marionette);
 }
 
 handlebarsHelpers();
@@ -31,13 +31,14 @@ export const _ = lodash;
 export const Service = BackboneService;
 export const Storage = BackboneStorage;
 export const Radio = BackboneRadio;
-export const BBCollection = Backbone.Collection;
+export const Backbone = CoreBackbone;
+export const BBCollection = CoreBackbone.Collection;
 export const Syphon = BackboneSyphon;
 export const Validation = BackboneValidation;
-export const Model = Backbone.Model;
-export const sync = Backbone.sync;
-export const history = Backbone.history;
-export const History = Backbone.History;
+export const Model = CoreBackbone.Model;
+export const sync = CoreBackbone.sync;
+export const history = CoreBackbone.history;
+export const History = CoreBackbone.History;
 export const Application = Marionette.Application;
 export const View = Marionette.View;
 export const CollectionView = Marionette.CollectionView;
