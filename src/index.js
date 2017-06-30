@@ -11,8 +11,10 @@ import BackboneStorage from 'backbone.storage';
 import BackboneSyphon from 'backbone.syphon';
 import handlebarsHelpers from './helpers/handlebars';
 import Marionette from 'backbone.marionette';
-export { Route,  Router } from 'backbone-routing';
+import './mvc/redux-view';
 
+export { Route,  Router } from 'backbone-routing';
+export * from './helpers/redux-helpers';
 export * from './mvc/collection';
 export * from './helpers/currency';
 export * from './helpers/localStorage';
