@@ -19,8 +19,16 @@ const ReduxViewMixin = {
     return this;
   },
 
-  onStoreUpdated() {
-    this.render();
+  shouldViewRender(oldState, newState) {
+    return true;
+  },
+
+  onStoreUpdated(oldState, newState) {
+    this.state = newState;
+
+    if (this.shouldViewRender(oldState, newState)) {
+      this.render();
+    }
   },
 
   connectToStore() {
@@ -37,8 +45,7 @@ const ReduxViewMixin = {
     this.actions = actions;
 
     observeStore(provider.store, currentState, mapState, (newState, oldState) => {
-      this.state = newState;
-      if (typeof this.onStoreUpdated === 'function') this.onStoreUpdated(oldState);
+      this.onStoreUpdated(oldState, newState);
     });
   },
 
