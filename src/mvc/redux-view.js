@@ -1,3 +1,5 @@
+'use strict';
+
 import { View } from 'backbone.marionette';
 import { bindActionCreators } from 'redux';
 import { observeStore, provider } from '../helpers/redux-helpers';
@@ -19,7 +21,7 @@ const ReduxViewMixin = {
     return this;
   },
 
-  shouldViewRender(oldState, newState) {
+  shouldViewRender() {
     return true;
   },
 
@@ -58,7 +60,7 @@ const ReduxViewMixin = {
     } else if (this.collection) {
       data = {
         items: this.serializeCollection()
-      }
+      };
     }
 
     if (this.state) {
@@ -67,7 +69,7 @@ const ReduxViewMixin = {
 
     return data;
   }
-}
+};
 
 _.extend(View.prototype, ReduxViewMixin);
 

@@ -1,6 +1,7 @@
 var files = {
   javascript: [
-    'src/**/*.js'
+    'src/**/*.js',
+    '!src/helpers/lodash.js'
   ]
 };
 
