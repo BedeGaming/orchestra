@@ -23,7 +23,7 @@
     "backbone-routing": "^0.2.0",
     "backbone-validation": "git://github.com/ahumphreys87/backbone.validation.git#custom-lodash",
     "backbone.cocktail": "0.5.10",
-    "backbone.marionette": "^3.0.0",
+    "backbone.marionette": "3.3.1",
     "backbone.service": "git://github.com/ahumphreys87/backbone.service.git#radio-2",
     "backbone.stickit": "^0.9.0",
     "backbone.storage": "0.2.1",
