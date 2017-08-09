@@ -1,6 +1,7 @@
 'use strict';
 
 import { createStore, applyMiddleware, compose } from 'redux';
+import reduxLogger from 'redux-logger';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -52,7 +53,11 @@ export const provider = {
   }
 };
 
-export function configureStore(reducer, preloadedState, middleware = []) {
+export function configureStore(env, reducer, preloadedState, middleware = []) {
+  if (env !== 'production') {
+    middleware.push(reduxLogger);
+  }
+
   return createStore(
     reducer,
     preloadedState,

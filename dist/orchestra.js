@@ -15,7 +15,7 @@ module.exports = function classify(target) {
   );
 };
 
-},{"backbone-metal":2,"underscore":92}],2:[function(require,module,exports){
+},{"backbone-metal":2,"underscore":135}],2:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('backbone'), require('underscore')) : typeof define === 'function' && define.amd ? define(['backbone', 'underscore'], factory) : global.Metal = factory(global.Backbone, global._);
 })(this, function (Backbone, _) {
@@ -521,7 +521,7 @@ module.exports = function classify(target) {
   return backbone_metal;
 });
 
-},{"backbone":11,"underscore":92}],3:[function(require,module,exports){
+},{"backbone":11,"underscore":135}],3:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('underscore'), require('backbone')) :
   typeof define === 'function' && define.amd ? define(['underscore', 'backbone'], factory) :
@@ -1012,7 +1012,7 @@ module.exports = function classify(target) {
 
 }));
 
-},{"backbone":11,"underscore":92}],4:[function(require,module,exports){
+},{"backbone":11,"underscore":135}],4:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('backbone'), require('backbone-metal')) : typeof define === 'function' && define.amd ? define(['backbone', 'backbone-metal'], factory) : global.Backbone.Routing = factory(global.Backbone, global.Metal);
 })(this, function (Backbone, Metal) {
@@ -1271,9 +1271,9 @@ module.exports = function classify(target) {
 // http://thedersen.com/projects/backbone-validation
 (function (factory) {
   if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'), require('lodash'));
+    module.exports = factory(require('backbone'), require('underscore'));
   } else if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'lodash'], factory);
+    define(['backbone', 'underscore'], factory);
   }
 }(function (Backbone, _) {
   Backbone.Validation = (function(_){
@@ -1981,10 +1981,10 @@ module.exports = function classify(target) {
   }(_));
   return Backbone.Validation;
 }));
-},{"backbone":11,"lodash":50}],6:[function(require,module,exports){
+},{"backbone":11,"underscore":135}],6:[function(require,module,exports){
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
-// v3.2.0
+// v3.3.1
 //
 // Copyright (c)2017 Derick Bailey, Muted Solutions, LLC.
 // Distributed under MIT license
@@ -2002,7 +2002,7 @@ Backbone = 'default' in Backbone ? Backbone['default'] : Backbone;
 _ = 'default' in _ ? _['default'] : _;
 Radio = 'default' in Radio ? Radio['default'] : Radio;
 
-var version = "3.2.0";
+var version = "3.3.1";
 
 //Internal utility for creating context style global utils
 var proxy = function proxy(method) {
@@ -2211,6 +2211,12 @@ function triggerDOMRefresh(view) {
   }
 }
 
+function triggerDOMRemove(view) {
+  if (view._isAttached && view._isRendered) {
+    triggerMethodOn(view, 'dom:remove', view);
+  }
+}
+
 function handleBeforeAttach() {
   triggerMethodChildren(this, 'before:attach', shouldTriggerAttach);
 }
@@ -2222,10 +2228,15 @@ function handleAttach() {
 
 function handleBeforeDetach() {
   triggerMethodChildren(this, 'before:detach', shouldTriggerDetach);
+  triggerDOMRemove(this);
 }
 
 function handleDetach() {
   triggerMethodChildren(this, 'detach', shouldDetach);
+}
+
+function handleBeforeRender() {
+  triggerDOMRemove(this);
 }
 
 function handleRender() {
@@ -2246,6 +2257,7 @@ function monitorViewEvents(view) {
     'attach': handleAttach,
     'before:detach': handleBeforeDetach,
     'detach': handleDetach,
+    'before:render': handleBeforeRender,
     'render': handleRender
   });
 }
@@ -2566,6 +2578,9 @@ var DomMixin = {
   setInnerContent: function setInnerContent(el, html) {
     Backbone.$(el).html(html);
   },
+  detachEl: function detachEl(el) {
+    Backbone.$(el).detach();
+  },
   removeEl: function removeEl(el) {
     Backbone.$(el).remove();
   },
@@ -2681,8 +2696,6 @@ _.extend(TemplateCache.prototype, DomMixin, {
 // lodash v3, v4, and underscore.js
 var _invoke = _.invokeMap || _.invoke;
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 // MixinOptions
 // - behaviors
 
@@ -2736,11 +2749,15 @@ var BehaviorsMixin = {
   },
   _getBehaviorTriggers: function _getBehaviorTriggers() {
     var triggers = _invoke(this._behaviors, 'getTriggers');
-    return _.extend.apply(_, [{}].concat(_toConsumableArray(triggers)));
+    return _.reduce(triggers, function (memo, _triggers) {
+      return _.extend(memo, _triggers);
+    }, {});
   },
   _getBehaviorEvents: function _getBehaviorEvents() {
     var events = _invoke(this._behaviors, 'getEvents');
-    return _.extend.apply(_, [{}].concat(_toConsumableArray(events)));
+    return _.reduce(events, function (memo, _events) {
+      return _.extend(memo, _events);
+    }, {});
   },
 
 
@@ -2760,12 +2777,26 @@ var BehaviorsMixin = {
   _undelegateBehaviorEntityEvents: function _undelegateBehaviorEntityEvents() {
     _invoke(this._behaviors, 'undelegateEntityEvents');
   },
-  _destroyBehaviors: function _destroyBehaviors(args) {
+  _destroyBehaviors: function _destroyBehaviors() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
     // Call destroy on each behavior after
     // destroying the view.
     // This unbinds event listeners
     // that behaviors have registered for.
-    _invoke.apply(undefined, [this._behaviors, 'destroy'].concat(_toConsumableArray(args)));
+    _invoke.apply(undefined, [this._behaviors, 'destroy'].concat(args));
+  },
+
+
+  // Remove a behavior
+  _removeBehavior: function _removeBehavior(behavior) {
+    // Don't worry about the clean up if the view is destroyed
+    if (this._isDestroyed) {
+      return;
+    }
+    this._behaviors = _.without(this._behaviors, behavior);
   },
   _bindBehaviorUIElements: function _bindBehaviorUIElements() {
     _invoke(this._behaviors, 'bindUIElements');
@@ -2824,6 +2855,7 @@ var getUniqueEventName = function getUniqueEventName(eventName) {
 // Add Feature flags here
 // e.g. 'class' => false
 var FEATURES = {
+  childViewEventPrefix: true,
   triggersStopPropagation: true,
   triggersPreventDefault: true
 };
@@ -3144,10 +3176,12 @@ var ViewMixin = {
     // remove children after the remove to prevent extra paints
     this._removeChildren();
 
-    this._destroyBehaviors(args);
-
     this._isDestroyed = true;
     this._isRendered = false;
+
+    // Destroy behaviors after _isDestroyed flag
+    this._destroyBehaviors.apply(this, args);
+
     this.triggerMethod.apply(this, ['destroy', this].concat(args));
 
     this.stopListening();
@@ -3176,7 +3210,10 @@ var ViewMixin = {
 
   // used as the prefix for child view events
   // that are forwarded through the layoutview
-  childViewEventPrefix: 'childview',
+  childViewEventPrefix: function childViewEventPrefix() {
+    return isEnabled('childViewEventPrefix') ? 'childview' : false;
+  },
+
 
   // import the `triggerMethod` to trigger events with corresponding
   // methods if the method exists
@@ -3264,6 +3301,7 @@ var Region = MarionetteObject.extend({
   cidPrefix: 'mnr',
   replaceElement: false,
   _isReplaced: false,
+  _isSwappingView: false,
 
   constructor: function constructor(options) {
     this._setOptions(options);
@@ -3302,6 +3340,8 @@ var Region = MarionetteObject.extend({
       return this;
     }
 
+    this._isSwappingView = !!this.currentView;
+
     this.triggerMethod('before:show', this, view, options);
 
     // Assume an attached view is already in the region for pre-existing DOM
@@ -3318,6 +3358,9 @@ var Region = MarionetteObject.extend({
     this.currentView = view;
 
     this.triggerMethod('show', this, view, options);
+
+    this._isSwappingView = false;
+
     return this;
   },
   _setupChildView: function _setupChildView(view) {
@@ -3469,7 +3512,7 @@ var Region = MarionetteObject.extend({
       return;
     }
 
-    this.replaceEl(this.el, view.el);
+    this._detachView(view);
 
     this._isReplaced = false;
   },
@@ -3478,6 +3521,12 @@ var Region = MarionetteObject.extend({
   // Check to see if the region's el was replaced.
   isReplaced: function isReplaced() {
     return !!this._isReplaced;
+  },
+
+
+  // Check to see if a view is being swapped by another
+  isSwappingView: function isSwappingView() {
+    return !!this._isSwappingView;
   },
 
 
@@ -3521,7 +3570,11 @@ var Region = MarionetteObject.extend({
     delete this.currentView;
 
     if (!view._isDestroyed) {
-      this._removeView(view, shouldDestroy);
+      if (shouldDestroy) {
+        this.removeView(view);
+      } else {
+        this._detachView(view);
+      }
       this._stopChildViewEvents(view);
     }
 
@@ -3536,10 +3589,9 @@ var Region = MarionetteObject.extend({
 
     this._parentView.stopListening(view);
   },
-  _removeView: function _removeView(view, shouldDestroy) {
-    if (!shouldDestroy) {
-      this._detachView(view);
-      return;
+  destroyView: function destroyView(view) {
+    if (view._isDestroyed) {
+      return view;
     }
 
     if (view.destroy) {
@@ -3547,7 +3599,15 @@ var Region = MarionetteObject.extend({
     } else {
       destroyBackboneView(view);
     }
+    return view;
   },
+  removeView: function removeView(view) {
+    this.destroyView(view);
+  },
+
+
+  // Empties the Region without destroying the view
+  // Returns the detached view
   detachView: function detachView() {
     var view = this.currentView;
 
@@ -3561,11 +3621,16 @@ var Region = MarionetteObject.extend({
   },
   _detachView: function _detachView(view) {
     var shouldTriggerDetach = !!view._isAttached;
+    var shouldRestoreEl = this._isReplaced;
     if (shouldTriggerDetach) {
       triggerMethodOn(view, 'before:detach', view);
     }
 
-    this.detachHtml();
+    if (shouldRestoreEl) {
+      this.replaceEl(this.el, view.el);
+    } else {
+      this.detachHtml();
+    }
 
     if (shouldTriggerDetach) {
       view._isAttached = false;
@@ -3601,7 +3666,18 @@ var Region = MarionetteObject.extend({
     return this;
   },
   destroy: function destroy(options) {
+    if (this._isDestroyed) {
+      return this;
+    }
+
     this.reset(options);
+
+    if (this._name) {
+      this._parentView._removeReferences(this._name);
+    }
+    delete this._parentView;
+    delete this._name;
+
     return MarionetteObject.prototype.destroy.apply(this, arguments);
   }
 });
@@ -3727,6 +3803,7 @@ var RegionsMixin = {
     this.triggerMethod('before:add:region', this, name, region);
 
     region._parentView = this;
+    region._name = name;
 
     this._regions[name] = region;
 
@@ -3746,7 +3823,7 @@ var RegionsMixin = {
 
   // Remove all regions from the View
   removeRegions: function removeRegions() {
-    var regions = this.getRegions();
+    var regions = this._getRegions();
 
     _.each(this._regions, _.bind(this._removeRegion, this));
 
@@ -3757,10 +3834,14 @@ var RegionsMixin = {
 
     region.destroy();
 
+    this.triggerMethod('remove:region', this, name, region);
+  },
+
+
+  // Called in a region's destroy
+  _removeReferences: function _removeReferences(name) {
     delete this.regions[name];
     delete this._regions[name];
-
-    this.triggerMethod('remove:region', this, name, region);
   },
 
 
@@ -3785,13 +3866,22 @@ var RegionsMixin = {
   // Accepts the region name
   // getRegion('main')
   getRegion: function getRegion(name) {
+    if (!this._isRendered) {
+      this.render();
+    }
     return this._regions[name];
   },
 
 
   // Get all regions
-  getRegions: function getRegions() {
+  _getRegions: function _getRegions() {
     return _.clone(this._regions);
+  },
+  getRegions: function getRegions() {
+    if (!this._isRendered) {
+      this.render();
+    }
+    return this._getRegions();
   },
   showChildView: function showChildView(name, view) {
     var region = this.getRegion(name);
@@ -3860,6 +3950,8 @@ var View = Backbone.View.extend({
     Backbone.View.prototype.constructor.apply(this, args);
 
     this.delegateEntityEvents();
+
+    this._triggerEventOnBehaviors('initialize', this);
   },
 
 
@@ -3965,6 +4057,7 @@ var View = Backbone.View.extend({
 
     // Allow template-less views
     if (template === false) {
+      deprecate('template:false is deprecated.  Use _.noop.');
       return;
     }
 
@@ -3972,8 +4065,14 @@ var View = Backbone.View.extend({
     var data = this.mixinTemplateContext(this.serializeData());
 
     // Render and add to el
-    var html = Renderer.render(template, data, this);
+    var html = this._renderHtml(template, data);
     this.attachElContent(html);
+  },
+
+
+  // Renders the data into the template
+  _renderHtml: function _renderHtml(template, data) {
+    return Renderer.render(template, data, this);
   },
 
 
@@ -4023,7 +4122,12 @@ var View = Backbone.View.extend({
     this.removeRegions();
   },
   _getImmediateChildren: function _getImmediateChildren() {
-    return _.chain(this.getRegions()).map('currentView').compact().value();
+    return _.chain(this._getRegions()).map('currentView').compact().value();
+  }
+}, {
+  // Sets the renderer for the Marionette.View class
+  setRenderer: function setRenderer(renderer) {
+    this.prototype._renderHtml = renderer;
   }
 });
 
@@ -4034,7 +4138,7 @@ _.extend(View.prototype, ViewMixin, RegionsMixin);
 // Borrowing this code from Backbone.Collection:
 // https://github.com/jashkenas/backbone/blob/1.1.2/backbone.js#L962
 
-var methods = ['forEach', 'each', 'map', 'find', 'detect', 'filter', 'select', 'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke', 'toArray', 'first', 'initial', 'rest', 'last', 'without', 'isEmpty', 'pluck', 'reduce'];
+var methods = ['forEach', 'each', 'map', 'find', 'detect', 'filter', 'select', 'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke', 'toArray', 'first', 'initial', 'rest', 'last', 'without', 'isEmpty', 'pluck', 'reduce', 'partition'];
 
 var emulateCollection = function emulateCollection(object, listProperty) {
   _.each(methods, function (method) {
@@ -4210,6 +4314,8 @@ var CollectionView = Backbone.View.extend({
     Backbone.View.prototype.constructor.apply(this, args);
 
     this.delegateEntityEvents();
+
+    this._triggerEventOnBehaviors('initialize', this);
   },
 
 
@@ -4424,8 +4530,6 @@ var CollectionView = Backbone.View.extend({
   // you can pass reorderOnSort: true to only reorder the DOM after a sort instead of
   // rendering all the collectionView.
   reorder: function reorder() {
-    var _this3 = this;
-
     var children = this.children;
     var models = this._filteredSortedModels();
 
@@ -4442,38 +4546,36 @@ var CollectionView = Backbone.View.extend({
     if (anyModelsAdded) {
       this.render();
     } else {
-      (function () {
 
-        var filteredOutModels = [];
+      var filteredOutModels = [];
 
-        // Get the DOM nodes in the same order as the models and
-        // find the model that were children before but aren't in this new order.
-        var elsToReorder = children.reduce(function (viewEls, view) {
-          var index = _.indexOf(models, view.model);
+      // Get the DOM nodes in the same order as the models and
+      // find the model that were children before but aren't in this new order.
+      var elsToReorder = children.reduce(function (viewEls, view) {
+        var index = _.indexOf(models, view.model);
 
-          if (index === -1) {
-            filteredOutModels.push(view.model);
-            return viewEls;
-          }
-
-          view._index = index;
-
-          viewEls[index] = view.el;
-
+        if (index === -1) {
+          filteredOutModels.push(view.model);
           return viewEls;
-        }, new Array(models.length));
+        }
 
-        _this3.triggerMethod('before:reorder', _this3);
+        view._index = index;
 
-        // Since append moves elements that are already in the DOM, appending the elements
-        // will effectively reorder them.
-        _this3._appendReorderedChildren(elsToReorder);
+        viewEls[index] = view.el;
 
-        // remove any views that have been filtered out
-        _this3._removeChildModels(filteredOutModels);
+        return viewEls;
+      }, new Array(models.length));
 
-        _this3.triggerMethod('reorder', _this3);
-      })();
+      this.triggerMethod('before:reorder', this);
+
+      // Since append moves elements that are already in the DOM, appending the elements
+      // will effectively reorder them.
+      this._appendReorderedChildren(elsToReorder);
+
+      // remove any views that have been filtered out
+      this._removeChildModels(filteredOutModels);
+
+      this.triggerMethod('reorder', this);
     }
     return this;
   },
@@ -4494,13 +4596,13 @@ var CollectionView = Backbone.View.extend({
   // Internal method. This checks for any changes in the order of the collection.
   // If the index of any view doesn't match, it will render.
   _sortViews: function _sortViews() {
-    var _this4 = this;
+    var _this3 = this;
 
     var models = this._filteredSortedModels();
 
     // check for any changes in sort order of views
     var orderChanged = _.find(models, function (item, index) {
-      var view = _this4.children.findByModel(item);
+      var view = _this3.children.findByModel(item);
       return !view || view._index !== index;
     });
 
@@ -4599,11 +4701,11 @@ var CollectionView = Backbone.View.extend({
 
   // Filter an array of models, if a filter exists
   _filterModels: function _filterModels(models) {
-    var _this5 = this;
+    var _this4 = this;
 
     if (this.filter) {
       models = _.filter(models, function (model, index) {
-        return _this5._shouldAddChild(model, index);
+        return _this4._shouldAddChild(model, index);
       });
     }
     return models;
@@ -4854,11 +4956,11 @@ var CollectionView = Backbone.View.extend({
 
   // Create a fragment buffer from the currently buffered children
   _createBuffer: function _createBuffer() {
-    var _this6 = this;
+    var _this5 = this;
 
     var elBuffer = this.createBuffer();
     _.each(this._bufferedChildren, function (b) {
-      _this6.appendChildren(elBuffer, b.el);
+      _this5.appendChildren(elBuffer, b.el);
     });
     return elBuffer;
   },
@@ -4947,10 +5049,856 @@ var CollectionView = Backbone.View.extend({
 
 _.extend(CollectionView.prototype, ViewMixin);
 
+// Provide a container to store, retrieve and
+// shut down child views.
+var Container$1 = function Container$1() {
+  this._init();
+};
+
+emulateCollection(Container$1.prototype, '_views');
+
+function stringComparator(comparator, view) {
+  return view.model && view.model.get(comparator);
+}
+
+// Container Methods
+// -----------------
+
+_.extend(Container$1.prototype, {
+
+  // Initializes an empty container
+  _init: function _init() {
+    this._views = [];
+    this._viewsByCid = {};
+    this._indexByModel = {};
+    this._updateLength();
+  },
+
+
+  // Add a view to this container. Stores the view
+  // by `cid` and makes it searchable by the model
+  // cid (and model itself). Additionally it stores
+  // the view by index in the _views array
+  _add: function _add(view) {
+    var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this._views.length;
+
+    var viewCid = view.cid;
+
+    // store the view
+    this._viewsByCid[viewCid] = view;
+
+    // index it by model
+    if (view.model) {
+      this._indexByModel[view.model.cid] = viewCid;
+    }
+
+    // add to end by default
+    this._views.splice(index, 0, view);
+
+    this._updateLength();
+  },
+
+
+  // Sort (mutate) and return the array of the child views.
+  _sort: function _sort(comparator) {
+    if (typeof comparator === 'string') {
+      comparator = _.partial(stringComparator, comparator);
+      return this._sortBy(comparator);
+    }
+
+    if (comparator.length === 1) {
+      return this._sortBy(comparator);
+    }
+
+    return this._views.sort(comparator);
+  },
+
+
+  // Makes `_.sortBy` mutate the array to match `this._views.sort`
+  _sortBy: function _sortBy(comparator) {
+    var sortedViews = _.sortBy(this._views, comparator);
+
+    this._set(sortedViews);
+
+    return sortedViews;
+  },
+
+
+  // Replace array contents without overwriting the reference.
+  _set: function _set(views) {
+    this._views.length = 0;
+
+    this._views.push.apply(this._views, views.slice(0));
+
+    this._updateLength();
+  },
+
+
+  // Find a view by the model that was attached to it.
+  // Uses the model's `cid` to find it.
+  findByModel: function findByModel(model) {
+    return this.findByModelCid(model.cid);
+  },
+
+
+  // Find a view by the `cid` of the model that was attached to it.
+  // Uses the model's `cid` to find the view `cid` and
+  // retrieve the view using it.
+  findByModelCid: function findByModelCid(modelCid) {
+    var viewCid = this._indexByModel[modelCid];
+    return this.findByCid(viewCid);
+  },
+
+
+  // Find a view by index.
+  findByIndex: function findByIndex(index) {
+    return this._views[index];
+  },
+
+
+  // Find the index of a view instance
+  findIndexByView: function findIndexByView(view) {
+    return this._views.indexOf(view);
+  },
+
+
+  // Retrieve a view by its `cid` directly
+  findByCid: function findByCid(cid) {
+    return this._viewsByCid[cid];
+  },
+
+
+  // Remove a view and clean up index references.
+  _remove: function _remove(view) {
+    if (!this._viewsByCid[view.cid]) {
+      return;
+    }
+
+    // delete model index
+    if (view.model) {
+      delete this._indexByModel[view.model.cid];
+    }
+
+    // remove the view from the container
+    delete this._viewsByCid[view.cid];
+
+    var index = this.findIndexByView(view);
+    this._views.splice(index, 1);
+
+    this._updateLength();
+  },
+
+
+  // Update the `.length` attribute on this container
+  _updateLength: function _updateLength() {
+    this.length = this._views.length;
+  }
+});
+
+// Next Collection View
+// ---------------
+
+var ClassOptions$4 = ['behaviors', 'childView', 'childViewEventPrefix', 'childViewEvents', 'childViewOptions', 'childViewTriggers', 'collectionEvents', 'emptyView', 'emptyViewOptions', 'events', 'modelEvents', 'sortWithCollection', 'triggers', 'ui', 'viewComparator', 'viewFilter'];
+
+// A view that iterates over a Backbone.Collection
+// and renders an individual child view for each model.
+var CollectionView$2 = Backbone.View.extend({
+  // flag for maintaining the sorted order of the collection
+  sortWithCollection: true,
+
+  // constructor
+  constructor: function constructor(options) {
+    this._setOptions(options);
+
+    this.mergeOptions(options, ClassOptions$4);
+
+    monitorViewEvents(this);
+
+    this.once('render', this._initialEvents);
+
+    // This children container isn't really used by a render, but it provides
+    // the ability to check `this.children.length` prior to rendering
+    // It also allows for cases where only addChildView is used
+    this._initChildViewStorage();
+    this._initBehaviors();
+
+    var args = Array.prototype.slice.call(arguments);
+    args[0] = this.options;
+    Backbone.View.prototype.constructor.apply(this, args);
+
+    this._initEmptyRegion();
+
+    this.delegateEntityEvents();
+
+    this._triggerEventOnBehaviors('initialize', this);
+  },
+
+
+  // Internal method to set up the `children` object for storing all of the child views
+  _initChildViewStorage: function _initChildViewStorage() {
+    this.children = new Container$1();
+  },
+
+
+  // Create an region to show the emptyView
+  _initEmptyRegion: function _initEmptyRegion() {
+    this.emptyRegion = new Region({ el: this.el });
+
+    this.emptyRegion._parentView = this;
+  },
+
+
+  // Configured the initial events that the collection view binds to.
+  _initialEvents: function _initialEvents() {
+    this.listenTo(this.collection, {
+      'sort': this._onCollectionSort,
+      'reset': this._onCollectionReset,
+      'update': this._onCollectionUpdate
+    });
+  },
+
+
+  // Internal method. This checks for any changes in the order of the collection.
+  // If the index of any view doesn't match, it will re-sort.
+  _onCollectionSort: function _onCollectionSort() {
+    var _this = this;
+
+    if (!this.sortWithCollection) {
+      return;
+    }
+
+    // If the data is changing we will handle the sort later
+    if (this.collection.length !== this.children.length) {
+      return;
+    }
+
+    // Additional check if the data is changing
+    var hasAddedModel = this.collection.some(function (model) {
+      return !_this.children.findByModel(model);
+    });
+
+    if (hasAddedModel) {
+      return;
+    }
+
+    // If the only thing happening here is sorting, sort.
+    this.sort();
+  },
+  _onCollectionReset: function _onCollectionReset() {
+    this.render();
+  },
+
+
+  // Handle collection update model additions and  removals
+  _onCollectionUpdate: function _onCollectionUpdate(collection, options) {
+    var changes = options.changes;
+
+    // Remove first since it'll be a shorter array lookup.
+    var removedViews = this._removeChildModels(changes.removed);
+
+    this._addChildModels(changes.added);
+
+    this._detachChildren(removedViews);
+
+    this._showChildren();
+
+    // Destroy removed child views after all of the render is complete
+    this._removeChildViews(removedViews);
+  },
+  _removeChildModels: function _removeChildModels(models) {
+    return _.map(models, _.bind(this._removeChildModel, this));
+  },
+  _removeChildModel: function _removeChildModel(model) {
+    var view = this.children.findByModel(model);
+
+    this._removeChild(view);
+
+    return view;
+  },
+  _removeChild: function _removeChild(view) {
+    this.triggerMethod('before:remove:child', this, view);
+
+    this.children._remove(view);
+
+    this.triggerMethod('remove:child', this, view);
+  },
+
+
+  // Added views are returned for consistency with _removeChildModels
+  _addChildModels: function _addChildModels(models) {
+    return _.map(models, _.bind(this._addChildModel, this));
+  },
+  _addChildModel: function _addChildModel(model) {
+    var view = this._createChildView(model);
+
+    this._addChild(view);
+
+    return view;
+  },
+  _createChildView: function _createChildView(model) {
+    var ChildView = this._getChildView(model);
+    var childViewOptions = this._getChildViewOptions(model);
+    var view = this.buildChildView(model, ChildView, childViewOptions);
+
+    return view;
+  },
+  _addChild: function _addChild(view, index) {
+    this.triggerMethod('before:add:child', this, view);
+
+    this._setupChildView(view);
+    this.children._add(view, index);
+
+    this.triggerMethod('add:child', this, view);
+  },
+
+
+  // Retrieve the `childView` class
+  // The `childView` property can be either a view class or a function that
+  // returns a view class. If it is a function, it will receive the model that
+  // will be passed to the view instance (created from the returned view class)
+  _getChildView: function _getChildView(child) {
+    var childView = this.childView;
+
+    if (!childView) {
+      throw new MarionetteError({
+        name: 'NoChildViewError',
+        message: 'A "childView" must be specified'
+      });
+    }
+
+    childView = this._getView(childView, child);
+
+    if (!childView) {
+      throw new MarionetteError({
+        name: 'InvalidChildViewError',
+        message: '"childView" must be a view class or a function that returns a view class'
+      });
+    }
+
+    return childView;
+  },
+
+
+  // First check if the `view` is a view class (the common case)
+  // Then check if it's a function (which we assume that returns a view class)
+  _getView: function _getView(view, child) {
+    if (view.prototype instanceof Backbone.View || view === Backbone.View) {
+      return view;
+    } else if (_.isFunction(view)) {
+      return view.call(this, child);
+    }
+  },
+  _getChildViewOptions: function _getChildViewOptions(child) {
+    if (_.isFunction(this.childViewOptions)) {
+      return this.childViewOptions(child);
+    }
+
+    return this.childViewOptions;
+  },
+
+
+  // Build a `childView` for a model in the collection.
+  // Override to customize the build
+  buildChildView: function buildChildView(child, ChildViewClass, childViewOptions) {
+    var options = _.extend({ model: child }, childViewOptions);
+    return new ChildViewClass(options);
+  },
+  _setupChildView: function _setupChildView(view) {
+    monitorViewEvents(view);
+
+    // We need to listen for if a view is destroyed in a way other
+    // than through the CollectionView.
+    // If this happens we need to remove the reference to the view
+    // since once a view has been destroyed we can not reuse it.
+    view.on('destroy', this.removeChildView, this);
+
+    // set up the child view event forwarding
+    this._proxyChildViewEvents(view);
+  },
+
+
+  // used by ViewMixin's `_childViewEventHandler`
+  _getImmediateChildren: function _getImmediateChildren() {
+    return this.children._views;
+  },
+
+
+  // Overriding Backbone.View's `setElement` to handle
+  // if an el was previously defined. If so, the view might be
+  // attached on setElement.
+  setElement: function setElement() {
+    var hasEl = !!this.el;
+
+    Backbone.View.prototype.setElement.apply(this, arguments);
+
+    if (hasEl) {
+      this._isAttached = isNodeAttached(this.el);
+    }
+
+    return this;
+  },
+
+
+  // Render children views.
+  render: function render() {
+    if (this._isDestroyed) {
+      return this;
+    }
+    this.triggerMethod('before:render', this);
+
+    this._destroyChildren();
+
+    // After all children have been destroyed re-init the container
+    this.children._init();
+
+    if (this.collection) {
+      this._addChildModels(this.collection.models);
+    }
+
+    this._showChildren();
+
+    this._isRendered = true;
+
+    this.triggerMethod('render', this);
+    return this;
+  },
+
+
+  // Sorts the children then filters and renders the results.
+  sort: function sort() {
+    if (this._isDestroyed) {
+      return this;
+    }
+
+    if (!this.children.length) {
+      return this;
+    }
+
+    this._showChildren();
+
+    return this;
+  },
+  _showChildren: function _showChildren() {
+    if (this.isEmpty()) {
+      this._showEmptyView();
+      return;
+    }
+
+    this._sortChildren();
+
+    this.filter();
+  },
+
+
+  // Returns true if the collectionView is considered empty.
+  // This is called twice during a render. Once to check the data,
+  // and again when views are filtered. Override this function to
+  // customize what empty means.
+  isEmpty: function isEmpty(allViewsFiltered) {
+    return allViewsFiltered || !this.children.length;
+  },
+  _showEmptyView: function _showEmptyView() {
+    var EmptyView = this._getEmptyView();
+
+    if (!EmptyView) {
+      return;
+    }
+
+    var options = this._getEmptyViewOptions();
+
+    this.emptyRegion.show(new EmptyView(options));
+  },
+
+
+  // Retrieve the empty view class
+  _getEmptyView: function _getEmptyView() {
+    var emptyView = this.emptyView;
+
+    if (!emptyView) {
+      return;
+    }
+
+    return this._getView(emptyView);
+  },
+
+
+  // Remove the emptyView
+  _destroyEmptyView: function _destroyEmptyView() {
+
+    // Only empty if a view is show so the region
+    // doesn't detach any other unrelated HTML
+    if (this.emptyRegion.hasView()) {
+      this.emptyRegion.empty();
+    }
+  },
+
+
+  //
+  _getEmptyViewOptions: function _getEmptyViewOptions() {
+    var emptyViewOptions = this.emptyViewOptions || this.childViewOptions;
+
+    if (_.isFunction(emptyViewOptions)) {
+      return emptyViewOptions.call(this);
+    }
+
+    return emptyViewOptions;
+  },
+
+
+  // Sorts views by viewComparator and sets the children to the new order
+  _sortChildren: function _sortChildren() {
+    this.triggerMethod('before:sort', this);
+
+    var viewComparator = this.getComparator();
+
+    if (_.isFunction(viewComparator)) {
+      // Must use native bind to preserve length
+      viewComparator = viewComparator.bind(this);
+    }
+
+    this.children._sort(viewComparator);
+
+    this.triggerMethod('sort', this);
+  },
+
+
+  // Sets the view's `viewComparator` and applies the sort if the view is ready.
+  // To prevent the render pass `{ preventRender: true }` as the 2nd argument.
+  setComparator: function setComparator(comparator) {
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        preventRender = _ref.preventRender;
+
+    var comparatorChanged = this.viewComparator !== comparator;
+    var shouldSort = comparatorChanged && !preventRender;
+
+    this.viewComparator = comparator;
+
+    if (shouldSort) {
+      this.sort();
+    }
+
+    return this;
+  },
+
+
+  // Clears the `viewComparator` and follows the same rules for rendering as `setComparator`.
+  removeComparator: function removeComparator(options) {
+    return this.setComparator(null, options);
+  },
+
+
+  // If viewComparator is overriden it will be returned here.
+  // Additionally override this function to provide custom
+  // viewComparator logic
+  getComparator: function getComparator() {
+    return this.viewComparator || this._viewComparator;
+  },
+
+
+  // Default internal view comparator that order the views by
+  // the order of the collection
+  _viewComparator: function _viewComparator(view) {
+    if (!this.collection) {
+      return;
+    }
+    return this.collection.indexOf(view.model);
+  },
+
+
+  // This method re-filters the children views and re-renders the results
+  filter: function filter() {
+    if (this._isDestroyed) {
+      return this;
+    }
+
+    if (!this.children.length) {
+      return this;
+    }
+
+    var filteredViews = this._filterChildren();
+
+    this._renderChildren(filteredViews);
+
+    return this;
+  },
+  _filterChildren: function _filterChildren() {
+    var viewFilter = this._getFilter();
+
+    if (!viewFilter) {
+      return this.children._views;
+    }
+
+    this.triggerMethod('before:filter', this);
+
+    var filteredViews = this.children.partition(_.bind(viewFilter, this));
+
+    this._detachChildren(filteredViews[1]);
+
+    this.triggerMethod('filter', this);
+
+    return filteredViews[0];
+  },
+
+
+  // This method returns a function for the viewFilter
+  _getFilter: function _getFilter() {
+    var viewFilter = this.getFilter();
+
+    if (!viewFilter) {
+      return false;
+    }
+
+    if (_.isFunction(viewFilter)) {
+      return viewFilter;
+    }
+
+    // Support filter predicates `{ fooFlag: true }`
+    if (_.isObject(viewFilter)) {
+      var matcher = _.matches(viewFilter);
+      return function (view) {
+        return matcher(view.model && view.model.attributes);
+      };
+    }
+
+    // Filter by model attribute
+    if (_.isString(viewFilter)) {
+      return function (view) {
+        return view.model && view.model.get(viewFilter);
+      };
+    }
+
+    throw new MarionetteError({
+      name: 'InvalidViewFilterError',
+      message: '"viewFilter" must be a function, predicate object literal, a string indicating a model attribute, or falsy'
+    });
+  },
+
+
+  // Override this function to provide custom
+  // viewFilter logic
+  getFilter: function getFilter() {
+    return this.viewFilter;
+  },
+
+
+  // Sets the view's `viewFilter` and applies the filter if the view is ready.
+  // To prevent the render pass `{ preventRender: true }` as the 2nd argument.
+  setFilter: function setFilter(filter) {
+    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        preventRender = _ref2.preventRender;
+
+    var filterChanged = this.viewFilter !== filter;
+    var shouldRender = filterChanged && !preventRender;
+
+    this.viewFilter = filter;
+
+    if (shouldRender) {
+      this.filter();
+    }
+
+    return this;
+  },
+
+
+  // Clears the `viewFilter` and follows the same rules for rendering as `setFilter`.
+  removeFilter: function removeFilter(options) {
+    return this.setFilter(null, options);
+  },
+  _detachChildren: function _detachChildren(detachingViews) {
+    _.each(detachingViews, _.bind(this._detachChildView, this));
+  },
+  _detachChildView: function _detachChildView(view) {
+    var shouldTriggerDetach = !!view._isAttached;
+    if (shouldTriggerDetach) {
+      triggerMethodOn(view, 'before:detach', view);
+    }
+
+    this.detachHtml(view);
+
+    if (shouldTriggerDetach) {
+      view._isAttached = false;
+      triggerMethodOn(view, 'detach', view);
+    }
+  },
+
+
+  // Override this method to change how the collectionView detaches a child view
+  detachHtml: function detachHtml(view) {
+    this.detachEl(view.el);
+  },
+  _renderChildren: function _renderChildren(views) {
+    if (this.isEmpty(!views.length)) {
+      this._showEmptyView();
+      return;
+    }
+
+    this._destroyEmptyView();
+
+    this.triggerMethod('before:render:children', this, views);
+
+    var els = this._getBuffer(views);
+
+    this._attachChildren(els, views);
+
+    this.triggerMethod('render:children', this, views);
+  },
+  _attachChildren: function _attachChildren(els, views) {
+    var shouldTriggerAttach = !!this._isAttached;
+
+    views = shouldTriggerAttach ? views : [];
+
+    _.each(views, function (view) {
+      if (view._isAttached) {
+        return;
+      }
+      triggerMethodOn(view, 'before:attach', view);
+    });
+
+    this.attachHtml(this, els);
+
+    _.each(views, function (view) {
+      if (view._isAttached) {
+        return;
+      }
+      view._isAttached = true;
+      triggerMethodOn(view, 'attach', view);
+    });
+  },
+
+
+  // Renders each view in children and creates a fragment buffer from them
+  _getBuffer: function _getBuffer(views) {
+    var _this2 = this;
+
+    var elBuffer = this.createBuffer();
+
+    _.each(views, function (view) {
+      _this2._renderChildView(view);
+      _this2.appendChildren(elBuffer, view.el);
+    });
+
+    return elBuffer;
+  },
+  _renderChildView: function _renderChildView(view) {
+    if (view._isRendered) {
+      return;
+    }
+
+    if (!view.supportsRenderLifecycle) {
+      triggerMethodOn(view, 'before:render', view);
+    }
+
+    view.render();
+
+    if (!view.supportsRenderLifecycle) {
+      view._isRendered = true;
+      triggerMethodOn(view, 'render', view);
+    }
+  },
+
+
+  // Override this method to do something other than `.append`.
+  // You can attach any HTML at this point including the els.
+  attachHtml: function attachHtml(collectionView, els) {
+    this.appendChildren(collectionView.el, els);
+  },
+
+
+  // Render the child's view and add it to the HTML for the collection view at a given index, based on the current sort
+  addChildView: function addChildView(view, index) {
+    if (!view || view._isDestroyed) {
+      return view;
+    }
+
+    this._addChild(view, index);
+    this._showChildren();
+
+    return view;
+  },
+
+
+  // Detach a view from the children.  Best used when adding a
+  // childView from `addChildView`
+  detachChildView: function detachChildView(view) {
+    this.removeChildView(view, { shouldDetach: true });
+
+    return view;
+  },
+
+
+  // Remove the child view and destroy it.  Best used when adding a
+  // childView from `addChildView`
+  // The options argument is for internal use only
+  removeChildView: function removeChildView(view, options) {
+    if (!view) {
+      return view;
+    }
+
+    this._removeChildView(view, options);
+
+    this._removeChild(view);
+
+    if (this.isEmpty()) {
+      this._showEmptyView();
+    }
+
+    return view;
+  },
+  _removeChildViews: function _removeChildViews(views) {
+    _.each(views, _.bind(this._removeChildView, this));
+  },
+  _removeChildView: function _removeChildView(view) {
+    var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        shouldDetach = _ref3.shouldDetach;
+
+    view.off('destroy', this.removeChildView, this);
+
+    if (shouldDetach) {
+      this._detachChildView(view);
+    } else {
+      this._destroyChildView(view);
+    }
+
+    this.stopListening(view);
+  },
+  _destroyChildView: function _destroyChildView(view) {
+    if (view._isDestroyed) {
+      return;
+    }
+
+    if (view.destroy) {
+      view.destroy();
+    } else {
+      destroyBackboneView(view);
+    }
+  },
+
+
+  // called by ViewMixin destroy
+  _removeChildren: function _removeChildren() {
+    this._destroyChildren();
+    this.emptyRegion.destroy();
+  },
+
+
+  // Destroy the child views that this collection view is holding on to, if any
+  _destroyChildren: function _destroyChildren() {
+    if (!this.children || !this.children.length) {
+      return;
+    }
+
+    this.triggerMethod('before:destroy:children', this);
+    this.children.each(_.bind(this._removeChildView, this));
+    this.triggerMethod('destroy:children', this);
+  }
+});
+
+_.extend(CollectionView$2.prototype, ViewMixin);
+
 // Composite View
 // --------------
 
-var ClassOptions$4 = ['childViewContainer', 'template', 'templateContext'];
+var ClassOptions$5 = ['childViewContainer', 'template', 'templateContext'];
 
 // Used for rendering a branch-leaf, hierarchical structure.
 // Extends directly from CollectionView
@@ -4965,7 +5913,7 @@ var CompositeView = CollectionView.extend({
   constructor: function constructor(options) {
     deprecate('CompositeView is deprecated. Convert to View at your earliest convenience');
 
-    this.mergeOptions(options, ClassOptions$4);
+    this.mergeOptions(options, ClassOptions$5);
 
     CollectionView.prototype.constructor.apply(this, arguments);
   },
@@ -5121,7 +6069,7 @@ var CompositeView = CollectionView.extend({
 
 // To prevent duplication but allow the best View organization
 // Certain View methods are mixed directly into the deprecated CompositeView
-var MixinFromView = _.pick(View.prototype, 'serializeModel', 'getTemplate', '_renderTemplate', 'mixinTemplateContext', 'attachElContent');
+var MixinFromView = _.pick(View.prototype, 'serializeModel', 'getTemplate', '_renderTemplate', '_renderHtml', 'mixinTemplateContext', 'attachElContent');
 _.extend(CompositeView.prototype, MixinFromView);
 
 // Behavior
@@ -5132,7 +6080,7 @@ _.extend(CompositeView.prototype, MixinFromView);
 // Behaviors allow you to blackbox View specific interactions
 // into portable logical chunks, keeping your views simple and your code DRY.
 
-var ClassOptions$5 = ['collectionEvents', 'events', 'modelEvents', 'triggers', 'ui'];
+var ClassOptions$6 = ['collectionEvents', 'events', 'modelEvents', 'triggers', 'ui'];
 
 var Behavior = MarionetteObject.extend({
   cidPrefix: 'mnb',
@@ -5143,9 +6091,15 @@ var Behavior = MarionetteObject.extend({
     // wants to directly talk up the chain
     // to the view.
     this.view = view;
+
+    if (this.defaults) {
+      deprecate('Behavior defaults are deprecated. For similar functionality set options on the Behavior class.');
+    }
+
     this.defaults = _.clone(_.result(this, 'defaults', {}));
+
     this._setOptions(this.defaults, options);
-    this.mergeOptions(this.options, ClassOptions$5);
+    this.mergeOptions(this.options, ClassOptions$6);
 
     // Construct an internal UI hash using
     // the behaviors UI hash and then the view UI hash.
@@ -5173,6 +6127,8 @@ var Behavior = MarionetteObject.extend({
   // Overrides Object#destroy to prevent additional events from being triggered.
   destroy: function destroy() {
     this.stopListening();
+
+    this.view._removeBehavior(this);
 
     return this;
   },
@@ -5248,7 +6204,7 @@ _.extend(Behavior.prototype, DelegateEntityEventsMixin, TriggersMixin, UIMixin);
 
 // Application
 // -----------
-var ClassOptions$6 = ['region', 'regionClass'];
+var ClassOptions$7 = ['region', 'regionClass'];
 
 // A container for a Marionette application.
 var Application = MarionetteObject.extend({
@@ -5257,7 +6213,7 @@ var Application = MarionetteObject.extend({
   constructor: function constructor(options) {
     this._setOptions(options);
 
-    this.mergeOptions(options, ClassOptions$6);
+    this.mergeOptions(options, ClassOptions$7);
 
     this._initRegion();
 
@@ -5324,13 +6280,13 @@ var Application = MarionetteObject.extend({
 //
 // You can also add standard routes to an AppRouter.
 
-var ClassOptions$7 = ['appRoutes', 'controller'];
+var ClassOptions$8 = ['appRoutes', 'controller'];
 
 var AppRouter = Backbone.Router.extend({
   constructor: function constructor(options) {
     this._setOptions(options);
 
-    this.mergeOptions(options, ClassOptions$7);
+    this.mergeOptions(options, ClassOptions$8);
 
     Backbone.Router.apply(this, arguments);
 
@@ -5454,6 +6410,7 @@ Marionette.Renderer = Renderer;
 Marionette.TemplateCache = TemplateCache;
 Marionette.View = View;
 Marionette.CollectionView = CollectionView;
+Marionette.NextCollectionView = CollectionView$2;
 Marionette.CompositeView = CompositeView;
 Marionette.Behavior = Behavior;
 Marionette.Region = Region;
@@ -5471,7 +6428,7 @@ return Marionette;
 
 
 
-},{"backbone":11,"backbone.radio":7,"underscore":92}],7:[function(require,module,exports){
+},{"backbone":11,"backbone.radio":7,"underscore":135}],7:[function(require,module,exports){
 // Backbone.Radio v2.0.0
 
 (function (global, factory) {
@@ -5822,7 +6779,7 @@ return Marionette;
 
 }));
 
-},{"backbone":11,"underscore":92}],8:[function(require,module,exports){
+},{"backbone":11,"underscore":135}],8:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('backbone.radio'), require('underscore'), require('backbone-metal-classify'), require('es6-promise')) : typeof define === 'function' && define.amd ? define(['backbone.radio', 'underscore', 'backbone-metal-classify', 'es6-promise'], factory) : global.Backbone.Service = factory(global.Radio, global._, global.classify, global.PromisePolyfill);
 })(this, function (Radio, _, classify, PromisePolyfill) {
@@ -5891,7 +6848,7 @@ return Marionette;
   return backbone_service;
 });
 
-},{"backbone-metal-classify":1,"backbone.radio":7,"es6-promise":12,"underscore":92}],9:[function(require,module,exports){
+},{"backbone-metal-classify":1,"backbone.radio":7,"es6-promise":12,"underscore":135}],9:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory(require("backbone"), require("backbone-metal")) : typeof define === "function" && define.amd ? define(["backbone", "backbone-metal"], factory) : global.Backbone.Storage = factory(global.Backbone, global.Metal);
 })(this, function (Backbone, Metal) {
@@ -6226,9 +7183,9 @@ return Marionette;
   // Otherwise, get the form fields from the view.
   var getForm = function(viewOrForm) {
     if (_.isUndefined(viewOrForm.$el)) {
-      return $(viewOrForm).find('input,textarea');
+      return $(viewOrForm).find('input,textarea,select,button');
     } else {
-      return viewOrForm.$('input,textarea');
+      return viewOrForm.$('input,textarea,select,button');
     }
   };
 
@@ -6542,7 +7499,7 @@ return Marionette;
   return Backbone.Syphon;
 }));
 
-},{"backbone":11,"jquery":49,"underscore":92}],11:[function(require,module,exports){
+},{"backbone":11,"jquery":49,"underscore":135}],11:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.3.3
 
@@ -8466,7 +9423,7 @@ return Marionette;
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":49,"underscore":92}],12:[function(require,module,exports){
+},{"jquery":49,"underscore":135}],12:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -9442,7 +10399,7 @@ return Marionette;
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":91}],13:[function(require,module,exports){
+},{"_process":123}],13:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -9533,7 +10490,7 @@ var _logger = require('./logger');
 
 var _logger2 = _interopRequireDefault(_logger);
 
-var VERSION = '4.0.5';
+var VERSION = '4.0.10';
 exports.VERSION = VERSION;
 var COMPILER_REVISION = 7;
 
@@ -9702,7 +10659,10 @@ function Exception(message, node) {
       // Work around issue under safari where we can't directly set the column value
       /* istanbul ignore next */
       if (Object.defineProperty) {
-        Object.defineProperty(this, 'column', { value: column });
+        Object.defineProperty(this, 'column', {
+          value: column,
+          enumerable: true
+        });
       } else {
         this.column = column;
       }
@@ -10259,6 +11219,8 @@ function template(templateSpec, env) {
 
       return obj;
     },
+    // An empty object to use as replacement for null-contexts
+    nullContext: Object.seal({}),
 
     noop: env.VM.noop,
     compilerInfo: templateSpec.compiler
@@ -10326,7 +11288,7 @@ function wrapProgram(container, i, fn, data, declaredBlockParams, blockParams, d
     var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
     var currentDepths = depths;
-    if (depths && context != depths[0]) {
+    if (depths && context != depths[0] && !(context === container.nullContext && depths[0] === null)) {
       currentDepths = [context].concat(depths);
     }
 
@@ -10344,12 +11306,7 @@ function wrapProgram(container, i, fn, data, declaredBlockParams, blockParams, d
 function resolvePartial(partial, context, options) {
   if (!partial) {
     if (options.name === '@partial-block') {
-      var data = options.data;
-      while (data['partial-block'] === noop) {
-        data = data._parent;
-      }
-      partial = data['partial-block'];
-      data['partial-block'] = noop;
+      partial = options.data['partial-block'];
     } else {
       partial = options.partials[options.name];
     }
@@ -10362,6 +11319,8 @@ function resolvePartial(partial, context, options) {
 }
 
 function invokePartial(partial, context, options) {
+  // Use the current closure context to save the partial-block if this partial
+  var currentPartialBlock = options.data && options.data['partial-block'];
   options.partial = true;
   if (options.ids) {
     options.data.contextPath = options.ids[0] || options.data.contextPath;
@@ -10369,12 +11328,23 @@ function invokePartial(partial, context, options) {
 
   var partialBlock = undefined;
   if (options.fn && options.fn !== noop) {
-    options.data = _base.createFrame(options.data);
-    partialBlock = options.data['partial-block'] = options.fn;
+    (function () {
+      options.data = _base.createFrame(options.data);
+      // Wrapper function to get access to currentPartialBlock from the closure
+      var fn = options.fn;
+      partialBlock = options.data['partial-block'] = function partialBlockWrapper(context) {
+        var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-    if (partialBlock.partials) {
-      options.partials = Utils.extend({}, options.partials, partialBlock.partials);
-    }
+        // Restore the partial-block from the closure for the execution of the block
+        // i.e. the part inside the block of the partial call.
+        options.data = _base.createFrame(options.data);
+        options.data['partial-block'] = currentPartialBlock;
+        return fn(context, options);
+      };
+      if (fn.partials) {
+        options.partials = Utils.extend({}, options.partials, fn.partials);
+      }
+    })();
   }
 
   if (partial === undefined && partialBlock) {
@@ -21900,6 +22870,255 @@ return jQuery;
 }));
 
 },{}],50:[function(require,module,exports){
+var root = require('./_root');
+
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+module.exports = Symbol;
+
+},{"./_root":57}],51:[function(require,module,exports){
+var Symbol = require('./_Symbol'),
+    getRawTag = require('./_getRawTag'),
+    objectToString = require('./_objectToString');
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
+},{"./_Symbol":50,"./_getRawTag":54,"./_objectToString":55}],52:[function(require,module,exports){
+(function (global){
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+module.exports = freeGlobal;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],53:[function(require,module,exports){
+var overArg = require('./_overArg');
+
+/** Built-in value references. */
+var getPrototype = overArg(Object.getPrototypeOf, Object);
+
+module.exports = getPrototype;
+
+},{"./_overArg":56}],54:[function(require,module,exports){
+var Symbol = require('./_Symbol');
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
+  }
+  return result;
+}
+
+module.exports = getRawTag;
+
+},{"./_Symbol":50}],55:[function(require,module,exports){
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+module.exports = objectToString;
+
+},{}],56:[function(require,module,exports){
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+module.exports = overArg;
+
+},{}],57:[function(require,module,exports){
+var freeGlobal = require('./_freeGlobal');
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+},{"./_freeGlobal":52}],58:[function(require,module,exports){
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+},{}],59:[function(require,module,exports){
+var baseGetTag = require('./_baseGetTag'),
+    getPrototype = require('./_getPrototype'),
+    isObjectLike = require('./isObjectLike');
+
+/** `Object#toString` result references. */
+var objectTag = '[object Object]';
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to infer the `Object` constructor. */
+var objectCtorString = funcToString.call(Object);
+
+/**
+ * Checks if `value` is a plain object, that is, an object created by the
+ * `Object` constructor or one with a `[[Prototype]]` of `null`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.8.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * _.isPlainObject(new Foo);
+ * // => false
+ *
+ * _.isPlainObject([1, 2, 3]);
+ * // => false
+ *
+ * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * // => true
+ *
+ * _.isPlainObject(Object.create(null));
+ * // => true
+ */
+function isPlainObject(value) {
+  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
+    return false;
+  }
+  var proto = getPrototype(value);
+  if (proto === null) {
+    return true;
+  }
+  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
+    funcToString.call(Ctor) == objectCtorString;
+}
+
+module.exports = isPlainObject;
+
+},{"./_baseGetTag":51,"./_getPrototype":53,"./isObjectLike":58}],60:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -38987,12 +40206,52 @@ return jQuery;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],51:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Bulgarian
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'bg',
+        cultureCode: 'bg',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'И',
+            million: 'А',
+            billion: 'M',
+            trillion: 'T'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'лв.'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        this.numbro.culture('bg', language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],62:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Czech
  * locale: Czech Republic
- * author : Anatoli Papirovski : https://github.com/apapirovski
+ * author : Jan Pesa : https://github.com/smajl (based on work from Anatoli Papirovski : https://github.com/apapirovski)
  */
 (function () {
     'use strict';
@@ -39001,21 +40260,22 @@ return jQuery;
         langLocaleCode: 'cs-CZ',
         cultureCode: 'cs-CZ',
         delimiters: {
-            thousands: ' ',
+            thousands: '\u00a0',
             decimal: ','
         },
         abbreviations: {
             thousand: 'tis.',
             million: 'mil.',
-            billion: 'b',
-            trillion: 't'
+            billion: 'mld.',
+            trillion: 'bil.'
         },
         ordinal: function () {
             return '.';
         },
         currency: {
             symbol: 'Kč',
-            position: 'postfix'
+            position: 'postfix',
+            spaceSeparated: true
         },
         defaults: {
             currencyFormat: ',4 a'
@@ -39038,7 +40298,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],52:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Danish
@@ -39089,7 +40349,48 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],53:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : German
+ * locale: Austria
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'de-AT',
+        cultureCode: 'de-AT',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '€'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],65:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -39140,7 +40441,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],54:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : German
@@ -39194,7 +40495,98 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],55:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : German
+ * locale: Liechtenstein
+ * author : Michael Piefel : https://github.com/piefel (based on work from Marco Krage : https://github.com/sinky)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'de-LI',
+        cultureCode: 'de-LI',
+        delimiters: {
+            thousands: '\'',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'CHF',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],68:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Greek (el)
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'el',
+        cultureCode: 'el',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'χ',
+            million: 'ε',
+            billion: 'δ',
+            trillion: 'τ'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '€'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('el', language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],69:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -39249,7 +40641,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],56:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -39304,7 +40696,52 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],57:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
+/*!
++ * numbro.js language configuration
+ * language : English
+ * locale: Ireland
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'en-IE',
+        cultureCode: 'en-IE',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (~~(number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                    (b === 2) ? 'nd' :
+                        (b === 3) ? 'rd' : 'th';
+        },
+        currency: {
+            symbol: '€'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('en-gb', language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],72:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -39359,7 +40796,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],58:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : English
@@ -39373,8 +40810,8 @@ return jQuery;
         langLocaleCode: 'en-ZA',
         cultureCode: 'en-ZA',
         delimiters: {
-            thousands: ',',
-            decimal: '.'
+            thousands: ' ',
+            decimal: ','
         },
         abbreviations: {
             thousand: 'k',
@@ -39414,7 +40851,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],59:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -39470,7 +40907,175 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],60:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Spanish
+ * locale: Chile
+ * author : Gwyn Judd : https://github.com/gwynjudd
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'es-CL',
+        cultureCode: 'es-CL',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (b === 1 || b === 3) ? 'er' :
+                (b === 2) ? 'do' :
+                    (b === 7 || b === 0) ? 'mo' :
+                        (b === 8) ? 'vo' :
+                            (b === 9) ? 'no' : 'to';
+        },
+        currency: {
+            symbol: '$',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: '$0,0'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],76:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Spanish
+ * locale: Colombia
+ * author : Gwyn Judd : https://github.com/gwynjudd
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'es-CO',
+        cultureCode: 'es-CO',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (b === 1 || b === 3) ? 'er' :
+                (b === 2) ? 'do' :
+                    (b === 7 || b === 0) ? 'mo' :
+                        (b === 8) ? 'vo' :
+                            (b === 9) ? 'no' : 'to';
+        },
+        currency: {
+            symbol: '€',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],77:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Spanish
+ * locale: Costa Rica
+ * author : Gwyn Judd : https://github.com/gwynjudd
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'es-CR',
+        cultureCode: 'es-CR',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (b === 1 || b === 3) ? 'er' :
+                (b === 2) ? 'do' :
+                    (b === 7 || b === 0) ? 'mo' :
+                        (b === 8) ? 'vo' :
+                            (b === 9) ? 'no' : 'to';
+        },
+        currency: {
+            symbol: '₡',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],78:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Spanish
@@ -39526,7 +41131,231 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],61:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Spanish
+ * locale: Nicaragua
+ * author : Gwyn Judd : https://github.com/gwynjudd
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'es-NI',
+        cultureCode: 'es-NI',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (b === 1 || b === 3) ? 'er' :
+                (b === 2) ? 'do' :
+                    (b === 7 || b === 0) ? 'mo' :
+                        (b === 8) ? 'vo' :
+                            (b === 9) ? 'no' : 'to';
+        },
+        currency: {
+            symbol: 'C$',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],80:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Spanish
+ * locale: Peru
+ * author : Gwyn Judd : https://github.com/gwynjudd
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'es-PE',
+        cultureCode: 'es-PE',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (b === 1 || b === 3) ? 'er' :
+                (b === 2) ? 'do' :
+                    (b === 7 || b === 0) ? 'mo' :
+                        (b === 8) ? 'vo' :
+                            (b === 9) ? 'no' : 'to';
+        },
+        currency: {
+            symbol: 'S/.',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],81:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Spanish
+ * locale: Puerto Rico
+ * author : Gwyn Judd : https://github.com/gwynjudd
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'es-PR',
+        cultureCode: 'es-PR',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (b === 1 || b === 3) ? 'er' :
+                (b === 2) ? 'do' :
+                    (b === 7 || b === 0) ? 'mo' :
+                        (b === 8) ? 'vo' :
+                            (b === 9) ? 'no' : 'to';
+        },
+        currency: {
+            symbol: '$',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],82:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Spanish
+ * locale: El Salvador
+ * author : Gwyn Judd : https://github.com/gwynjudd
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'es-SV',
+        cultureCode: 'es-SV',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'mm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function (number) {
+            var b = number % 10;
+            return (b === 1 || b === 3) ? 'er' :
+                (b === 2) ? 'do' :
+                    (b === 7 || b === 0) ? 'mo' :
+                        (b === 8) ? 'vo' :
+                            (b === 9) ? 'no' : 'to';
+        },
+        currency: {
+            symbol: '$',
+            position: 'prefix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],83:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Estonian
@@ -39580,7 +41409,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],62:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Farsi
@@ -39621,7 +41450,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],63:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Finnish
@@ -39672,7 +41501,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],64:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Filipino (Pilipino)
@@ -39717,7 +41546,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],65:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : French
@@ -39769,7 +41598,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],66:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : French
@@ -39783,7 +41612,7 @@ return jQuery;
         langLocaleCode: 'fr-CH',
         cultureCode: 'fr-CH',
         delimiters: {
-            thousands: '\'',
+            thousands: ' ',
             decimal: '.'
         },
         abbreviations: {
@@ -39820,7 +41649,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],67:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : French
@@ -39871,7 +41700,7 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],68:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Hebrew
@@ -39920,7 +41749,7 @@ return jQuery;
 }.call(typeof window === 'undefined' ? this : window));
 
 
-},{}],69:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Hungarian
@@ -39971,17 +41800,70 @@ return jQuery;
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],70:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Indonesian
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'id',
+        cultureCode: 'id',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'r',
+            million: 'j',
+            billion: 'm',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'Rp'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('id', language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],93:[function(require,module,exports){
+/* jshint sub: true */
+exports['bg'] = require('./bg.js');
 exports['cs-CZ'] = require('./cs-CZ.js');
 exports['da-DK'] = require('./da-DK.js');
+exports['de-AT'] = require('./de-AT.js');
 exports['de-CH'] = require('./de-CH.js');
 exports['de-DE'] = require('./de-DE.js');
+exports['de-LI'] = require('./de-LI.js');
+exports['el'] = require('./el.js');
 exports['en-AU'] = require('./en-AU.js');
 exports['en-GB'] = require('./en-GB.js');
+exports['en-IE'] = require('./en-IE.js');
 exports['en-NZ'] = require('./en-NZ.js');
 exports['en-ZA'] = require('./en-ZA.js');
 exports['es-AR'] = require('./es-AR.js');
+exports['es-CL'] = require('./es-CL.js');
+exports['es-CO'] = require('./es-CO.js');
+exports['es-CR'] = require('./es-CR.js');
 exports['es-ES'] = require('./es-ES.js');
+exports['es-NI'] = require('./es-NI.js');
+exports['es-PE'] = require('./es-PE.js');
+exports['es-PR'] = require('./es-PR.js');
+exports['es-SV'] = require('./es-SV.js');
 exports['et-EE'] = require('./et-EE.js');
 exports['fa-IR'] = require('./fa-IR.js');
 exports['fi-FI'] = require('./fi-FI.js');
@@ -39991,26 +41873,77 @@ exports['fr-CH'] = require('./fr-CH.js');
 exports['fr-FR'] = require('./fr-FR.js');
 exports['he-IL'] = require('./he-IL.js');
 exports['hu-HU'] = require('./hu-HU.js');
+exports['id'] = require('./id.js');
+exports['it-CH'] = require('./it-CH.js');
 exports['it-IT'] = require('./it-IT.js');
 exports['ja-JP'] = require('./ja-JP.js');
 exports['ko-KR'] = require('./ko-KR.js');
 exports['lv-LV'] = require('./lv-LV.js');
 exports['nb-NO'] = require('./nb-NO.js');
+exports['nb'] = require('./nb.js');
 exports['nl-BE'] = require('./nl-BE.js');
 exports['nl-NL'] = require('./nl-NL.js');
+exports['nn'] = require('./nn.js');
 exports['pl-PL'] = require('./pl-PL.js');
 exports['pt-BR'] = require('./pt-BR.js');
 exports['pt-PT'] = require('./pt-PT.js');
+exports['ro-RO'] = require('./ro-RO.js');
+exports['ro'] = require('./ro.js');
 exports['ru-RU'] = require('./ru-RU.js');
 exports['ru-UA'] = require('./ru-UA.js');
 exports['sk-SK'] = require('./sk-SK.js');
+exports['sl'] = require('./sl.js');
+exports['sr-Cyrl-RS'] = require('./sr-Cyrl-RS.js');
 exports['sv-SE'] = require('./sv-SE.js');
 exports['th-TH'] = require('./th-TH.js');
 exports['tr-TR'] = require('./tr-TR.js');
 exports['uk-UA'] = require('./uk-UA.js');
 exports['zh-CN'] = require('./zh-CN.js');
+exports['zh-MO'] = require('./zh-MO.js');
+exports['zh-SG'] = require('./zh-SG.js');
 exports['zh-TW'] = require('./zh-TW.js');
-},{"./cs-CZ.js":51,"./da-DK.js":52,"./de-CH.js":53,"./de-DE.js":54,"./en-AU.js":55,"./en-GB.js":56,"./en-NZ.js":57,"./en-ZA.js":58,"./es-AR.js":59,"./es-ES.js":60,"./et-EE.js":61,"./fa-IR.js":62,"./fi-FI.js":63,"./fil-PH.js":64,"./fr-CA.js":65,"./fr-CH.js":66,"./fr-FR.js":67,"./he-IL.js":68,"./hu-HU.js":69,"./it-IT.js":71,"./ja-JP.js":72,"./ko-KR.js":73,"./lv-LV.js":74,"./nb-NO.js":75,"./nl-BE.js":76,"./nl-NL.js":77,"./pl-PL.js":78,"./pt-BR.js":79,"./pt-PT.js":80,"./ru-RU.js":81,"./ru-UA.js":82,"./sk-SK.js":83,"./sv-SE.js":84,"./th-TH.js":85,"./tr-TR.js":86,"./uk-UA.js":87,"./zh-CN.js":88,"./zh-TW.js":89}],71:[function(require,module,exports){
+},{"./bg.js":61,"./cs-CZ.js":62,"./da-DK.js":63,"./de-AT.js":64,"./de-CH.js":65,"./de-DE.js":66,"./de-LI.js":67,"./el.js":68,"./en-AU.js":69,"./en-GB.js":70,"./en-IE.js":71,"./en-NZ.js":72,"./en-ZA.js":73,"./es-AR.js":74,"./es-CL.js":75,"./es-CO.js":76,"./es-CR.js":77,"./es-ES.js":78,"./es-NI.js":79,"./es-PE.js":80,"./es-PR.js":81,"./es-SV.js":82,"./et-EE.js":83,"./fa-IR.js":84,"./fi-FI.js":85,"./fil-PH.js":86,"./fr-CA.js":87,"./fr-CH.js":88,"./fr-FR.js":89,"./he-IL.js":90,"./hu-HU.js":91,"./id.js":92,"./it-CH.js":94,"./it-IT.js":95,"./ja-JP.js":96,"./ko-KR.js":97,"./lv-LV.js":98,"./nb-NO.js":99,"./nb.js":100,"./nl-BE.js":101,"./nl-NL.js":102,"./nn.js":103,"./pl-PL.js":104,"./pt-BR.js":105,"./pt-PT.js":106,"./ro-RO.js":107,"./ro.js":108,"./ru-RU.js":109,"./ru-UA.js":110,"./sk-SK.js":111,"./sl.js":112,"./sr-Cyrl-RS.js":113,"./sv-SE.js":114,"./th-TH.js":115,"./tr-TR.js":116,"./uk-UA.js":117,"./zh-CN.js":118,"./zh-MO.js":119,"./zh-SG.js":120,"./zh-TW.js":121}],94:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Italian
+ * locale: Switzerland
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'it-CH',
+        cultureCode: 'it-CH',
+        delimiters: {
+            thousands: '\'',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: 'mila',
+            million: 'mil',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '°';
+        },
+        currency: {
+            symbol: 'CHF'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('it-CH', language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],95:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Italian
@@ -40061,7 +41994,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],72:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Japanese
@@ -40112,7 +42045,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],73:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Korean
@@ -40153,7 +42086,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],74:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Latvian
@@ -40203,7 +42136,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],75:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language: Norwegian Bokmål
@@ -40251,7 +42184,47 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],76:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Norwegian Bokmål (nb)
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'nb',
+        cultureCode: 'nb',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 't',
+            million: 'mil',
+            billion: 'mia',
+            trillion: 'b'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'kr'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('nb', language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],101:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Dutch
@@ -40303,7 +42276,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],77:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Dutch
@@ -40355,7 +42328,47 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],78:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Norwegian Nynorsk (nn)
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'nn',
+        cultureCode: 'nn',
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 't',
+            million: 'mil',
+            billion: 'mia',
+            trillion: 'b'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'kr'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.language) {
+        window.numbro.language('nn', language);
+    }
+}());
+
+},{}],104:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Polish
@@ -40406,7 +42419,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],79:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Portuguese
@@ -40457,7 +42470,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],80:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Portuguese
@@ -40508,7 +42521,97 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],81:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
+/*!
+ * numeral.js language configuration
+ * language : Romanian
+ * author : Andrei Alecu https://github.com/andreialecu
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'ro-RO',
+        cultureCode: 'ro-RO',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'mii',
+            million: 'mil',
+            billion: 'mld',
+            trillion: 'bln'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: ' lei',
+            position: 'postfix'
+        },
+        defaults: {
+            currencyFormat: ',4 a'
+        },
+        formats: {
+            fourDigits: '4 a',
+            fullWithTwoDecimals: ',0.00 $',
+            fullWithTwoDecimalsNoCurrency: ',0.00',
+            fullWithNoDecimals: ',0 $'
+        }
+    };
+
+    // CommonJS
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture(language.cultureCode, language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],108:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Romanian (ro)
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'ro',
+        cultureCode: 'ro',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'mie',
+            million: 'mln',
+            billion: 'mld',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'RON'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('ro', language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],109:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Russian
@@ -40562,7 +42665,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],82:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Russian
@@ -40616,12 +42719,12 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],83:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Slovak
  * locale : Slovakia
- * author : Ahmed Al Hafoudh : http://www.freevision.sk
+ * author : Jan Pesa : https://github.com/smajl (based on work from Ahmed Al Hafoudh : http://www.freevision.sk)
  */
 (function () {
     'use strict';
@@ -40630,21 +42733,22 @@ exports['zh-TW'] = require('./zh-TW.js');
         langLocaleCode: 'sk-SK',
         cultureCode: 'sk-SK',
         delimiters: {
-            thousands: ' ',
+            thousands: '\u00a0',
             decimal: ','
         },
         abbreviations: {
             thousand: 'tis.',
             million: 'mil.',
-            billion: 'b',
-            trillion: 't'
+            billion: 'mld.',
+            trillion: 'bil.'
         },
         ordinal: function () {
             return '.';
         },
         currency: {
             symbol: '€',
-            position: 'postfix'
+            position: 'postfix',
+            spaceSeparated: true
         },
         defaults: {
             currencyFormat: ',4 a'
@@ -40667,7 +42771,89 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],84:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Slovene
+ * locale: Slovenia
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'sl',
+        cultureCode: 'sl',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'tis.',
+            million: 'mil.',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '€'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('sl', language);
+    }
+}());
+
+},{}],113:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Serbian (sr)
+ * country : Serbia (Cyrillic)
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'sr-Cyrl-RS',
+        cultureCode: 'sr-Cyrl-RS',
+        delimiters: {
+            thousands: '.',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'тыс.',
+            million: 'млн',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'RSD'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('sr-Cyrl-RS', language);
+    }
+}());
+
+},{}],114:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Swedish
@@ -40715,7 +42901,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],85:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Thai
@@ -40766,7 +42952,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],86:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Turkish
@@ -40852,7 +43038,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],87:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Ukrainian
@@ -40906,7 +43092,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],88:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : simplified chinese
@@ -40957,7 +43143,89 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],89:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Chinese traditional
+ * locale: Macau
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'zh-MO',
+        cultureCode: 'zh-MO',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: '千',
+            million: '百萬',
+            billion: '十億',
+            trillion: '兆'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: 'MOP'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('zh-MO', language);
+    }
+}());
+
+},{}],120:[function(require,module,exports){
+/*!
+ * numbro.js language configuration
+ * language : Chinese simplified
+ * locale: Singapore
+ * author : Tim McIntosh (StayinFront NZ)
+ */
+(function () {
+    'use strict';
+
+    var language = {
+        langLocaleCode: 'zh-SG',
+        cultureCode: 'zh-SG',
+        delimiters: {
+            thousands: ',',
+            decimal: '.'
+        },
+        abbreviations: {
+            thousand: '千',
+            million: '百万',
+            billion: '十亿',
+            trillion: '兆'
+        },
+        ordinal: function () {
+            return '.';
+        },
+        currency: {
+            symbol: '$'
+        }
+    };
+
+    // Node
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = language;
+    }
+    // Browser
+    if (typeof window !== 'undefined' && window.numbro && window.numbro.culture) {
+        window.numbro.culture('zh-SG', language);
+    }
+}.call(typeof window === 'undefined' ? this : window));
+
+},{}],121:[function(require,module,exports){
 /*!
  * numbro.js language configuration
  * language : Chinese (Taiwan)
@@ -40998,11 +43266,11 @@ exports['zh-TW'] = require('./zh-TW.js');
     }
 }.call(typeof window === 'undefined' ? this : window));
 
-},{}],90:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 (function (process){
 /*!
  * numbro.js
- * version : 1.9.3
+ * version : 1.11.0
  * author : Företagsplatsen AB
  * license : MIT
  * http://www.foretagsplatsen.se
@@ -41016,7 +43284,7 @@ exports['zh-TW'] = require('./zh-TW.js');
     ************************************/
 
     var numbro,
-        VERSION = '1.9.3',
+        VERSION = '1.11.0',
         binarySuffixes = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
         decimalSuffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
         bytes = {
@@ -41077,6 +43345,11 @@ exports['zh-TW'] = require('./zh-TW.js');
     // Numbro prototype object
     function Numbro(number) {
         this._value = number;
+    }
+
+    function numberLength(number) {
+        if (number === 0) { return 1; }
+        return Math.floor(Math.log(Math.abs(number)) / Math.LN10) + 1;
     }
 
     function zeroes(count) {
@@ -41474,7 +43747,6 @@ exports['zh-TW'] = require('./zh-TW.js');
             forcedNeg = false,
             neg = false,
             indexOpenP,
-            size,
             indexMinus,
             paren = '',
             minlen,
@@ -41500,7 +43772,7 @@ exports['zh-TW'] = require('./zh-TW.js');
             prefix = '';
         }
 
-        if (format.indexOf('}') === format.length - 1) {
+        if (format.indexOf('}') === format.length - 1 && format.length) {
             var start = format.indexOf('{');
             if (start === -1) {
                 throw Error('Format should also contain a "{"');
@@ -41553,30 +43825,16 @@ exports['zh-TW'] = require('./zh-TW.js');
                 format = format.replace('a', '');
             }
 
-            totalLength = Math.floor(Math.log(abs) / Math.LN10) + 1;
-
+            totalLength = numberLength(value);
             minimumPrecision = totalLength % 3;
             minimumPrecision = minimumPrecision === 0 ? 3 : minimumPrecision;
 
             if (intPrecision && abs !== 0) {
-
-                length = Math.floor(Math.log(abs) / Math.LN10) + 1 - intPrecision;
-
                 pow = 3 * ~~((Math.min(intPrecision, totalLength) - minimumPrecision) / 3);
-
                 abs = abs / Math.pow(10, pow);
-
-                if (format.indexOf('.') === -1 && intPrecision > 3) {
-                    format += '[.]';
-
-                    size = length === 0 ? 0 : 3 * ~~(length / 3) - length;
-                    size = size < 0 ? size + 3 : size;
-
-                    format += zeroes(size);
-                }
             }
 
-            if (Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1 !== intPrecision) {
+            if (totalLength !== intPrecision) {
                 if (abs >= Math.pow(10, 12) && !abbrForce || abbrT) {
                     // trillion
                     abbr = abbr + cultures[currentCulture].abbreviations.trillion;
@@ -41594,6 +43852,12 @@ exports['zh-TW'] = require('./zh-TW.js');
                     abbr = abbr + cultures[currentCulture].abbreviations.thousand;
                     value = value / Math.pow(10, 3);
                 }
+            }
+
+            length = numberLength(value);
+            if (intPrecision && length < intPrecision && format.indexOf('.') === -1) {
+                format += '[.]';
+                format += zeroes(intPrecision - length);
             }
         }
 
@@ -41640,13 +43904,18 @@ exports['zh-TW'] = require('./zh-TW.js');
             format = format.replace('[.]', '.');
         }
 
-        w = value.toString().split('.')[0];
         precision = format.split('.')[1];
         thousands = format.indexOf(',');
 
         if (precision) {
+            var dSplit = [];
+
             if (precision.indexOf('*') !== -1) {
-                d = toFixed(value, value.toString().split('.')[1].length, roundingFunction);
+                d = value.toString();
+                dSplit = d.split('.');
+                if (dSplit.length > 1) {
+                    d = toFixed(value, dSplit[1].length, roundingFunction);
+                }
             } else {
                 if (precision.indexOf('[') > -1) {
                     precision = precision.replace(']', '');
@@ -41658,11 +43927,12 @@ exports['zh-TW'] = require('./zh-TW.js');
                 }
             }
 
-            w = d.split('.')[0];
+            dSplit = d.split('.');
+            w = dSplit[0];
 
-            if (d.split('.')[1].length) {
+            if (dSplit.length > 1 && dSplit[1].length) {
                 var p = sep ? abbr + sep : cultures[currentCulture].delimiters.decimal;
-                d = p + d.split('.')[1];
+                d = p + dSplit[1];
             } else {
                 d = '';
             }
@@ -41719,10 +43989,10 @@ exports['zh-TW'] = require('./zh-TW.js');
     numbro = function(input) {
         if (numbro.isNumbro(input)) {
             input = input.value();
-        } else if (input === 0 || typeof input === 'undefined') {
-            input = 0;
-        } else if (!Number(input)) {
+        } else if (typeof input === 'string' || typeof input === 'number') {
             input = numbro.fn.unformat(input);
+        } else {
+            input = NaN;
         }
 
         return new Numbro(Number(input));
@@ -42051,7 +44321,7 @@ exports['zh-TW'] = require('./zh-TW.js');
             (process.browser === undefined) &&
             process.title &&
             (
-                process.title.indexOf('node') === 0 ||
+                process.title.indexOf('node') !== -1 ||
                 process.title.indexOf('meteor-tool') > 0 ||
                 process.title === 'grunt' ||
                 process.title === 'gulp'
@@ -42293,7 +44563,7 @@ exports['zh-TW'] = require('./zh-TW.js');
 }.call(typeof window === 'undefined' ? this : window));
 
 }).call(this,require('_process'))
-},{"./languages":70,"_process":91}],91:[function(require,module,exports){
+},{"./languages":93,"_process":123}],123:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -42464,6 +44734,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -42475,9 +44749,704 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],92:[function(require,module,exports){
-module.exports = require('/Users/andrewhumphreys/Documents/work/orchestra/node_modules/lodash/lodash.js');
-},{"/Users/andrewhumphreys/Documents/work/orchestra/node_modules/lodash/lodash.js":50}],93:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
+(function (global){
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t(e.reduxLogger=e.reduxLogger||{})}(this,function(e){"use strict";function t(e,t){e.super_=t,e.prototype=Object.create(t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}})}function r(e,t){Object.defineProperty(this,"kind",{value:e,enumerable:!0}),t&&t.length&&Object.defineProperty(this,"path",{value:t,enumerable:!0})}function n(e,t,r){n.super_.call(this,"E",e),Object.defineProperty(this,"lhs",{value:t,enumerable:!0}),Object.defineProperty(this,"rhs",{value:r,enumerable:!0})}function o(e,t){o.super_.call(this,"N",e),Object.defineProperty(this,"rhs",{value:t,enumerable:!0})}function i(e,t){i.super_.call(this,"D",e),Object.defineProperty(this,"lhs",{value:t,enumerable:!0})}function a(e,t,r){a.super_.call(this,"A",e),Object.defineProperty(this,"index",{value:t,enumerable:!0}),Object.defineProperty(this,"item",{value:r,enumerable:!0})}function f(e,t,r){var n=e.slice((r||t)+1||e.length);return e.length=t<0?e.length+t:t,e.push.apply(e,n),e}function u(e){var t="undefined"==typeof e?"undefined":N(e);return"object"!==t?t:e===Math?"math":null===e?"null":Array.isArray(e)?"array":"[object Date]"===Object.prototype.toString.call(e)?"date":"function"==typeof e.toString&&/^\/.*\//.test(e.toString())?"regexp":"object"}function l(e,t,r,c,s,d,p){s=s||[],p=p||[];var g=s.slice(0);if("undefined"!=typeof d){if(c){if("function"==typeof c&&c(g,d))return;if("object"===("undefined"==typeof c?"undefined":N(c))){if(c.prefilter&&c.prefilter(g,d))return;if(c.normalize){var h=c.normalize(g,d,e,t);h&&(e=h[0],t=h[1])}}}g.push(d)}"regexp"===u(e)&&"regexp"===u(t)&&(e=e.toString(),t=t.toString());var y="undefined"==typeof e?"undefined":N(e),v="undefined"==typeof t?"undefined":N(t),b="undefined"!==y||p&&p[p.length-1].lhs&&p[p.length-1].lhs.hasOwnProperty(d),m="undefined"!==v||p&&p[p.length-1].rhs&&p[p.length-1].rhs.hasOwnProperty(d);if(!b&&m)r(new o(g,t));else if(!m&&b)r(new i(g,e));else if(u(e)!==u(t))r(new n(g,e,t));else if("date"===u(e)&&e-t!==0)r(new n(g,e,t));else if("object"===y&&null!==e&&null!==t)if(p.filter(function(t){return t.lhs===e}).length)e!==t&&r(new n(g,e,t));else{if(p.push({lhs:e,rhs:t}),Array.isArray(e)){var w;e.length;for(w=0;w<e.length;w++)w>=t.length?r(new a(g,w,new i(void 0,e[w]))):l(e[w],t[w],r,c,g,w,p);for(;w<t.length;)r(new a(g,w,new o(void 0,t[w++])))}else{var x=Object.keys(e),S=Object.keys(t);x.forEach(function(n,o){var i=S.indexOf(n);i>=0?(l(e[n],t[n],r,c,g,n,p),S=f(S,i)):l(e[n],void 0,r,c,g,n,p)}),S.forEach(function(e){l(void 0,t[e],r,c,g,e,p)})}p.length=p.length-1}else e!==t&&("number"===y&&isNaN(e)&&isNaN(t)||r(new n(g,e,t)))}function c(e,t,r,n){return n=n||[],l(e,t,function(e){e&&n.push(e)},r),n.length?n:void 0}function s(e,t,r){if(r.path&&r.path.length){var n,o=e[t],i=r.path.length-1;for(n=0;n<i;n++)o=o[r.path[n]];switch(r.kind){case"A":s(o[r.path[n]],r.index,r.item);break;case"D":delete o[r.path[n]];break;case"E":case"N":o[r.path[n]]=r.rhs}}else switch(r.kind){case"A":s(e[t],r.index,r.item);break;case"D":e=f(e,t);break;case"E":case"N":e[t]=r.rhs}return e}function d(e,t,r){if(e&&t&&r&&r.kind){for(var n=e,o=-1,i=r.path?r.path.length-1:0;++o<i;)"undefined"==typeof n[r.path[o]]&&(n[r.path[o]]="number"==typeof r.path[o]?[]:{}),n=n[r.path[o]];switch(r.kind){case"A":s(r.path?n[r.path[o]]:n,r.index,r.item);break;case"D":delete n[r.path[o]];break;case"E":case"N":n[r.path[o]]=r.rhs}}}function p(e,t,r){if(r.path&&r.path.length){var n,o=e[t],i=r.path.length-1;for(n=0;n<i;n++)o=o[r.path[n]];switch(r.kind){case"A":p(o[r.path[n]],r.index,r.item);break;case"D":o[r.path[n]]=r.lhs;break;case"E":o[r.path[n]]=r.lhs;break;case"N":delete o[r.path[n]]}}else switch(r.kind){case"A":p(e[t],r.index,r.item);break;case"D":e[t]=r.lhs;break;case"E":e[t]=r.lhs;break;case"N":e=f(e,t)}return e}function g(e,t,r){if(e&&t&&r&&r.kind){var n,o,i=e;for(o=r.path.length-1,n=0;n<o;n++)"undefined"==typeof i[r.path[n]]&&(i[r.path[n]]={}),i=i[r.path[n]];switch(r.kind){case"A":p(i[r.path[n]],r.index,r.item);break;case"D":i[r.path[n]]=r.lhs;break;case"E":i[r.path[n]]=r.lhs;break;case"N":delete i[r.path[n]]}}}function h(e,t,r){if(e&&t){var n=function(n){r&&!r(e,t,n)||d(e,t,n)};l(e,t,n)}}function y(e){return"color: "+F[e].color+"; font-weight: bold"}function v(e){var t=e.kind,r=e.path,n=e.lhs,o=e.rhs,i=e.index,a=e.item;switch(t){case"E":return[r.join("."),n,"→",o];case"N":return[r.join("."),o];case"D":return[r.join(".")];case"A":return[r.join(".")+"["+i+"]",a];default:return[]}}function b(e,t,r,n){var o=c(e,t);try{n?r.groupCollapsed("diff"):r.group("diff")}catch(e){r.log("diff")}o?o.forEach(function(e){var t=e.kind,n=v(e);r.log.apply(r,["%c "+F[t].text,y(t)].concat(P(n)))}):r.log("—— no diff ——");try{r.groupEnd()}catch(e){r.log("—— diff end —— ")}}function m(e,t,r,n){switch("undefined"==typeof e?"undefined":N(e)){case"object":return"function"==typeof e[n]?e[n].apply(e,P(r)):e[n];case"function":return e(t);default:return e}}function w(e){var t=e.timestamp,r=e.duration;return function(e,n,o){var i=["action"];return i.push("%c"+String(e.type)),t&&i.push("%c@ "+n),r&&i.push("%c(in "+o.toFixed(2)+" ms)"),i.join(" ")}}function x(e,t){var r=t.logger,n=t.actionTransformer,o=t.titleFormatter,i=void 0===o?w(t):o,a=t.collapsed,f=t.colors,u=t.level,l=t.diff,c="undefined"==typeof t.titleFormatter;e.forEach(function(o,s){var d=o.started,p=o.startedTime,g=o.action,h=o.prevState,y=o.error,v=o.took,w=o.nextState,x=e[s+1];x&&(w=x.prevState,v=x.started-d);var S=n(g),k="function"==typeof a?a(function(){return w},g,o):a,j=D(p),E=f.title?"color: "+f.title(S)+";":"",A=["color: gray; font-weight: lighter;"];A.push(E),t.timestamp&&A.push("color: gray; font-weight: lighter;"),t.duration&&A.push("color: gray; font-weight: lighter;");var O=i(S,j,v);try{k?f.title&&c?r.groupCollapsed.apply(r,["%c "+O].concat(A)):r.groupCollapsed(O):f.title&&c?r.group.apply(r,["%c "+O].concat(A)):r.group(O)}catch(e){r.log(O)}var N=m(u,S,[h],"prevState"),P=m(u,S,[S],"action"),C=m(u,S,[y,h],"error"),F=m(u,S,[w],"nextState");if(N)if(f.prevState){var L="color: "+f.prevState(h)+"; font-weight: bold";r[N]("%c prev state",L,h)}else r[N]("prev state",h);if(P)if(f.action){var T="color: "+f.action(S)+"; font-weight: bold";r[P]("%c action    ",T,S)}else r[P]("action    ",S);if(y&&C)if(f.error){var M="color: "+f.error(y,h)+"; font-weight: bold;";r[C]("%c error     ",M,y)}else r[C]("error     ",y);if(F)if(f.nextState){var _="color: "+f.nextState(w)+"; font-weight: bold";r[F]("%c next state",_,w)}else r[F]("next state",w);l&&b(h,w,r,k);try{r.groupEnd()}catch(e){r.log("—— log end ——")}})}function S(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=Object.assign({},L,e),r=t.logger,n=t.stateTransformer,o=t.errorTransformer,i=t.predicate,a=t.logErrors,f=t.diffPredicate;if("undefined"==typeof r)return function(){return function(e){return function(t){return e(t)}}};if(e.getState&&e.dispatch)return console.error("[redux-logger] redux-logger not installed. Make sure to pass logger instance as middleware:\n// Logger with default options\nimport { logger } from 'redux-logger'\nconst store = createStore(\n  reducer,\n  applyMiddleware(logger)\n)\n// Or you can create your own logger with custom options http://bit.ly/redux-logger-options\nimport createLogger from 'redux-logger'\nconst logger = createLogger({\n  // ...options\n});\nconst store = createStore(\n  reducer,\n  applyMiddleware(logger)\n)\n"),function(){return function(e){return function(t){return e(t)}}};var u=[];return function(e){var r=e.getState;return function(e){return function(l){if("function"==typeof i&&!i(r,l))return e(l);var c={};u.push(c),c.started=O.now(),c.startedTime=new Date,c.prevState=n(r()),c.action=l;var s=void 0;if(a)try{s=e(l)}catch(e){c.error=o(e)}else s=e(l);c.took=O.now()-c.started,c.nextState=n(r());var d=t.diff&&"function"==typeof f?f(r,l):t.diff;if(x(u,Object.assign({},t,{diff:d})),u.length=0,c.error)throw c.error;return s}}}}var k,j,E=function(e,t){return new Array(t+1).join(e)},A=function(e,t){return E("0",t-e.toString().length)+e},D=function(e){return A(e.getHours(),2)+":"+A(e.getMinutes(),2)+":"+A(e.getSeconds(),2)+"."+A(e.getMilliseconds(),3)},O="undefined"!=typeof performance&&null!==performance&&"function"==typeof performance.now?performance:Date,N="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},P=function(e){if(Array.isArray(e)){for(var t=0,r=Array(e.length);t<e.length;t++)r[t]=e[t];return r}return Array.from(e)},C=[];k="object"===("undefined"==typeof global?"undefined":N(global))&&global?global:"undefined"!=typeof window?window:{},j=k.DeepDiff,j&&C.push(function(){"undefined"!=typeof j&&k.DeepDiff===c&&(k.DeepDiff=j,j=void 0)}),t(n,r),t(o,r),t(i,r),t(a,r),Object.defineProperties(c,{diff:{value:c,enumerable:!0},observableDiff:{value:l,enumerable:!0},applyDiff:{value:h,enumerable:!0},applyChange:{value:d,enumerable:!0},revertChange:{value:g,enumerable:!0},isConflict:{value:function(){return"undefined"!=typeof j},enumerable:!0},noConflict:{value:function(){return C&&(C.forEach(function(e){e()}),C=null),c},enumerable:!0}});var F={E:{color:"#2196F3",text:"CHANGED:"},N:{color:"#4CAF50",text:"ADDED:"},D:{color:"#F44336",text:"DELETED:"},A:{color:"#2196F3",text:"ARRAY:"}},L={level:"log",logger:console,logErrors:!0,collapsed:void 0,predicate:void 0,duration:!1,timestamp:!0,stateTransformer:function(e){return e},actionTransformer:function(e){return e},errorTransformer:function(e){return e},colors:{title:function(){return"inherit"},prevState:function(){return"#9E9E9E"},action:function(){return"#03A9F4"},nextState:function(){return"#4CAF50"},error:function(){return"#F20404"}},diff:!1,diffPredicate:void 0,transformer:void 0},T=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=e.dispatch,r=e.getState;return"function"==typeof t||"function"==typeof r?S()({dispatch:t,getState:r}):void console.error("\n[redux-logger v3] BREAKING CHANGE\n[redux-logger v3] Since 3.0.0 redux-logger exports by default logger with default settings.\n[redux-logger v3] Change\n[redux-logger v3] import createLogger from 'redux-logger'\n[redux-logger v3] to\n[redux-logger v3] import { createLogger } from 'redux-logger'\n")};e.defaults=L,e.createLogger=S,e.logger=T,e.default=T,Object.defineProperty(e,"__esModule",{value:!0})});
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],125:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports['default'] = applyMiddleware;
+
+var _compose = require('./compose');
+
+var _compose2 = _interopRequireDefault(_compose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+/**
+ * Creates a store enhancer that applies middleware to the dispatch method
+ * of the Redux store. This is handy for a variety of tasks, such as expressing
+ * asynchronous actions in a concise manner, or logging every action payload.
+ *
+ * See `redux-thunk` package as an example of the Redux middleware.
+ *
+ * Because middleware is potentially asynchronous, this should be the first
+ * store enhancer in the composition chain.
+ *
+ * Note that each middleware will be given the `dispatch` and `getState` functions
+ * as named arguments.
+ *
+ * @param {...Function} middlewares The middleware chain to be applied.
+ * @returns {Function} A store enhancer applying the middleware.
+ */
+function applyMiddleware() {
+  for (var _len = arguments.length, middlewares = Array(_len), _key = 0; _key < _len; _key++) {
+    middlewares[_key] = arguments[_key];
+  }
+
+  return function (createStore) {
+    return function (reducer, preloadedState, enhancer) {
+      var store = createStore(reducer, preloadedState, enhancer);
+      var _dispatch = store.dispatch;
+      var chain = [];
+
+      var middlewareAPI = {
+        getState: store.getState,
+        dispatch: function dispatch(action) {
+          return _dispatch(action);
+        }
+      };
+      chain = middlewares.map(function (middleware) {
+        return middleware(middlewareAPI);
+      });
+      _dispatch = _compose2['default'].apply(undefined, chain)(store.dispatch);
+
+      return _extends({}, store, {
+        dispatch: _dispatch
+      });
+    };
+  };
+}
+},{"./compose":128}],126:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports['default'] = bindActionCreators;
+function bindActionCreator(actionCreator, dispatch) {
+  return function () {
+    return dispatch(actionCreator.apply(undefined, arguments));
+  };
+}
+
+/**
+ * Turns an object whose values are action creators, into an object with the
+ * same keys, but with every function wrapped into a `dispatch` call so they
+ * may be invoked directly. This is just a convenience method, as you can call
+ * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+ *
+ * For convenience, you can also pass a single function as the first argument,
+ * and get a function in return.
+ *
+ * @param {Function|Object} actionCreators An object whose values are action
+ * creator functions. One handy way to obtain it is to use ES6 `import * as`
+ * syntax. You may also pass a single function.
+ *
+ * @param {Function} dispatch The `dispatch` function available on your Redux
+ * store.
+ *
+ * @returns {Function|Object} The object mimicking the original object, but with
+ * every action creator wrapped into the `dispatch` call. If you passed a
+ * function as `actionCreators`, the return value will also be a single
+ * function.
+ */
+function bindActionCreators(actionCreators, dispatch) {
+  if (typeof actionCreators === 'function') {
+    return bindActionCreator(actionCreators, dispatch);
+  }
+
+  if (typeof actionCreators !== 'object' || actionCreators === null) {
+    throw new Error('bindActionCreators expected an object or a function, instead received ' + (actionCreators === null ? 'null' : typeof actionCreators) + '. ' + 'Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?');
+  }
+
+  var keys = Object.keys(actionCreators);
+  var boundActionCreators = {};
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var actionCreator = actionCreators[key];
+    if (typeof actionCreator === 'function') {
+      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+    }
+  }
+  return boundActionCreators;
+}
+},{}],127:[function(require,module,exports){
+(function (process){
+'use strict';
+
+exports.__esModule = true;
+exports['default'] = combineReducers;
+
+var _createStore = require('./createStore');
+
+var _isPlainObject = require('lodash/isPlainObject');
+
+var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+
+var _warning = require('./utils/warning');
+
+var _warning2 = _interopRequireDefault(_warning);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function getUndefinedStateErrorMessage(key, action) {
+  var actionType = action && action.type;
+  var actionName = actionType && '"' + actionType.toString() + '"' || 'an action';
+
+  return 'Given action ' + actionName + ', reducer "' + key + '" returned undefined. ' + 'To ignore an action, you must explicitly return the previous state. ' + 'If you want this reducer to hold no value, you can return null instead of undefined.';
+}
+
+function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, unexpectedKeyCache) {
+  var reducerKeys = Object.keys(reducers);
+  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'preloadedState argument passed to createStore' : 'previous state received by the reducer';
+
+  if (reducerKeys.length === 0) {
+    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
+  }
+
+  if (!(0, _isPlainObject2['default'])(inputState)) {
+    return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
+  }
+
+  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
+    return !reducers.hasOwnProperty(key) && !unexpectedKeyCache[key];
+  });
+
+  unexpectedKeys.forEach(function (key) {
+    unexpectedKeyCache[key] = true;
+  });
+
+  if (unexpectedKeys.length > 0) {
+    return 'Unexpected ' + (unexpectedKeys.length > 1 ? 'keys' : 'key') + ' ' + ('"' + unexpectedKeys.join('", "') + '" found in ' + argumentName + '. ') + 'Expected to find one of the known reducer keys instead: ' + ('"' + reducerKeys.join('", "') + '". Unexpected keys will be ignored.');
+  }
+}
+
+function assertReducerShape(reducers) {
+  Object.keys(reducers).forEach(function (key) {
+    var reducer = reducers[key];
+    var initialState = reducer(undefined, { type: _createStore.ActionTypes.INIT });
+
+    if (typeof initialState === 'undefined') {
+      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined. If you don\'t want to set a value for this reducer, ' + 'you can use null instead of undefined.');
+    }
+
+    var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
+    if (typeof reducer(undefined, { type: type }) === 'undefined') {
+      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + _createStore.ActionTypes.INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined, but can be null.');
+    }
+  });
+}
+
+/**
+ * Turns an object whose values are different reducer functions, into a single
+ * reducer function. It will call every child reducer, and gather their results
+ * into a single state object, whose keys correspond to the keys of the passed
+ * reducer functions.
+ *
+ * @param {Object} reducers An object whose values correspond to different
+ * reducer functions that need to be combined into one. One handy way to obtain
+ * it is to use ES6 `import * as reducers` syntax. The reducers may never return
+ * undefined for any action. Instead, they should return their initial state
+ * if the state passed to them was undefined, and the current state for any
+ * unrecognized action.
+ *
+ * @returns {Function} A reducer function that invokes every reducer inside the
+ * passed object, and builds a state object with the same shape.
+ */
+function combineReducers(reducers) {
+  var reducerKeys = Object.keys(reducers);
+  var finalReducers = {};
+  for (var i = 0; i < reducerKeys.length; i++) {
+    var key = reducerKeys[i];
+
+    if (process.env.NODE_ENV !== 'production') {
+      if (typeof reducers[key] === 'undefined') {
+        (0, _warning2['default'])('No reducer provided for key "' + key + '"');
+      }
+    }
+
+    if (typeof reducers[key] === 'function') {
+      finalReducers[key] = reducers[key];
+    }
+  }
+  var finalReducerKeys = Object.keys(finalReducers);
+
+  var unexpectedKeyCache = void 0;
+  if (process.env.NODE_ENV !== 'production') {
+    unexpectedKeyCache = {};
+  }
+
+  var shapeAssertionError = void 0;
+  try {
+    assertReducerShape(finalReducers);
+  } catch (e) {
+    shapeAssertionError = e;
+  }
+
+  return function combination() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var action = arguments[1];
+
+    if (shapeAssertionError) {
+      throw shapeAssertionError;
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action, unexpectedKeyCache);
+      if (warningMessage) {
+        (0, _warning2['default'])(warningMessage);
+      }
+    }
+
+    var hasChanged = false;
+    var nextState = {};
+    for (var _i = 0; _i < finalReducerKeys.length; _i++) {
+      var _key = finalReducerKeys[_i];
+      var reducer = finalReducers[_key];
+      var previousStateForKey = state[_key];
+      var nextStateForKey = reducer(previousStateForKey, action);
+      if (typeof nextStateForKey === 'undefined') {
+        var errorMessage = getUndefinedStateErrorMessage(_key, action);
+        throw new Error(errorMessage);
+      }
+      nextState[_key] = nextStateForKey;
+      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
+    }
+    return hasChanged ? nextState : state;
+  };
+}
+}).call(this,require('_process'))
+},{"./createStore":129,"./utils/warning":131,"_process":123,"lodash/isPlainObject":59}],128:[function(require,module,exports){
+"use strict";
+
+exports.__esModule = true;
+exports["default"] = compose;
+/**
+ * Composes single-argument functions from right to left. The rightmost
+ * function can take multiple arguments as it provides the signature for
+ * the resulting composite function.
+ *
+ * @param {...Function} funcs The functions to compose.
+ * @returns {Function} A function obtained by composing the argument functions
+ * from right to left. For example, compose(f, g, h) is identical to doing
+ * (...args) => f(g(h(...args))).
+ */
+
+function compose() {
+  for (var _len = arguments.length, funcs = Array(_len), _key = 0; _key < _len; _key++) {
+    funcs[_key] = arguments[_key];
+  }
+
+  if (funcs.length === 0) {
+    return function (arg) {
+      return arg;
+    };
+  }
+
+  if (funcs.length === 1) {
+    return funcs[0];
+  }
+
+  return funcs.reduce(function (a, b) {
+    return function () {
+      return a(b.apply(undefined, arguments));
+    };
+  });
+}
+},{}],129:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports.ActionTypes = undefined;
+exports['default'] = createStore;
+
+var _isPlainObject = require('lodash/isPlainObject');
+
+var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+
+var _symbolObservable = require('symbol-observable');
+
+var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+/**
+ * These are private action types reserved by Redux.
+ * For any unknown actions, you must return the current state.
+ * If the current state is undefined, you must return the initial state.
+ * Do not reference these action types directly in your code.
+ */
+var ActionTypes = exports.ActionTypes = {
+  INIT: '@@redux/INIT'
+
+  /**
+   * Creates a Redux store that holds the state tree.
+   * The only way to change the data in the store is to call `dispatch()` on it.
+   *
+   * There should only be a single store in your app. To specify how different
+   * parts of the state tree respond to actions, you may combine several reducers
+   * into a single reducer function by using `combineReducers`.
+   *
+   * @param {Function} reducer A function that returns the next state tree, given
+   * the current state tree and the action to handle.
+   *
+   * @param {any} [preloadedState] The initial state. You may optionally specify it
+   * to hydrate the state from the server in universal apps, or to restore a
+   * previously serialized user session.
+   * If you use `combineReducers` to produce the root reducer function, this must be
+   * an object with the same shape as `combineReducers` keys.
+   *
+   * @param {Function} [enhancer] The store enhancer. You may optionally specify it
+   * to enhance the store with third-party capabilities such as middleware,
+   * time travel, persistence, etc. The only store enhancer that ships with Redux
+   * is `applyMiddleware()`.
+   *
+   * @returns {Store} A Redux store that lets you read the state, dispatch actions
+   * and subscribe to changes.
+   */
+};function createStore(reducer, preloadedState, enhancer) {
+  var _ref2;
+
+  if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
+    enhancer = preloadedState;
+    preloadedState = undefined;
+  }
+
+  if (typeof enhancer !== 'undefined') {
+    if (typeof enhancer !== 'function') {
+      throw new Error('Expected the enhancer to be a function.');
+    }
+
+    return enhancer(createStore)(reducer, preloadedState);
+  }
+
+  if (typeof reducer !== 'function') {
+    throw new Error('Expected the reducer to be a function.');
+  }
+
+  var currentReducer = reducer;
+  var currentState = preloadedState;
+  var currentListeners = [];
+  var nextListeners = currentListeners;
+  var isDispatching = false;
+
+  function ensureCanMutateNextListeners() {
+    if (nextListeners === currentListeners) {
+      nextListeners = currentListeners.slice();
+    }
+  }
+
+  /**
+   * Reads the state tree managed by the store.
+   *
+   * @returns {any} The current state tree of your application.
+   */
+  function getState() {
+    return currentState;
+  }
+
+  /**
+   * Adds a change listener. It will be called any time an action is dispatched,
+   * and some part of the state tree may potentially have changed. You may then
+   * call `getState()` to read the current state tree inside the callback.
+   *
+   * You may call `dispatch()` from a change listener, with the following
+   * caveats:
+   *
+   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
+   * If you subscribe or unsubscribe while the listeners are being invoked, this
+   * will not have any effect on the `dispatch()` that is currently in progress.
+   * However, the next `dispatch()` call, whether nested or not, will use a more
+   * recent snapshot of the subscription list.
+   *
+   * 2. The listener should not expect to see all state changes, as the state
+   * might have been updated multiple times during a nested `dispatch()` before
+   * the listener is called. It is, however, guaranteed that all subscribers
+   * registered before the `dispatch()` started will be called with the latest
+   * state by the time it exits.
+   *
+   * @param {Function} listener A callback to be invoked on every dispatch.
+   * @returns {Function} A function to remove this change listener.
+   */
+  function subscribe(listener) {
+    if (typeof listener !== 'function') {
+      throw new Error('Expected listener to be a function.');
+    }
+
+    var isSubscribed = true;
+
+    ensureCanMutateNextListeners();
+    nextListeners.push(listener);
+
+    return function unsubscribe() {
+      if (!isSubscribed) {
+        return;
+      }
+
+      isSubscribed = false;
+
+      ensureCanMutateNextListeners();
+      var index = nextListeners.indexOf(listener);
+      nextListeners.splice(index, 1);
+    };
+  }
+
+  /**
+   * Dispatches an action. It is the only way to trigger a state change.
+   *
+   * The `reducer` function, used to create the store, will be called with the
+   * current state tree and the given `action`. Its return value will
+   * be considered the **next** state of the tree, and the change listeners
+   * will be notified.
+   *
+   * The base implementation only supports plain object actions. If you want to
+   * dispatch a Promise, an Observable, a thunk, or something else, you need to
+   * wrap your store creating function into the corresponding middleware. For
+   * example, see the documentation for the `redux-thunk` package. Even the
+   * middleware will eventually dispatch plain object actions using this method.
+   *
+   * @param {Object} action A plain object representing “what changed”. It is
+   * a good idea to keep actions serializable so you can record and replay user
+   * sessions, or use the time travelling `redux-devtools`. An action must have
+   * a `type` property which may not be `undefined`. It is a good idea to use
+   * string constants for action types.
+   *
+   * @returns {Object} For convenience, the same action object you dispatched.
+   *
+   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
+   * return something else (for example, a Promise you can await).
+   */
+  function dispatch(action) {
+    if (!(0, _isPlainObject2['default'])(action)) {
+      throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
+    }
+
+    if (typeof action.type === 'undefined') {
+      throw new Error('Actions may not have an undefined "type" property. ' + 'Have you misspelled a constant?');
+    }
+
+    if (isDispatching) {
+      throw new Error('Reducers may not dispatch actions.');
+    }
+
+    try {
+      isDispatching = true;
+      currentState = currentReducer(currentState, action);
+    } finally {
+      isDispatching = false;
+    }
+
+    var listeners = currentListeners = nextListeners;
+    for (var i = 0; i < listeners.length; i++) {
+      var listener = listeners[i];
+      listener();
+    }
+
+    return action;
+  }
+
+  /**
+   * Replaces the reducer currently used by the store to calculate the state.
+   *
+   * You might need this if your app implements code splitting and you want to
+   * load some of the reducers dynamically. You might also need this if you
+   * implement a hot reloading mechanism for Redux.
+   *
+   * @param {Function} nextReducer The reducer for the store to use instead.
+   * @returns {void}
+   */
+  function replaceReducer(nextReducer) {
+    if (typeof nextReducer !== 'function') {
+      throw new Error('Expected the nextReducer to be a function.');
+    }
+
+    currentReducer = nextReducer;
+    dispatch({ type: ActionTypes.INIT });
+  }
+
+  /**
+   * Interoperability point for observable/reactive libraries.
+   * @returns {observable} A minimal observable of state changes.
+   * For more information, see the observable proposal:
+   * https://github.com/tc39/proposal-observable
+   */
+  function observable() {
+    var _ref;
+
+    var outerSubscribe = subscribe;
+    return _ref = {
+      /**
+       * The minimal observable subscription method.
+       * @param {Object} observer Any object that can be used as an observer.
+       * The observer object should have a `next` method.
+       * @returns {subscription} An object with an `unsubscribe` method that can
+       * be used to unsubscribe the observable from the store, and prevent further
+       * emission of values from the observable.
+       */
+      subscribe: function subscribe(observer) {
+        if (typeof observer !== 'object') {
+          throw new TypeError('Expected the observer to be an object.');
+        }
+
+        function observeState() {
+          if (observer.next) {
+            observer.next(getState());
+          }
+        }
+
+        observeState();
+        var unsubscribe = outerSubscribe(observeState);
+        return { unsubscribe: unsubscribe };
+      }
+    }, _ref[_symbolObservable2['default']] = function () {
+      return this;
+    }, _ref;
+  }
+
+  // When a store is created, an "INIT" action is dispatched so that every
+  // reducer returns their initial state. This effectively populates
+  // the initial state tree.
+  dispatch({ type: ActionTypes.INIT });
+
+  return _ref2 = {
+    dispatch: dispatch,
+    subscribe: subscribe,
+    getState: getState,
+    replaceReducer: replaceReducer
+  }, _ref2[_symbolObservable2['default']] = observable, _ref2;
+}
+},{"lodash/isPlainObject":59,"symbol-observable":132}],130:[function(require,module,exports){
+(function (process){
+'use strict';
+
+exports.__esModule = true;
+exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
+
+var _createStore = require('./createStore');
+
+var _createStore2 = _interopRequireDefault(_createStore);
+
+var _combineReducers = require('./combineReducers');
+
+var _combineReducers2 = _interopRequireDefault(_combineReducers);
+
+var _bindActionCreators = require('./bindActionCreators');
+
+var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
+
+var _applyMiddleware = require('./applyMiddleware');
+
+var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
+
+var _compose = require('./compose');
+
+var _compose2 = _interopRequireDefault(_compose);
+
+var _warning = require('./utils/warning');
+
+var _warning2 = _interopRequireDefault(_warning);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+/*
+* This is a dummy function to check if the function name has been altered by minification.
+* If the function has been minified and NODE_ENV !== 'production', warn the user.
+*/
+function isCrushed() {}
+
+if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
+  (0, _warning2['default'])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
+}
+
+exports.createStore = _createStore2['default'];
+exports.combineReducers = _combineReducers2['default'];
+exports.bindActionCreators = _bindActionCreators2['default'];
+exports.applyMiddleware = _applyMiddleware2['default'];
+exports.compose = _compose2['default'];
+}).call(this,require('_process'))
+},{"./applyMiddleware":125,"./bindActionCreators":126,"./combineReducers":127,"./compose":128,"./createStore":129,"./utils/warning":131,"_process":123}],131:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports['default'] = warning;
+/**
+ * Prints a warning in the console if it exists.
+ *
+ * @param {String} message The warning message.
+ * @returns {void}
+ */
+function warning(message) {
+  /* eslint-disable no-console */
+  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+    console.error(message);
+  }
+  /* eslint-enable no-console */
+  try {
+    // This error was thrown as a convenience so that if you enable
+    // "break on all exceptions" in your console,
+    // it would pause the execution at this line.
+    throw new Error(message);
+    /* eslint-disable no-empty */
+  } catch (e) {}
+  /* eslint-enable no-empty */
+}
+},{}],132:[function(require,module,exports){
+module.exports = require('./lib/index');
+
+},{"./lib/index":133}],133:[function(require,module,exports){
+(function (global){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ponyfill = require('./ponyfill');
+
+var _ponyfill2 = _interopRequireDefault(_ponyfill);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var root; /* global window */
+
+
+if (typeof self !== 'undefined') {
+  root = self;
+} else if (typeof window !== 'undefined') {
+  root = window;
+} else if (typeof global !== 'undefined') {
+  root = global;
+} else if (typeof module !== 'undefined') {
+  root = module;
+} else {
+  root = Function('return this')();
+}
+
+var result = (0, _ponyfill2['default'])(root);
+exports['default'] = result;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./ponyfill":134}],134:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports['default'] = symbolObservablePonyfill;
+function symbolObservablePonyfill(root) {
+	var result;
+	var _Symbol = root.Symbol;
+
+	if (typeof _Symbol === 'function') {
+		if (_Symbol.observable) {
+			result = _Symbol.observable;
+		} else {
+			result = _Symbol('observable');
+			_Symbol.observable = result;
+		}
+	} else {
+		result = '@@observable';
+	}
+
+	return result;
+};
+},{}],135:[function(require,module,exports){
+module.exports = require('/Users/Viktor/Documents/bolt/orchestra/node_modules/lodash/lodash.js');
+},{"/Users/Viktor/Documents/bolt/orchestra/node_modules/lodash/lodash.js":60}],136:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42560,7 +45529,7 @@ var CurrencyHelper = function () {
 
 var Currency = exports.Currency = new CurrencyHelper();
 
-},{"backbone.radio":7,"numbro":90}],94:[function(require,module,exports){
+},{"backbone.radio":7,"numbro":122}],137:[function(require,module,exports){
 //
 // ## helpers/handlebars
 //
@@ -42652,7 +45621,7 @@ function _interopRequireDefault(obj) {
 
 module.exports = exports['default'];
 
-},{"./currency":93,"./translate":97,"handlebars/runtime":31}],95:[function(require,module,exports){
+},{"./currency":136,"./translate":141,"handlebars/runtime":31}],138:[function(require,module,exports){
 //
 // #orchestra/storage/local.js
 //
@@ -42741,7 +45710,7 @@ var LocalStorageHelper = function () {
 
 var LocalStorage = exports.LocalStorage = new LocalStorageHelper();
 
-},{}],96:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -53156,7 +56125,97 @@ var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "sym
 }).call(undefined);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],97:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.provider = undefined;
+exports.shallowEqual = shallowEqual;
+exports.observeStore = observeStore;
+exports.configureStore = configureStore;
+
+var _redux = require('redux');
+
+var _reduxLogger = require('redux-logger');
+
+var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
+
+function _toConsumableArray(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }return arr2;
+  } else {
+    return Array.from(arr);
+  }
+}
+
+var composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || _redux.compose;
+
+function shallowEqual(objA, objB) {
+  if (objA === objB) return true;
+
+  var keysA = Object.keys(objA);
+  var keysB = Object.keys(objB);
+
+  if (keysA.length !== keysB.length) return false;
+
+  // Test for A's keys different from B.
+  var hasOwn = Object.prototype.hasOwnProperty;
+  for (var i = 0; i < keysA.length; i++) {
+    if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function observeStore(store, currState, select, onChange) {
+  if (typeof onChange !== 'function') return null;
+  var currentState = currState || {};
+
+  function handleChange() {
+    var nextState = select(store.getState());
+    if (!shallowEqual(currentState, nextState)) {
+      var previousState = currentState;
+      currentState = nextState;
+      onChange(currentState, previousState);
+    }
+  }
+
+  var unsubscribe = store.subscribe(handleChange);
+  handleChange();
+  return unsubscribe;
+}
+
+var provider = exports.provider = {
+  set store(store) {
+    this._store = store;
+  },
+
+  get store() {
+    return this._store;
+  }
+};
+
+function configureStore(env, reducer, preloadedState) {
+  var middleware = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+
+  if (env !== 'production') {
+    middleware.push(_reduxLogger2.default);
+  }
+
+  return (0, _redux.createStore)(reducer, preloadedState, composeEnhancers(_redux.applyMiddleware.apply(undefined, _toConsumableArray(middleware))));
+}
+
+},{"redux":130,"redux-logger":124}],141:[function(require,module,exports){
 //
 // helpers.translate
 //
@@ -53258,7 +56317,7 @@ var TranslateHelpers = function () {
 
 var Translator = exports.Translator = new TranslateHelpers();
 
-},{"backbone.radio":7,"i18next":48,"i18next-sprintf-postprocessor":32}],98:[function(require,module,exports){
+},{"backbone.radio":7,"i18next":48,"i18next-sprintf-postprocessor":32}],142:[function(require,module,exports){
 //
 // expose device capibilities to app object.
 //
@@ -53356,14 +56415,14 @@ var VisibilityHelper = function () {
 
 var Visibility = exports.Visibility = new VisibilityHelper();
 
-},{"backbone.radio":7,"jquery":49}],99:[function(require,module,exports){
+},{"backbone.radio":7,"jquery":49}],143:[function(require,module,exports){
 /* jshint -W079 */
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Behavior = exports.Region = exports.CompositeView = exports.CollectionView = exports.View = exports.Application = exports.History = exports.history = exports.sync = exports.Model = exports.Validation = exports.Syphon = exports.BBCollection = exports.Backbone = exports.Radio = exports.Storage = exports.Service = exports._ = exports.$ = exports.attachHelpers = exports.Router = exports.Route = undefined;
+exports.Behavior = exports.Region = exports.InfernoView = exports.CompositeView = exports.CollectionView = exports.View = exports.Application = exports.History = exports.history = exports.sync = exports.Model = exports.Validation = exports.Syphon = exports.BBCollection = exports.Backbone = exports.Radio = exports.Storage = exports.Service = exports._ = exports.$ = exports.attachHelpers = exports.Router = exports.Route = undefined;
 
 var _backboneRouting = require('backbone-routing');
 
@@ -53378,6 +56437,18 @@ Object.defineProperty(exports, 'Router', {
   get: function get() {
     return _backboneRouting.Router;
   }
+});
+
+var _reduxHelpers = require('./helpers/redux-helpers');
+
+Object.keys(_reduxHelpers).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _reduxHelpers[key];
+    }
+  });
 });
 
 var _collection = require('./mvc/collection');
@@ -53480,6 +56551,12 @@ var _backbone11 = require('backbone.marionette');
 
 var _backbone12 = _interopRequireDefault(_backbone11);
 
+require('./mvc/redux-view');
+
+var _infernoView = require('./mvc/inferno-view');
+
+var _infernoView2 = _interopRequireDefault(_infernoView);
+
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : { default: obj };
 }
@@ -53508,10 +56585,11 @@ var Application = exports.Application = _backbone12.default.Application;
 var View = exports.View = _backbone12.default.View;
 var CollectionView = exports.CollectionView = _backbone12.default.CollectionView;
 var CompositeView = exports.CompositeView = _backbone12.default.CompositeView;
+var InfernoView = exports.InfernoView = _infernoView2.default;
 var Region = exports.Region = _backbone12.default.Region;
 var Behavior = exports.Behavior = _backbone12.default.Behavior;
 
-},{"./helpers/currency":93,"./helpers/handlebars":94,"./helpers/localStorage":95,"./helpers/lodash":96,"./helpers/translate":97,"./helpers/visibility":98,"./mvc/collection":100,"backbone":11,"backbone-routing":4,"backbone-validation":5,"backbone.marionette":6,"backbone.radio":7,"backbone.service":8,"backbone.storage":9,"backbone.syphon":10,"jquery":49}],100:[function(require,module,exports){
+},{"./helpers/currency":136,"./helpers/handlebars":137,"./helpers/localStorage":138,"./helpers/lodash":139,"./helpers/redux-helpers":140,"./helpers/translate":141,"./helpers/visibility":142,"./mvc/collection":144,"./mvc/inferno-view":145,"./mvc/redux-view":146,"backbone":11,"backbone-routing":4,"backbone-validation":5,"backbone.marionette":6,"backbone.radio":7,"backbone.service":8,"backbone.storage":9,"backbone.syphon":10,"jquery":49}],144:[function(require,module,exports){
 //
 // #orchestra/mvc/collection.js
 //
@@ -53553,6 +56631,133 @@ var Collection = exports.Collection = _backbone2.default.Collection.extend({
   }
 });
 
-},{"../helpers/lodash":96,"backbone":11}]},{},[99])(99)
+},{"../helpers/lodash":139,"backbone":11}],145:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _backbone = require('backbone.marionette');
+
+var InfernoView = _backbone.View.extend({
+  _renderTemplate: function _renderTemplate() {
+    var template = this.getTemplate();
+
+    // Allow template-less views
+    if (template === false) {
+      return;
+    }
+
+    // Add in entity data and template context
+    var data = this.mixinTemplateContext(this.serializeData());
+
+    // Render and add to el
+    var html = this._renderHtml(template, data);
+
+    if (html) {
+      this.attachElContent(html);
+    }
+  }
+});
+
+exports.default = InfernoView;
+module.exports = exports['default'];
+
+},{"backbone.marionette":6}],146:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _backbone = require('backbone.marionette');
+
+var _redux = require('redux');
+
+var _reduxHelpers = require('../helpers/redux-helpers');
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
+
+var defaultMapState = function defaultMapState() {
+  return {};
+};
+var defaultMapDispatch = function defaultMapDispatch(dispatch) {
+  return { dispatch: dispatch };
+};
+
+var ReduxViewMixin = {
+  delegateEntityEvents: function delegateEntityEvents() {
+    this._delegateEntityEvents(this.model, this.collection);
+
+    // bind each behaviors model and collection events
+    this._delegateBehaviorEntityEvents();
+
+    // listen to redux store
+    this.connectToStore();
+
+    return this;
+  },
+  shouldViewRender: function shouldViewRender() {
+    return true;
+  },
+  onStoreUpdated: function onStoreUpdated(oldState, newState) {
+    this.state = newState;
+
+    if (this.shouldViewRender(oldState, newState)) {
+      this.render();
+    }
+  },
+  connectToStore: function connectToStore() {
+    var _this = this;
+
+    if (!_reduxHelpers.provider.store) {
+      return;
+    }
+
+    var mapState = this.mapState || defaultMapState;
+    var mapDispatch = this.mapDispatch || defaultMapDispatch;
+    var actions = (0, _redux.bindActionCreators)(mapDispatch(), _reduxHelpers.provider.store.dispatch);
+    var currentState = mapState(_reduxHelpers.provider.store.getState());
+
+    this.state = currentState;
+    this.actions = actions;
+
+    (0, _reduxHelpers.observeStore)(_reduxHelpers.provider.store, currentState, mapState, function (newState, oldState) {
+      _this.onStoreUpdated(oldState, newState);
+    });
+  },
+  serializeData: function serializeData() {
+    var data = {};
+
+    // If we have a model, we serialize that
+    if (this.model) {
+      data = this.serializeModel();
+    } else if (this.collection) {
+      data = {
+        items: this.serializeCollection()
+      };
+    }
+
+    if (this.state) {
+      data.redux = this.state;
+    }
+
+    return data;
+  }
+};
+
+_lodash2.default.extend(_backbone.View.prototype, ReduxViewMixin);
+
+exports.default = _backbone.View;
+module.exports = exports['default'];
+
+},{"../helpers/redux-helpers":140,"backbone.marionette":6,"lodash":60,"redux":130}]},{},[143])(143)
 });
 //# sourceMappingURL=orchestra.js.map

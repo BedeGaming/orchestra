@@ -9,7 +9,6 @@ var rename = require('gulp-rename');
 var babelify = require('babelify');
 var gutil = require('gulp-util');
 var files = require('../config').files;
-
 var pkg = require('../../package');
 
 gulp.task("babel", function () {

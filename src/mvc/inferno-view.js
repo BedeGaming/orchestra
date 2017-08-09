@@ -2,13 +2,12 @@
 
 import { View } from 'backbone.marionette';
 
-const InfernoView = Marionette.View.extend({
+const InfernoView = View.extend({
   _renderTemplate() {
     const template = this.getTemplate();
 
     // Allow template-less views
     if (template === false) {
-      deprecate('template:false is deprecated.  Use _.noop.');
       return;
     }
 
