@@ -1,3 +1,28 @@
+### v3.0.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0...v3.0.0)
+
+#### Package Updates
+
+* Update to Handlebars 4.
+* Replaced numeral with numbro.
+* Replaced Backbone.Validation with a version compatible with lodash4.
+* Updated to jQuery 3.0.0
+
+#### Breaking change
+
+* Remove hammerjs
+* Remove touch view mixin.
+* Named export rewrite, users using babel exports default plugin will no longer need this.
+* Removed module helper.
+* Removed `getInstance`.
+* Remove Backbone.Stickit.
+* Remove full lodash in favour of a custom version that includes only backbone dependencies.
+
+#### Misc
+
+* import full lodash in `Collection`.
+* export attachHelpers to allow attaching handlebars helpers to a different instance of handlebars.
+* export `sync` and `Backbone.Collection`.
+
 ### v3.0.0-pre.5 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.4...v3.0.0-pre.5)
 
 #### Breaking Changes
