@@ -1,3 +1,10 @@
+### v3.1.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0...v3.1.0)
+
+#### Misc
+
+* Added InfernoView to allow jsx component views.
+* Added a redux plugin so that Marionette.View can consume redux state and handle changes.
+
 ### v3.0.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0...v3.0.0)
 
 #### Package Updates
