@@ -69,11 +69,6 @@ require.extensions['.hbs'] = function(module, filename) {
   module.exports = handlebars.compile(fs.readFileSync(filename).toString());
 };
 
-var app = Orchestra.getInstance();
-app.start(config);
-
-global.app = app;
-
 beforeEach(function() {
   this.sandbox = sinon.sandbox.create();
 });

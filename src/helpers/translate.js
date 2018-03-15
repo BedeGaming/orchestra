@@ -56,4 +56,4 @@ class TranslateHelpers {
   }
 }
 
-export default new TranslateHelpers();
+export const Translator = new TranslateHelpers();

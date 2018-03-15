@@ -42,7 +42,7 @@ import Orchestra from 'orchestra';
 var Orchestra = require('orchestra');
 ```
 
-NOTE: we recommend the use of `browserify-shim` property to point to the commonjs version of Orchestra located in the `lib` folder. 
+NOTE: we recommend the use of `browserify-shim` property to point to the commonjs version of Orchestra located in the `lib` folder.
 
 *Requirejs*
 
@@ -361,5 +361,4 @@ Orchestra recommends the use of Handlebars as a templating language for your vie
 * [Currency](/docs/currency-helper.md)
 * [Translation](/docs/translate-helper.md)
 * [Local Storage](/docs/localstorage-helper.md)
-* [Touch View](/docs/touch-view.md)
 * [Visibility](/docs/visibility-helper.md)

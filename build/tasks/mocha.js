@@ -20,7 +20,7 @@ gulp.task('mocha', function() {
 });
 
 gulp.task('istanbul', function(cb) {
-  gulp.src(files.javascript)
+  gulp.src(files.test)
     .pipe(istanbul({ instrumenter: isparta.Instrumenter }))
     .pipe(istanbul.hookRequire())
     .on('finish', function() {

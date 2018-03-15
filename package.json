@@ -1,7 +1,7 @@
 {
   "name": "orchestra",
   "description": "Simplify Backbone.Marionette applcations with an opinionated set of dependencies",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "authors": [
     "Andrew Humphreys <ahumphreys87@googlemail.com>",
     "Joe Fitter <hello@joefitter.com>",
@@ -21,29 +21,27 @@
   "dependencies": {
     "backbone": "^1.3.3",
     "backbone-routing": "^0.2.0",
-    "backbone-validation": "^0.11.5",
+    "backbone-validation": "git://github.com/ahumphreys87/backbone.validation.git#custom-lodash",
     "backbone.cocktail": "0.5.10",
-    "backbone.marionette": "^3.0.0",
+    "backbone.marionette": "3.3.1",
     "backbone.service": "git://github.com/ahumphreys87/backbone.service.git#radio-2",
     "backbone.stickit": "^0.9.0",
     "backbone.storage": "0.2.1",
     "backbone.syphon": "git://github.com/ahumphreys87/backbone.syphon.git#peer-deps",
     "browserify-swap": "^0.2.2",
-    "hammerjs": "^2.0.4",
-    "handlebars": "~1.3.0",
+    "handlebars": "^4.0.5",
     "i18next": "2.3.5",
     "i18next-sprintf-postprocessor": "0.0.6",
-    "jquery": "2.1.1",
+    "jquery": "3.0.0",
     "lodash": "^4.0.0",
     "moment": "^2.8.3",
-    "numeral": "^1.5.3"
+    "numbro": "^1.9.3"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.1",
     "babel-preset-es2015": "^6.3.13",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
-    "browserify-handlebars": "^0.2.0",
     "connect": "2.4.3",
     "expect.js": "^0.3.1",
     "gulp": "^3.8.7",

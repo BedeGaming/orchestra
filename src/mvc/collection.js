@@ -13,9 +13,9 @@
 'use strict';
 
 import Backbone from 'backbone';
-import _ from 'lodash';
+import _ from '../helpers/lodash';
 
-export default Backbone.Collection.extend({
+export const Collection = Backbone.Collection.extend({
 
   next(model) {
     return this.at((this.indexOf(model) + 1) % _.size(this));

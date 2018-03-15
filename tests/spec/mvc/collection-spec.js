@@ -5,7 +5,7 @@
 
 require('../../app/support/setup');
 
-var Collection = require('../../../src/mvc/collection');
+var Collection = require('../../../src/mvc/collection').Collection;
 var Backbone = require('backbone');
 
 describe('Base collection', function() {

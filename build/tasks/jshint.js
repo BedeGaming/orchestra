@@ -5,7 +5,7 @@ var jshint = require('gulp-jshint');
 var files = require('../config').files;
 
 gulp.task('jshint', function() {
-  return gulp.src(files.javascript)
+  return gulp.src(files.lint)
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
     .pipe(jshint.reporter('fail'));

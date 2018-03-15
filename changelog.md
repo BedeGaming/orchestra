@@ -1,3 +1,74 @@
+### v3.0.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0...v3.0.0)
+
+#### Package Updates
+
+* Update to Handlebars 4.
+* Replaced numeral with numbro.
+* Replaced Backbone.Validation with a version compatible with lodash4.
+* Updated to jQuery 3.0.0
+
+#### Breaking change
+
+* Remove hammerjs
+* Remove touch view mixin.
+* Named export rewrite, users using babel exports default plugin will no longer need this.
+* Removed module helper.
+* Removed `getInstance`.
+* Remove Backbone.Stickit.
+* Remove full lodash in favour of a custom version that includes only backbone dependencies.
+
+#### Misc
+
+* import full lodash in `Collection`.
+* export attachHelpers to allow attaching handlebars helpers to a different instance of handlebars.
+* export `sync` and `Backbone.Collection`.
+
+### v3.0.0-pre.5 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.4...v3.0.0-pre.5)
+
+#### Breaking Changes
+
+* Remove Backbone.Stickit.
+
+#### Misc
+
+* export `sync` and `Backbone.Collection`.
+
+### v3.0.0-pre.4 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.3...v3.0.0-pre.4)
+
+#### Misc
+
+* export attachHelpers to allow attaching handlebars helpers to a different instance of handlebars.
+
+### v3.0.0-pre.3 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.2...v3.0.0-pre.3)
+
+#### Misc
+
+* import full lodash in `Collection`.
+
+### v3.0.0-pre.2 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v3.0.0-pre.1...v3.0.0-pre.2)
+
+#### Package Updates
+
+* Replaced numeral with numbro.
+* Replaced Backbone.Validation with a version compatible with lodash4.
+
+#### Breaking change
+
+* Named export rewrite, users using babel exports default plugin will no longer need this.
+* Removed module helper.
+* Removed `getInstance`.
+
+### v3.0.0-pre.1 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v2.0.0...v3.0.0-pre.1)
+
+#### Package Updates
+
+* Update to Handlebars 4.
+
+#### Breaking change
+
+* Remove hammerjs
+* Remove touch view mixin.
+
 ### v2.0.0 [view commit logs](https://github.com/BedeGaming/orchestra/compare/v1.5.1...v2.0.0)
 
 #### Package Updates

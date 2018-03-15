@@ -1,73 +1,47 @@
+/* jshint -W079 */
 'use strict';
 
-import $ from 'jquery';
-import _ from 'lodash';
-import Backbone from 'backbone';
-import {Route, Router} from 'backbone-routing';
-import Validation from 'backbone-validation';
-import Cocktail from 'backbone.cocktail';
-import Radio from 'backbone.radio';
-import Service from 'backbone.service';
-import Storage from 'backbone.storage';
-import Syphon from 'backbone.syphon';
-import Collection from './mvc/collection';
-import Currency from './helpers/currency';
-import LocalStorage from './helpers/localStorage';
-import Translator from './helpers/translate';
-import TouchView from './mixins/touch.view';
-import Visibility from './helpers/visibility';
-import ModuleHelper from './helpers/module';
+import jQuery from 'jquery';
+import lodash from './helpers/lodash';
+import CoreBackbone from 'backbone';
+import BackboneValidation from 'backbone-validation';
+import BackboneRadio from 'backbone.radio';
+import BackboneService from 'backbone.service';
+import BackboneStorage from 'backbone.storage';
+import BackboneSyphon from 'backbone.syphon';
 import handlebarsHelpers from './helpers/handlebars';
 import Marionette from 'backbone.marionette';
-import 'backbone.stickit';
+export { Route,  Router } from 'backbone-routing';
+
+export * from './mvc/collection';
+export * from './helpers/currency';
+export * from './helpers/localStorage';
+export * from './helpers/translate';
+export * from './helpers/visibility';
 
 if (window.__agent) {
-  window.__agent.start(Backbone, Marionette);
+  window.__agent.start(CoreBackbone, Marionette);
 }
 
 handlebarsHelpers();
 
-// build orchestra framework
-const Orchestra = {};
-_.extend(Orchestra, Backbone);
-_.extend(Orchestra, Backbone.Marionette.extend());
-
-_.extend(Orchestra, {
-  _,
-  $,
-  Radio,
-  Service,
-  Storage,
-  Syphon,
-  Validation,
-  Cocktail,
-  Route,
-  Router,
-  Collection,
-  Currency,
-  LocalStorage,
-  Translator,
-  Visibility,
-  ModuleHelper,
-  TouchView,
-
-  instances: {},
-
-  getInstance(namespace) {
-    namespace = namespace || 'main';
-    if (!this.instances[namespace]) {
-      this.instances[namespace] = new this.Application({
-        namespace: namespace
-      });
-
-      this.listenTo(this.instances[namespace], 'destroy', () => {
-        delete this.instances[namespace];
-      });
-    }
-
-    return this.instances[namespace];
-  }
-
-});
-
-export default Orchestra;
+export const attachHelpers = handlebarsHelpers;
+export const $ = jQuery;
+export const _ = lodash;
+export const Service = BackboneService;
+export const Storage = BackboneStorage;
+export const Radio = BackboneRadio;
+export const Backbone = CoreBackbone;
+export const BBCollection = CoreBackbone.Collection;
+export const Syphon = BackboneSyphon;
+export const Validation = BackboneValidation;
+export const Model = CoreBackbone.Model;
+export const sync = CoreBackbone.sync;
+export const history = CoreBackbone.history;
+export const History = CoreBackbone.History;
+export const Application = Marionette.Application;
+export const View = Marionette.View;
+export const CollectionView = Marionette.CollectionView;
+export const CompositeView = Marionette.CompositeView;
+export const Region = Marionette.Region;
+export const Behavior = Marionette.Behavior;

@@ -5,6 +5,6 @@ var jscs = require('gulp-jscs');
 var files = require('../config').files;
 
 gulp.task('jscs', function() {
-  return gulp.src(files.javascript)
+  return gulp.src(files.lint)
     .pipe(jscs());
 });
