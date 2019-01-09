@@ -41,6 +41,7 @@ class TranslateHelpers {
     i18next
       .use(sprintf)
       .init({
+        compatibilityJSON: 'v2',
         nsSeparator: false,
         keySeparator: false,
         lng: locale,
