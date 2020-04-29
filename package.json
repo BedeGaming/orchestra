@@ -32,7 +32,7 @@
     "handlebars": "^4.1.2",
     "i18next": "^3.4.4",
     "i18next-sprintf-postprocessor": "0.0.6",
-    "jquery": "3.4.1",
+    "jquery": "3.5.0",
     "lodash": "^4.0.0",
     "moment": "^2.8.3",
     "numbro": "^1.9.3",
